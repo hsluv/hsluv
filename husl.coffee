@@ -68,8 +68,8 @@ round = (num, places) ->
 refX = 0.95047
 refY = 1.00000
 refZ = 1.08883
-refU = (4 * refX) / (refX + (15 * refY) + (3 * refZ))
-refV = (9 * refY) / (refX + (15 * refY) + (3 * refZ))
+refU = 0.19784 # = (4 * refX) / (refX + (15 * refY) + (3 * refZ))
+refV = 0.46834 # = (9 * refY) / (refX + (15 * refY) + (3 * refZ))
 
 # CIE LAB and LUV constants
 lab_e = 0.008856
