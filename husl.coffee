@@ -13,22 +13,22 @@ maxChroma = (L, H) ->
   sinH = Math.sin hrad
   cosH = Math.cos hrad
   sub1 = Math.pow(L + 16, 3) / 1560896
-  sub2 = if sub1 > (1107 / 125000) then sub1 else 10 * L / 9033
+  sub2 = if sub1 > 0.008856 then sub1 else L / 903.3
   result = Infinity
   # For each channel (red, green and blue)
   for row in m
     # Get the relevant matrix values and plug them into
     # some variables to be used later
     [m1, m2, m3] = row
-    top = (0.9991 * m1 + 1.0512 * m2 + 1.1446 * m3) * L
-    rbottom = (0.8633 * m3 - 0.1727 * m2) * sinH
-    lbottom = (0.1295 * m3 - 0.3885 * m1) * cosH
+    top = (0.99914902410024 * m1 + 1.05121573691680 * m2 + 1.14459523831237 * m3) * L
+    rbottom = (0.86329789712775 * m3 - 0.17265957942555 * m2) * sinH
+    lbottom = (0.12949468478388 * m3 - 0.38848405435164 * m1) * cosH
     bottom = rbottom + lbottom
     # Solve for <RGB channel> = 1
     # This is the C value that you can put together with the given L and H
     # to produce a color that with <RGB channel> = 1. This means that if C
     # goes any higher, the color will step outside of the RGB gamut.
-    C = (top * sub2 - 1.051 * L) / (bottom * sub2 + 1.7266 * sinH)
+    C = (top * sub2 - 1.05121573691680 * L) / (bottom * sub2 + 1.7265957942555 * sinH)
     # We have to do this for every channel and take the smallest value
     result = C if 0 < C < result
     # Increasing C might decrease an RGB channel below zero, so we do the
@@ -61,8 +61,8 @@ dotProduct = (a, b) ->
 
 # Rounds number to a given number of decimal places
 round = (num, places) ->
-  m = Math.pow 10, places
-  return Math.round(num * m) / m
+  n = Math.pow 10, places
+  return Math.round(num * n) / n
 
 # Hard-coded D65 standard illuminant
 refX = 0.95047
@@ -200,10 +200,10 @@ conv.hex.rgb = (hex) ->
     parseInt(n, 16) / 255
 
 # Main conversion chains, don't include them in conv to avoid confusion
-huslToRgb = (tuple) ->
-  conv.xyz.rgb conv.luv.xyz conv.lch.luv conv.husl.lch tuple...
-rgbToHusl = (tuple) ->
-  conv.lch.husl conv.luv.lch conv.xyz.luv conv.rgb.xyz tuple...
+huslToRgb = (tuple...) ->
+  conv.xyz.rgb conv.luv.xyz conv.lch.luv conv.husl.lch tuple
+rgbToHusl = (tuple...) ->
+  conv.lch.husl conv.luv.lch conv.xyz.luv conv.rgb.xyz tuple
 
 root = {}
 
@@ -228,4 +228,4 @@ root._conv = conv
 # Export to Node.js
 module.exports = root if module?
 # Export to jQuery
-jQuery.colorspaces = root if jQuery?
+jQuery.husl = root if jQuery?
