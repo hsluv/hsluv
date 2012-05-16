@@ -12,30 +12,21 @@ maxChroma = (L, H) ->
   hrad = H / 360 * 2 * Math.PI
   sinH = Math.sin hrad
   cosH = Math.cos hrad
-  sub1 = Math.pow(L + 16, 3) / 1560896
-  sub2 = if sub1 > 0.008856 then sub1 else L / 903.3
   result = Infinity
-  # For each channel (red, green and blue)
   for row in m
     # Get the relevant matrix values and plug them into
-    # some variables to be used later
+    # some variables to be used below
     [m1, m2, m3] = row
-    top = (0.99914902410024 * m1 + 1.05121573691680 * m2 + 1.14459523831237 * m3) * L
-    rbottom = (0.86329789712775 * m3 - 0.17265957942555 * m2) * sinH
-    lbottom = (0.12949468478388 * m3 - 0.38848405435164 * m1) * cosH
-    bottom = rbottom + lbottom
-    # Solve for <RGB channel> = 1
+    sub1 = 1.03986e3 * m3 + 9.5503e2 * m2 + 9.07727e2 * m1
+    sub2 = (2.35292e0 * m3 - 7.05875e0 * m1) * cosH
+    sub3 = 1.56861e1 * m3 - 3.13722e0 * m2
+    # Solve for C in <RGB channel from LCH> = t where t is 0 or 1
     # This is the C value that you can put together with the given L and H
-    # to produce a color that with <RGB channel> = 1. This means that if C
+    # to produce a color that with <RGB channel> = 1 or 0. This means that if C
     # goes any higher, the color will step outside of the RGB gamut.
-    C = (top * sub2 - 1.05121573691680 * L) / (bottom * sub2 + 1.7265957942555 * sinH)
-    # We have to do this for every channel and take the smallest value
-    result = C if 0 < C < result
-    # Increasing C might decrease an RGB channel below zero, so we do the
-    # same solving for <RGB channel> = 0. TODO: do some math to see if this
-    # step can be omitted.
-    C = top / bottom
-    result = C if 0 < C < result
+    for t in [0, 1]
+      C = (sub1 - 5.18512e3 * t) / ((1.70329e1*t + sub3) * sinH + sub2)
+      result = C if 0 < C < result
   return result
 
 # All non-husl color math on this page comes from http://www.easyrgb.com
@@ -224,6 +215,7 @@ root.rgb = (R, G, B) ->
 root.hex = (hex) ->
   rgbToHusl conv.hex.rgb hex
 root._conv = conv
+root._maxChroma = maxChroma
 
 # Export to Node.js
 module.exports = root if module?

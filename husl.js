@@ -4,27 +4,24 @@
     __slice = [].slice;
 
   maxChroma = function(L, H) {
-    var C, bottom, cosH, hrad, lbottom, m1, m2, m3, rbottom, result, row, sinH, sub1, sub2, top, _i, _len;
+    var C, cosH, hrad, m1, m2, m3, result, row, sinH, sub1, sub2, sub3, t, _i, _j, _len, _len1, _ref;
     hrad = H / 360 * 2 * Math.PI;
     sinH = Math.sin(hrad);
     cosH = Math.cos(hrad);
-    sub1 = Math.pow(L + 16, 3) / 1560896;
-    sub2 = sub1 > 0.008856 ? sub1 : L / 903.3;
     result = Infinity;
     for (_i = 0, _len = m.length; _i < _len; _i++) {
       row = m[_i];
       m1 = row[0], m2 = row[1], m3 = row[2];
-      top = (0.99914902410024 * m1 + 1.05121573691680 * m2 + 1.14459523831237 * m3) * L;
-      rbottom = (0.86329789712775 * m3 - 0.17265957942555 * m2) * sinH;
-      lbottom = (0.12949468478388 * m3 - 0.38848405435164 * m1) * cosH;
-      bottom = rbottom + lbottom;
-      C = (top * sub2 - 1.05121573691680 * L) / (bottom * sub2 + 1.7265957942555 * sinH);
-      if ((0 < C && C < result)) {
-        result = C;
-      }
-      C = top / bottom;
-      if ((0 < C && C < result)) {
-        result = C;
+      sub1 = 1.03986e3 * m3 + 9.5503e2 * m2 + 9.07727e2 * m1;
+      sub2 = (2.35292e0 * m3 - 7.05875e0 * m1) * cosH;
+      sub3 = 1.56861e1 * m3 - 3.13722e0 * m2;
+      _ref = [0, 1];
+      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+        t = _ref[_j];
+        C = (sub1 - 5.18512e3 * t) / ((1.70329e1 * t + sub3) * sinH + sub2);
+        if ((0 < C && C < result)) {
+          result = C;
+        }
       }
     }
     return result;
@@ -280,6 +277,8 @@
   };
 
   root._conv = conv;
+
+  root._maxChroma = maxChroma;
 
   if (typeof module !== "undefined" && module !== null) {
     module.exports = root;
