@@ -264,8 +264,16 @@
     };
   } catch (_error) {}
 
-  root.husl = function(H, S, L) {
-    return conv.rgb.hex(huslToRgb(H, S, L));
+  root.husl = function(H, S, L, noHex) {
+    var rgb;
+    if (noHex == null) {
+      noHex = false;
+    }
+    rgb = huslToRgb(H, S, L);
+    if (noHex) {
+      return rgb;
+    }
+    return conv.rgb.hex(rgb);
   };
 
   root.rgb = function(R, G, B) {

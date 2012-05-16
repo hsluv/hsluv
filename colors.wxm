@@ -1,0 +1,93 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+from_linear(c):=(if(c<=0.0031308) then 12.92 * c else 1.055 * c ^ (1 / 2.4) - 0.055);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* This should be wrapped in from_linear, but since we are only
+ looking at 0 and 1, it is unnecessary (plug in 0 and 1 above) */
+RGBval(x, y, z, m1, m2, m3):=(x * m1 + y * m2 + z * m3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+refX: 0.95047;
+refY: 1.0;
+refZ: 1.08883;
+lab_e: 0.008856;
+lab_k: 903.3;
+refU: (4 * refX) / (refX + (15 * refY) + (3 * refZ));
+refV: (9 * refY) / (refX + (15 * refY) + (3 * refZ));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+f_inv(t):=(if (t^3>lab_e) then (t^3) else (116 * t - 16) / lab_k);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* CORRECT */
+channelFromLUV(L, U, V, m1, m2, m3):=block(
+[varY, varU, varV, Y, X, Z],
+ varY: f_inv((L+16)/116),
+ varU: U / (13 * L) + refU,
+ varV: V / (13 * L) + refV,
+ Y: varY * refY,
+ X: 0 - (9 * Y * varU) / ((varU - 4) * varV - varU * varV),
+ Z: (9 * Y - (15 * varV * Y) - (varV * X)) / (3 * varV),
+ RGBval(X, Y, Z, m1, m2, m3));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* CORRECT */
+channelFromLCH(L, C, H, m1, m2, m3) := block(
+    [hrad, U, V],
+    hrad: H / 360 * 2 * %pi,
+    U: cos(hrad) * C,
+    V: sin(hrad) * C,
+    fromLUV(L, U, V, m1, m2, m3)
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+maxChroma(L, H, m1, m2, m3, t) := rhs(
+    solve(channelFromLCH(L, C, H, m1, m2, m3) = t, C)[1]
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+bfloat(solve(channelFromLCH(L, C, H, m1, m2, m3) = t, C));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fpprec : 6;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* Above function rewritten manually for code */
+maxChroma2(L, H, m1, m2, m3, t) := block(
+    [hrad, sinH, cosH],
+    hrad    : H / 360 * 2 * %pi,
+    sinH    : sin(hrad),
+    cosH    : cos(hrad),
+    (1.03986b3*m3 + 9.5503b2*m2 + 9.07727b2*m1 - 5.18512b3*t) / (
+       (1.70329b1*t + 1.56861b1*m3 - 3.13722b0*m2) * sinH +
+       (2.35292b0*m3 - 7.05875b0*m1) * cosH
+    )
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+L: 50;
+wxplot2d([
+    200 - maxChroma2(L, x, 3.2406, -1.5372, -0.4986, 0),
+    200 - maxChroma2(L, x, 3.2406, -1.5372, -0.4986, 1),
+    200 - maxChroma2(L, x, -0.9689, 1.8758,  0.0415, 0),
+    200 - maxChroma2(L, x, -0.9689, 1.8758,  0.0415, 1),
+    200 - maxChroma2(L, x, 0.0557, -0.2040,  1.0570, 0),
+    200 - maxChroma2(L, x, 0.0557, -0.2040,  1.0570, 1)
+], [x,0,359], [y,0,200]);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$

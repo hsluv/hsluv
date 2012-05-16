@@ -208,8 +208,10 @@ try
         [R, G, B] = rgbPrepare huslToRgb [H.val, S.val, L.val]
         new stylus.nodes.RGBA(R, G, B, 1)
 
-root.husl = (H, S, L) ->
-  conv.rgb.hex huslToRgb H, S, L
+root.husl = (H, S, L, noHex = false) ->
+  rgb = huslToRgb H, S, L
+  return rgb if noHex
+  conv.rgb.hex rgb
 root.rgb = (R, G, B) ->
   rgbToHusl R, G, B
 root.hex = (hex) ->
