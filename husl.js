@@ -3,26 +3,39 @@
   var conv, dotProduct, f, f_inv, fromLinear, huslToRgb, lab_e, lab_k, m, m_inv, maxChroma, refU, refV, refX, refY, refZ, rgbPrepare, rgbToHusl, root, round, stylus, toLinear,
     __slice = [].slice;
 
-  maxChroma = function(L, H) {
-    var C, cosH, hrad, m1, m2, m3, result, row, sinH, sub1, sub2, sub3, t, _i, _j, _len, _len1, _ref;
+  maxChroma = function(L, H, debug) {
+    var C, bottom, cosH, hrad, lbottom, list, m1, m2, m3, rbottom, result, row, sinH, sub1, sub2, t, top, _i, _j, _len, _len1, _ref;
+    if (debug == null) {
+      debug = false;
+    }
     hrad = H / 360 * 2 * Math.PI;
     sinH = Math.sin(hrad);
     cosH = Math.cos(hrad);
+    sub1 = Math.pow(L + 16, 3) / 1560896;
+    sub2 = sub1 > 0.008856 ? sub1 : L / 903.3;
     result = Infinity;
+    list = [];
     for (_i = 0, _len = m.length; _i < _len; _i++) {
       row = m[_i];
       m1 = row[0], m2 = row[1], m3 = row[2];
-      sub1 = 1.03986e3 * m3 + 9.5503e2 * m2 + 9.07727e2 * m1;
-      sub2 = (2.35292e0 * m3 - 7.05875e0 * m1) * cosH;
-      sub3 = 1.56861e1 * m3 - 3.13722e0 * m2;
+      top = (0.99915 * m1 + 1.05122 * m2 + 1.14460 * m3) * sub2;
+      rbottom = 0.86330 * m3 - 0.17266 * m2;
+      lbottom = 0.12949 * m3 - 0.38848 * m1;
+      bottom = (rbottom * sinH + lbottom * cosH) * sub2;
       _ref = [0, 1];
       for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
         t = _ref[_j];
-        C = (sub1 - 5.18512e3 * t) / ((1.70329e1 * t + sub3) * sinH + sub2);
+        C = L * (top - 1.05122 * t) / (bottom + 0.17266 * sinH * t);
         if ((0 < C && C < result)) {
           result = C;
         }
+        if (debug) {
+          list.push(C);
+        }
       }
+    }
+    if (debug) {
+      return list;
     }
     return result;
   };
@@ -295,5 +308,7 @@
   if (typeof jQuery !== "undefined" && jQuery !== null) {
     jQuery.husl = root;
   }
+
+  console.log(maxChroma(50, 260, true));
 
 }).call(this);

@@ -27,15 +27,16 @@ f_inv(t):=(if (t^3>lab_e) then (t^3) else (116 * t - 16) / lab_k);
 
 /* [wxMaxima: input   start ] */
 /* CORRECT */
-channelFromLUV(L, U, V, m1, m2, m3):=block(
-[varY, varU, varV, Y, X, Z],
- varY: f_inv((L+16)/116),
- varU: U / (13 * L) + refU,
- varV: V / (13 * L) + refV,
- Y: varY * refY,
- X: 0 - (9 * Y * varU) / ((varU - 4) * varV - varU * varV),
- Z: (9 * Y - (15 * varV * Y) - (varV * X)) / (3 * varV),
- RGBval(X, Y, Z, m1, m2, m3));
+channelFromLUV(L, U, V, m1, m2, m3) := block(
+    [varY, varU, varV, Y, X, Z],
+    varY : f_inv((L + 16) / 116),
+    varU : U / (13 * L) + refU,
+    varV : V / (13 * L) + refV,
+    Y    : varY * refY,
+    X    : 0 - (9 * Y * varU) / ((varU - 4) * varV - varU * varV),
+    Z    : (9 * Y - (15 * varV * Y) - (varV * X)) / (3 * varV),
+    RGBval(X, Y, Z, m1, m2, m3)
+);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -45,7 +46,7 @@ channelFromLCH(L, C, H, m1, m2, m3) := block(
     hrad: H / 360 * 2 * %pi,
     U: cos(hrad) * C,
     V: sin(hrad) * C,
-    fromLUV(L, U, V, m1, m2, m3)
+    channelFromLUV(L, U, V, m1, m2, m3)
 );
 /* [wxMaxima: input   end   ] */
 
@@ -56,37 +57,52 @@ maxChroma(L, H, m1, m2, m3, t) := rhs(
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-bfloat(solve(channelFromLCH(L, C, H, m1, m2, m3) = t, C));
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
 fpprec : 6;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-/* Above function rewritten manually for code */
+bfloat(solve(channelFromLCH(L, C, H, m1, m2, m3) = t, C));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+/* Manually rewritten for code */
 maxChroma2(L, H, m1, m2, m3, t) := block(
-    [hrad, sinH, cosH],
-    hrad    : H / 360 * 2 * %pi,
-    sinH    : sin(hrad),
-    cosH    : cos(hrad),
-    (1.03986b3*m3 + 9.5503b2*m2 + 9.07727b2*m1 - 5.18512b3*t) / (
-       (1.70329b1*t + 1.56861b1*m3 - 3.13722b0*m2) * sinH +
-       (2.35292b0*m3 - 7.05875b0*m1) * cosH
-    )
+    [hrad, subH, cosH, sub1, sub2, sub3, sub4, sub5],
+    hrad : (%pi * H) / 180,
+    sinH : sin(hrad),
+    cosH : cos(hrad),
+    sub1 : (L + 16) ^ 3 / 1560896,
+    sub2 : (if sub1 > 1107 / 125000 then sub1 else (10 * L) / 9033),
+    top  : (1.1446b1 * m3 + 1.05122b1 * m2 + 9.99149b0 * m1) * sub2,
+    print(top),
+    sub4 : (8.63298b0 * m3 - 1.7266b0 * m2) * sinH,
+    sub5 : (1.29495b0 * m3 - 3.88484b0 * m1) * cosH,
+    L * (top - 1.05122b1 * t)/((sub4 + sub5) * sub2 + 1.7266b0 * t * sinH)
 );
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-L: 50;
+bfloat(maxChroma2(50, 260, 3.2406, -1.5372, -0.4986, 1));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+block(
+[L],
+L: 50,
 wxplot2d([
-    200 - maxChroma2(L, x, 3.2406, -1.5372, -0.4986, 0),
-    200 - maxChroma2(L, x, 3.2406, -1.5372, -0.4986, 1),
-    200 - maxChroma2(L, x, -0.9689, 1.8758,  0.0415, 0),
-    200 - maxChroma2(L, x, -0.9689, 1.8758,  0.0415, 1),
-    200 - maxChroma2(L, x, 0.0557, -0.2040,  1.0570, 0),
-    200 - maxChroma2(L, x, 0.0557, -0.2040,  1.0570, 1)
-], [x,0,359], [y,0,200]);
+    maxChroma2(L, x, 3.2406, -1.5372, -0.4986, 0),
+    maxChroma2(L, x, 3.2406, -1.5372, -0.4986, 1),
+    maxChroma2(L, x, -0.9689, 1.8758,  0.0415, 0),
+    maxChroma2(L, x, -0.9689, 1.8758,  0.0415, 1),
+    maxChroma2(L, x, 0.0557, -0.2040,  1.0570, 0),
+    maxChroma2(L, x, 0.0557, -0.2040,  1.0570, 1)
+], [x,0,359], [y,0,200])
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+:w
+
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

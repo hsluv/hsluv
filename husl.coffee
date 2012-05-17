@@ -7,26 +7,34 @@
 # chroma, we can protect the user from stepping outside of
 # the RGB gamut.
 
-maxChroma = (L, H) ->
+maxChroma = (L, H, debug=false) ->
   # Pre-calculate some pluggable values
   hrad = H / 360 * 2 * Math.PI
   sinH = Math.sin hrad
   cosH = Math.cos hrad
+  sub1 = Math.pow(L + 16, 3) / 1560896
+  sub2 = if sub1 > 0.008856 then sub1 else L / 903.3
   result = Infinity
+  list = []
+  # For each channel (red, green and blue)
   for row in m
     # Get the relevant matrix values and plug them into
-    # some variables to be used below
+    # some variables to be used later
     [m1, m2, m3] = row
-    sub1 = 1.03986e3 * m3 + 9.5503e2 * m2 + 9.07727e2 * m1
-    sub2 = (2.35292e0 * m3 - 7.05875e0 * m1) * cosH
-    sub3 = 1.56861e1 * m3 - 3.13722e0 * m2
-    # Solve for C in <RGB channel from LCH> = t where t is 0 or 1
+    top = (0.99915 * m1 + 1.05122 * m2 + 1.14460 * m3) * sub2
+    rbottom = 0.86330 * m3 - 0.17266 * m2
+    lbottom = 0.12949 * m3 - 0.38848 * m1
+    bottom = (rbottom * sinH + lbottom * cosH) * sub2
     # This is the C value that you can put together with the given L and H
-    # to produce a color that with <RGB channel> = 1 or 0. This means that if C
+    # to produce a color that with <RGB channel> = 1 or 2. This means that if C
     # goes any higher, the color will step outside of the RGB gamut.
     for t in [0, 1]
-      C = (sub1 - 5.18512e3 * t) / ((1.70329e1*t + sub3) * sinH + sub2)
+      C = L * (top - 1.05122 * t) / (bottom + 0.17266 * sinH * t)
       result = C if 0 < C < result
+      if debug
+        list.push C
+  if debug
+    return list
   return result
 
 # All non-husl color math on this page comes from http://www.easyrgb.com
@@ -164,6 +172,8 @@ conv.husl.lch = (tuple) ->
   [H, S, L] = tuple
   max = maxChroma L, H
   C = max / 100 * S
+  #t = 3
+  #C = Math.pow(S / 100,  1 / t) * max
   return [L, C, H]
 
 conv.lch.husl = (tuple) ->
@@ -223,3 +233,5 @@ root._maxChroma = maxChroma
 module.exports = root if module?
 # Export to jQuery
 jQuery.husl = root if jQuery?
+
+console.log maxChroma(50, 260, true)
