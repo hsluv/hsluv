@@ -270,7 +270,7 @@
       return function(style) {
         return style.define('husl', function(H, S, L) {
           var B, G, R, _ref;
-          _ref = rgbPrepare(huslToRgb([H.val, S.val, L.val])), R = _ref[0], G = _ref[1], B = _ref[2];
+          _ref = rgbPrepare(huslToRgb(H.val, S.val, L.val)), R = _ref[0], G = _ref[1], B = _ref[2];
           return new stylus.nodes.RGBA(R, G, B, 1);
         });
       };
@@ -308,7 +308,5 @@
   if (typeof jQuery !== "undefined" && jQuery !== null) {
     jQuery.husl = root;
   }
-
-  console.log(maxChroma(50, 260, true));
 
 }).call(this);

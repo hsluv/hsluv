@@ -172,8 +172,9 @@ conv.husl.lch = (tuple) ->
   [H, S, L] = tuple
   max = maxChroma L, H
   C = max / 100 * S
-  #t = 3
-  #C = Math.pow(S / 100,  1 / t) * max
+  # I already tried this scaling function to improve the chroma
+  # uniformity. It did not work very well.
+  # C = Math.pow(S / 100,  1 / t) * max
   return [L, C, H]
 
 conv.lch.husl = (tuple) ->
@@ -215,7 +216,7 @@ try
     (style) ->
       style.define 'husl', (H, S, L) ->
         # TODO: Assert passed types, allow passing alpha channel
-        [R, G, B] = rgbPrepare huslToRgb [H.val, S.val, L.val]
+        [R, G, B] = rgbPrepare huslToRgb H.val, S.val, L.val
         new stylus.nodes.RGBA(R, G, B, 1)
 
 root.husl = (H, S, L, noHex = false) ->
@@ -233,5 +234,3 @@ root._maxChroma = maxChroma
 module.exports = root if module?
 # Export to jQuery
 jQuery.husl = root if jQuery?
-
-console.log maxChroma(50, 260, true)
