@@ -229,6 +229,7 @@ root.hex = (hex) ->
   rgbToHusl conv.hex.rgb hex
 root._conv = conv
 root._maxChroma = maxChroma
+root._rgbPrepare = rgbPrepare
 
 # Export to Node.js
 module.exports = root if module?

@@ -121,7 +121,7 @@
     for (_i = 0, _len = tuple.length; _i < _len; _i++) {
       ch = tuple[_i];
       if (ch < 0 || ch > 1) {
-        throw new Error("Illegal rgb value");
+        throw new Error("Illegal rgb value in " + tuple.toString());
       }
     }
     _results = [];
@@ -300,6 +300,8 @@
   root._conv = conv;
 
   root._maxChroma = maxChroma;
+
+  root._rgbPrepare = rgbPrepare;
 
   if (typeof module !== "undefined" && module !== null) {
     module.exports = root;
