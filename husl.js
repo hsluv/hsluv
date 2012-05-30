@@ -121,7 +121,7 @@
     for (_i = 0, _len = tuple.length; _i < _len; _i++) {
       ch = tuple[_i];
       if (ch < 0 || ch > 1) {
-        throw new Error("Illegal rgb value in " + tuple.toString());
+        throw new Error("Illegal rgb value");
       }
     }
     _results = [];
@@ -268,10 +268,10 @@
     stylus = require('stylus');
     root = function() {
       return function(style) {
-        return style.define('husl', function(H, S, L) {
+        return style.define('husl', function(H, S, L, A) {
           var B, G, R, _ref;
           _ref = rgbPrepare(huslToRgb(H.val, S.val, L.val)), R = _ref[0], G = _ref[1], B = _ref[2];
-          return new stylus.nodes.RGBA(R, G, B, 1);
+          return new stylus.nodes.RGBA(R, G, B, (A != null ? A.val : 1));
         });
       };
     };

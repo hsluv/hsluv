@@ -4,6 +4,7 @@ husl = require './husl.js'
 styl = """
 .someclass
   // Some edge cases
+  color husl(0, 0, 0, 0.1)
   color husl(0, 0, 0)
   color husl(0, 100, 0)
   color husl(0, 0, 100)
@@ -25,6 +26,7 @@ styl = """
 
 css = """
 .someclass {
+  color: rgba(0,0,0,0.1);
   color: #000;
   color: #000;
   color: #fff;

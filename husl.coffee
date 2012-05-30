@@ -214,10 +214,10 @@ try
   stylus = require 'stylus'
   root = ->
     (style) ->
-      style.define 'husl', (H, S, L) ->
-        # TODO: Assert passed types, allow passing alpha channel
+      style.define 'husl', (H, S, L, A) ->
+        # TODO: Assert passed types
         [R, G, B] = rgbPrepare huslToRgb H.val, S.val, L.val
-        new stylus.nodes.RGBA(R, G, B, 1)
+        new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
 
 root.husl = (H, S, L, noHex = false) ->
   rgb = huslToRgb H, S, L
