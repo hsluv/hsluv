@@ -2,7 +2,7 @@
   "name": "husl",
   "description": "Replacement for the HSL color space",
   "keywords": ["color", "color space", "CIE", "RGB", "stylus", "HUSL", "HSL"],
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Alexei Boronine <alexei.boronine@gmail.com>",
   "main": "husl.js",
   "files": ["husl.js"],

@@ -136,6 +136,9 @@ conv.xyz.luv = (tuple) ->
   varU = (4 * X) / (X + (15 * Y) + (3 * Z))
   varV = (9 * Y) / (X + (15 * Y) + (3 * Z))
   L = 116 * f(Y / refY) - 16
+  # Black will create a divide-by-zero error
+  if L is 0
+    return [0, 0, 0]
   U = 13 * L * (varU - refU)
   V = 13 * L * (varV - refV)
   [L, U, V]
@@ -156,7 +159,7 @@ conv.luv.xyz = (tuple) ->
 conv.luv.lch = (tuple) ->
   [L, U, V] = tuple
   C = Math.pow Math.pow(U, 2) + Math.pow(V, 2), 1 / 2
-  Hrad = Math.atan2 U, V
+  Hrad = Math.atan2 V, U
   H = Hrad * 360 / 2 / Math.PI
   H = 360 + H if H < 0
   [L, C, H]
@@ -202,9 +205,9 @@ conv.hex.rgb = (hex) ->
     parseInt(n, 16) / 255
 
 # Main conversion chains, don't include them in conv to avoid confusion
-huslToRgb = (tuple...) ->
+huslToRgb = (tuple) ->
   conv.xyz.rgb conv.luv.xyz conv.lch.luv conv.husl.lch tuple
-rgbToHusl = (tuple...) ->
+rgbToHusl = (tuple) ->
   conv.lch.husl conv.luv.lch conv.xyz.luv conv.rgb.xyz tuple
 
 root = {}
@@ -216,15 +219,15 @@ try
     (style) ->
       style.define 'husl', (H, S, L, A) ->
         # TODO: Assert passed types
-        [R, G, B] = rgbPrepare huslToRgb H.val, S.val, L.val
+        [R, G, B] = rgbPrepare huslToRgb [H.val, S.val, L.val]
         new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
 
 root.husl = (H, S, L, noHex = false) ->
-  rgb = huslToRgb H, S, L
+  rgb = huslToRgb [H, S, L]
   return rgb if noHex
   conv.rgb.hex rgb
 root.rgb = (R, G, B) ->
-  rgbToHusl R, G, B
+  rgbToHusl [R, G, B]
 root.hex = (hex) ->
   rgbToHusl conv.hex.rgb hex
 root._conv = conv

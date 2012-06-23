@@ -1,6 +1,23 @@
 assert = require 'assert'
 husl = require './husl.js'
 
+colors = [
+  '#000000'
+  '#ffffff'
+  '#211a1b'
+  '#3e2b31'
+  '#5f3c4d'
+  '#844c6f'
+  '#ab5b9a'
+  '#5f9a9f'
+  '#0094fc'
+]
+
+# Convert HEX -> HUSL -> HEX
+for hex in colors
+  intermediate = husl.hex hex
+  assert.equal hex, husl.husl intermediate...
+
 styl = """
 .someclass
   // Some edge cases
@@ -49,8 +66,4 @@ css = """
 stylus = require 'stylus'
 stylus(styl).use(husl()).render (err, test_css) ->
   throw err if err
-  if test_css is css
-    console.log 'OK'
-  else
-    console.log 'FAIL\n' + test_css
-
+  assert.equal test_css, css
