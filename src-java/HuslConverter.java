@@ -1,5 +1,3 @@
-package com.PolymorphicDissociation.Visualizer4.Utils;
-
 public class HuslConverter {
 	
 	//These are the only 2 functions you have to use. Don't care about the ones in husl.c
