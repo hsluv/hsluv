@@ -1,7 +1,5 @@
 public class HuslConverter {
 	
-	//These are the only 2 functions you have to use. Don't care about the ones in husl.c
-
 	//Pass in HUSL values and get back RGB values, H ranges from 0 to 360, S and L from 0 to 100.
 	//RGB values will range from 0 to 1.
 	public static float[] HUSLtoRGB( float h, float s,float l )
