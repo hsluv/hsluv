@@ -294,6 +294,15 @@ root.rgb = (R, G, B) ->
   conv.rgb.husl [R, G, B]
 root.hex = (hex) ->
   conv.rgb.husl conv.hex.rgb hex
+# TESTING
+root.husl2 = (H, S, L, noHex = false) ->
+  rgb = conv.xyz.rgb conv.luv.xyz conv.lch.luv conv.husl2.lch [H, S, L]
+  return rgb if noHex
+  conv.rgb.hex rgb
+root.rgb2 = (R, G, B) ->
+  conv.lch.husl2 conv.luv.lch conv.xyz.luv conv.rgb.xyz [R, G, B]
+root.hex2 = (hex) ->
+  conv.lch.husl2 conv.luv.lch conv.xyz.luv conv.rgb.xyz conv.hex.rgb hex
 root._conv = conv
 root._maxChroma = maxChroma
 root._rgbPrepare = rgbPrepare
