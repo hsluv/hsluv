@@ -61,7 +61,7 @@ fpprec : 6;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-bfloat(solve(channelFromLCH(L, C, H, m1, m2, m3) = t, C));
+solve(diff(maxChroma(L, H, m1, m2, m3, t), H) = 0, H);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -82,11 +82,6 @@ maxChroma2(L, H, m1, m2, m3, t) := block(
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-bfloat(maxChroma2(50, 260, 3.2406, -1.5372, -0.4986, 1));
-/* [wxMaxima: input   end   ] */
-
-
-/* [wxMaxima: input   start ] */
 block(
 [L],
 L: 50,
@@ -97,7 +92,7 @@ plot2d([
     maxChroma2(L, x, -0.9689, 1.8758,  0.0415, 1),
     maxChroma2(L, x, 0.0557, -0.2040,  1.0570, 0),
     maxChroma2(L, x, 0.0557, -0.2040,  1.0570, 1)
-], [x,0,360], [y,0,200], [
+], [x,0,360], [y,0,400], [
     legend,
     "red = 0",
     "red = 1",
