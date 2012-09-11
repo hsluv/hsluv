@@ -8,6 +8,7 @@
 # the RGB gamut.
 
 maxChroma = (L, H, debug=false) ->
+  return 0 if L == 0
   # Pre-calculate some pluggable values
   hrad = H / 360 * 2 * Math.PI
   sinH = Math.sin hrad
@@ -104,8 +105,11 @@ toLinear = (c) ->
 rgbPrepare = (tuple) ->
   tuple = (round(n, 3) for n in tuple)
   for ch in tuple
-    if ch < 0 or ch > 1
-      throw new Error "Illegal rgb value"
+    # Extremely generous error tolerance
+    if ch < -0.2 or ch > 1.2
+      throw new Error "Illegal rgb value: #{ch}"
+    ch = 0 if ch < 0
+    ch = 1 if ch > 1
   (Math.round(ch * 255) for ch in tuple)
 
 # This map will contain our conversion functions
