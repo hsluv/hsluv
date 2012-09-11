@@ -288,6 +288,9 @@ try
         # TODO: Assert passed types
         [R, G, B] = rgbPrepare conv.husl.rgb [H.val, S.val, L.val]
         new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
+      style.define 'husl2', (H, S, L, A) ->
+        [R, G, B] = rgbPrepare conv.xyz.rgb conv.luv.xyz conv.lch.luv conv.husl2.lch [H.val, S.val, L.val]
+        new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
 
 root.husl = (H, S, L, noHex = false) ->
   rgb = conv.husl.rgb [H, S, L]

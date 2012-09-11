@@ -36,6 +36,7 @@ styl = """
   color husl(350, 20, 20)
   color husl(340, 30, 30)
   color husl(330, 40, 40)
+  color husl2(330, 40, 40)
   color husl(320, 50, 50)
   color husl(200, 60, 60)
   color husl(250, 100, 60)
@@ -61,6 +62,7 @@ css = """
   color: #3e2b31;
   color: #5f3c4d;
   color: #844c6f;
+  color: #6d5964;
   color: #ab5b9a;
   color: #5f9a9f;
   color: #0094fc;
