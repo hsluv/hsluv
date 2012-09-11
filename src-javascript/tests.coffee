@@ -1,5 +1,5 @@
 assert = require 'assert'
-husl = require './husl.js'
+husl = require './husl.coffee'
 
 colors = [
   '#000000'
@@ -39,6 +39,11 @@ styl = """
   color husl(320, 50, 50)
   color husl(200, 60, 60)
   color husl(250, 100, 60)
+  // Reported by @KelseyHigham
+  // https://github.com/boronine/husl/issues/1#issuecomment-8415456
+  color husl(90,100,100)
+  color husl(120,100,100)
+  color husl(177,100,100)
 """
 
 css = """
@@ -59,6 +64,9 @@ css = """
   color: #ab5b9a;
   color: #5f9a9f;
   color: #0094fc;
+  color: #feff00;
+  color: #8dff00;
+  color: #feffff;
 }
 
 """
