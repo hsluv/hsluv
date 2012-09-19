@@ -16,6 +16,7 @@
     "colorspaces": "*",
     "onecolor": "*",
     "png": "*",
-    "stylus": "*"
+    "stylus": "*",
+    "mocha": "*"
   }
 }

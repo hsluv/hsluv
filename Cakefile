@@ -8,7 +8,10 @@ husl = require './husl'
 colorspaces = require 'colorspaces'
 onecolor = require 'onecolor'
 
-task 'build:docs', 'Build docs', ->
+coffee = "./node_modules/coffee-script/bin/coffee"
+
+task 'build:docs-images', 'Generate images', ->
+  console.log "Generating demo images:"
 
   hslToRgb = (h, s, l) ->
     h *= 360
@@ -41,8 +44,6 @@ task 'build:docs', 'Build docs', ->
     func2 = (x, y) ->
       husl._rgbPrepare func x, y
     makeImage file, func2, width, height
-
-  console.log "Generating demo images:"
 
   makeDemo 'husl', (x, y) ->
     rgb = husl.husl x * 360, 100 - y * 100, 50, true
@@ -87,13 +88,18 @@ task 'build:docs', 'Build docs', ->
     rgb = hslToRgb x, 1 - y, 0.5
     return chromaDemo colorspaces.make_color 'sRGB', rgb
 
-task 'build', 'Build project', ->
-  console.log "Compile HUSL"
-  exec 'coffee --compile husl.coffee', (err, stdout, stderr) ->
+task 'build:docs', 'Build docs', ->
+  console.log "Building docs/js/main.js"
+  exec "#{coffee} --compile --output gh-pages/js docs/main.coffee", (err, stdout, stderr) ->
     throw err if err
     console.log stdout + stderr
+    invoke 'build:docs-images'
+
+task 'build', 'Build project', ->
+  console.log "Compiling HUSL"
+  exec "#{coffee} --compile husl.coffee", (err, stdout, stderr) ->
+    throw err if err
     exec 'uglifyjs husl.js > husl.min.js', (err, stdout, stderr) ->
       throw err if err
-      console.log stderr
       invoke 'build:docs'
 
