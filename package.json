@@ -10,5 +10,12 @@
     "type" : "git",
     "url" : "http://github.com/boronine/husl.git"
   },
-  "homepage": "http://boronine.github.com/husl/"
+  "homepage": "http://boronine.github.com/husl/",
+  "devDependencies": {
+    "coffee-script": "*",
+    "colorspaces": "*",
+    "onecolor": "*",
+    "png": "*",
+    "stylus": "*"
+  }
 }

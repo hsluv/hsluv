@@ -7,6 +7,9 @@
     if (debug == null) {
       debug = false;
     }
+    if (L === 0) {
+      return 0;
+    }
     hrad = H / 360 * 2 * Math.PI;
     sinH = Math.sin(hrad);
     cosH = Math.cos(hrad);
@@ -119,8 +122,14 @@
     })();
     for (_i = 0, _len = tuple.length; _i < _len; _i++) {
       ch = tuple[_i];
-      if (ch < 0 || ch > 1) {
-        throw new Error("Illegal rgb value");
+      if (ch < -0.2 || ch > 1.2) {
+        throw new Error("Illegal rgb value: " + ch);
+      }
+      if (ch < 0) {
+        ch = 0;
+      }
+      if (ch > 1) {
+        ch = 1;
       }
     }
     _results = [];
