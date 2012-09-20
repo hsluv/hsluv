@@ -115,3 +115,5 @@ task 'build', 'Build project', ->
       throw err if err
       invoke 'build:docs'
 
+task 'snapshot', 'Take snapshot of the gamut for later testing', ->
+  

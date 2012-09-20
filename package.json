@@ -17,6 +17,10 @@
     "onecolor": "*",
     "png": "*",
     "stylus": "*",
-    "eco": "*"
+    "eco": "*",
+    "mocha": "*"
+  },
+  "scripts": {
+    "test": "mocha --compilers coffee:coffee-script"
   }
 }
