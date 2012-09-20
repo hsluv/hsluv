@@ -126,6 +126,8 @@ task 'snapshot', 'Take snapshot of the gamut for later testing', ->
         S = Ss * 5
         L = Ls * 5
         rgbVal = husl._rgbPrepare husl.husl H, S, L, true
+        if L == 100 and rgbVal[0] != 255
+          console.log H, S, L, rgbVal
         pos = (Ls * (37 * 21) + Ss * 37 + Hs) * 3
         rgb[pos + 0] = rgbVal[0]
         rgb[pos + 1] = rgbVal[1]
@@ -133,6 +135,6 @@ task 'snapshot', 'Take snapshot of the gamut for later testing', ->
 
   png = new Png rgb, width, height, 'rgb'
   png_image = png.encodeSync()
-  file = "test/snapshot-#{meta.version}.png"
+  file = "test/snapshot-current.png"
   fs.writeFileSync file, png_image.toString('binary'), 'binary'
 

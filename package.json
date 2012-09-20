@@ -18,7 +18,8 @@
     "png": "*",
     "stylus": "*",
     "eco": "*",
-    "mocha": "*"
+    "mocha": "*",
+    "imagediff": "*"
   },
   "scripts": {
     "test": "mocha --compilers coffee:coffee-script"

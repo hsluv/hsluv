@@ -7,9 +7,6 @@
     if (debug == null) {
       debug = false;
     }
-    if (L === 0) {
-      return 0;
-    }
     hrad = H / 360 * 2 * Math.PI;
     sinH = Math.sin(hrad);
     cosH = Math.cos(hrad);
@@ -122,7 +119,7 @@
     })();
     for (_i = 0, _len = tuple.length; _i < _len; _i++) {
       ch = tuple[_i];
-      if (ch < -0.2 || ch > 1.2) {
+      if (ch < -0.0001 || ch > 1.0001) {
         throw new Error("Illegal rgb value: " + ch);
       }
       if (ch < 0) {
@@ -220,6 +217,12 @@
   conv.husl.lch = function(tuple) {
     var C, H, L, S, max;
     H = tuple[0], S = tuple[1], L = tuple[2];
+    if (L > 99.9999999) {
+      return [100, 0, H];
+    }
+    if (L < 0.00000001) {
+      return [0, 0, H];
+    }
     max = maxChroma(L, H);
     C = max / 100 * S;
     return [L, C, H];
@@ -228,6 +231,12 @@
   conv.lch.husl = function(tuple) {
     var C, H, L, S, max;
     L = tuple[0], C = tuple[1], H = tuple[2];
+    if (L > 99.9999999) {
+      return [H, 0, 100];
+    }
+    if (L < 0.00000001) {
+      return [H, 0, 0];
+    }
     max = maxChroma(L, H);
     S = C / max * 100;
     return [H, S, L];

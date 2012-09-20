@@ -1,2 +1,4 @@
-gh-pages
-node_modules
+/gh-pages
+/node_modules
+/test/snapshot-current.png
+

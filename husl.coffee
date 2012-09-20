@@ -8,7 +8,6 @@
 # the RGB gamut.
 
 maxChroma = (L, H, debug=false) ->
-  return 0 if L == 0
   # Pre-calculate some pluggable values
   hrad = H / 360 * 2 * Math.PI
   sinH = Math.sin hrad
@@ -105,8 +104,8 @@ toLinear = (c) ->
 rgbPrepare = (tuple) ->
   tuple = (round(n, 3) for n in tuple)
   for ch in tuple
-    # Extremely generous error tolerance
-    if ch < -0.2 or ch > 1.2
+    # Error tolerance
+    if ch < -0.0001 or ch > 1.0001
       throw new Error "Illegal rgb value: #{ch}"
     ch = 0 if ch < 0
     ch = 1 if ch > 1
@@ -177,6 +176,9 @@ conv.lch.luv = (tuple) ->
 
 conv.husl.lch = (tuple) ->
   [H, S, L] = tuple
+  # Bad things happen when you reach a limit
+  return [100, 0, H] if L > 99.9999999
+  return [0, 0, H] if L < 0.00000001
   max = maxChroma L, H
   C = max / 100 * S
   # I already tried this scaling function to improve the chroma
@@ -186,6 +188,8 @@ conv.husl.lch = (tuple) ->
 
 conv.lch.husl = (tuple) ->
   [L, C, H] = tuple
+  return [H, 0, 100] if L > 99.9999999
+  return [H, 0, 0] if L < 0.00000001
   max = maxChroma L, H
   S = C / max * 100
   return [H, S, L]

@@ -1,9 +1,11 @@
 assert = require 'assert'
 husl = require '../husl.coffee'
+meta = require '../package.json'
+{exec} = require 'child_process'
 
 
 describe 'HUSL', ->  
-  it 'should have able to convert to and from', ->  
+  it 'should be able to convert to and from', ->  
     colors = [
       '#000000'
       '#ffffff'
@@ -77,3 +79,20 @@ describe 'HUSL', ->
     stylus(styl).use(husl()).render (err, test_css) ->
       throw err if err
       assert.equal test_css, css
+
+  it 'should match the stable snapshot', (done) ->
+    cake = 'node_modules/coffee-script/bin/cake'
+    imagediff = 'node_modules/imagediff/bin/imagediff'
+    exec "#{cake} snapshot", (err, stdout, stderr) ->
+      throw err if err
+      current = "test/snapshot-current.png"
+      stable = "test/snapshot-1.x.x.png"
+      exec "#{imagediff} -e #{current} #{stable}", (err, stdout, stderr) ->
+        throw err if err
+        if stdout != 'true\n'
+          throw new Error "The snapshots don't match"
+        done()
+
+
+
+
