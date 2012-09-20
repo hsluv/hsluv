@@ -126,7 +126,7 @@
   $(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
         </div>
         <div class="span2">
-          <button class="btn btn-large" id="demo1">Test HUSL</button>
+          <button class="btn btn-large btn-block" id="demo1">Test HUSL</button>
           <div class="demo">Lightness: 60%</div>
           <div class="demo">Lightness: 60%</div>
           <div class="demo">Lightness: 60%</div>
@@ -135,7 +135,7 @@
           <div class="demo">Lightness: 60%</div>
         </div>
         <div class="span2">
-          <button class="btn btn-large" id="demo2">Test HSL</button>
+          <button class="btn btn-large btn-block" id="demo2">Test HSL</button>
           <div class="demo">Lightness: 60%</div>
           <div class="demo">Lightness: 60%</div>
           <div class="demo">Lightness: 60%</div>
