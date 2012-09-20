@@ -3,12 +3,16 @@
 fs  = require 'fs'
 Png = require('png').Png
 Buffer = require('buffer').Buffer
+meta = require './package.json'
 
 husl = require './husl'
 colorspaces = require 'colorspaces'
 onecolor = require 'onecolor'
 
 coffee = "./node_modules/coffee-script/bin/coffee"
+stylus = "./node_modules/stylus/bin/stylus"
+eco = require 'eco'
+
 
 task 'build:docs-images', 'Generate images', ->
   console.log "Generating demo images:"
@@ -89,11 +93,19 @@ task 'build:docs-images', 'Generate images', ->
     return chromaDemo colorspaces.make_color 'sRGB', rgb
 
 task 'build:docs', 'Build docs', ->
-  console.log "Building docs/js/main.js"
+  console.log "Building index.html"
+  template = (fs.readFileSync 'docs/index.eco').toString()
+  fs.writeFile 'gh-pages/index.html', eco.render template,
+    version: meta.version
+
+  console.log "Building js/main.js"
   exec "#{coffee} --compile --output gh-pages/js docs/main.coffee", (err, stdout, stderr) ->
     throw err if err
     console.log stdout + stderr
-    invoke 'build:docs-images'
+    console.log "Building css/main.css"
+    exec "#{stylus} < docs/main.styl > gh-pages/css/main.css", (err, stdout, stderr) ->
+      throw err if err
+      invoke 'build:docs-images'
 
 task 'build', 'Build project', ->
   console.log "Compiling HUSL"

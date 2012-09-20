@@ -21,36 +21,8 @@ hslToRgb = (h, s, l) ->
 
 hslToHex = (h, s, l) ->
   rgb = hslToRgb h, s / 100, l / 100
-  console.log h, s, l, rgb
   return $.colorspaces.converter('sRGB', 'hex') rgb
 
-$('.tagline span').each (index) ->
-  $(this).css 'color', $.husl.husl index / 17 * 360, 90, 50
-
-L = 50
-
-"""
-function set($canvas, func) {
-  var c = $canvas.get(0).getContext("2d");
-  for (var x = 0; x < 360; x ++) {
-    for (var y = 0; y < 100; y ++) {
-      var rgb = func(x, y);
-      var r = rgb[0] * 256;
-      var g = rgb[1] * 256;
-      var b = rgb[2] * 256;
-      index = (x + y * 360) * 4
-      imageData.data[index+0] = r;
-      imageData.data[index+1] = g;
-      imageData.data[index+2] = b;
-      imageData.data[index+3] = 256;
-    }
-  }
-  c.putImageData(imageData, 0, 0);
-}
-set($("#picker canvas"), function(x, y) {
-  return $.husl.husl(x, 100 - y, 50, true);
-})
-"""
 
 randomHue = ->
   Math.floor Math.random() * 360
@@ -65,3 +37,75 @@ $('#demo2').click ->
 
 $('#demo1').click()
 $('#demo2').click()
+
+$('#rainbow-husl div').each (index) ->
+  $(this).css('background-color', $.husl.husl(index * 36, 90, 60))
+$('#rainbow-hsl div').each (index) ->
+  $(this).css('background-color', hslToHex(index * 36, 90, 60))
+
+
+$canvas = $ '#picker canvas'
+ctx = $canvas[0].getContext '2d'
+
+redrawSwatch = do ->
+
+  $swatch = $ '#picker .swatch'
+  $hex = $ '#picker .hex'
+  $scope = $ '#picker .scope'
+  $channels = {}
+
+  for c in ['R', 'G', 'B', 'H', 'S', 'L', 'C']
+    $channels[c] = $ "#picker .#{c}"
+
+  chromaFromHex = ->
+  conv = $.colorspaces.converter 'hex', 'CIELCHuv'
+
+  return ->
+    $channels.H.text Math.round current_H
+    $channels.S.text Math.round current_S
+    $channels.L.text Math.round current_L
+    [R, G, B] = $.husl.husl current_H, current_S, current_L, true
+    $channels.R.text Math.round R * 255
+    $channels.G.text Math.round G * 255
+    $channels.B.text Math.round B * 255
+    hex = $.husl.husl current_H, current_S, current_L
+    $swatch.css 'background-color', hex
+    $hex.text hex
+    C = conv(hex)[1]
+    $channels.C.text Math.round C
+    $scope.css 'left', current_H - 5
+    $scope.css 'top', (100 - current_S) * 2 - 5
+    $scope.css 'border-color', if current_L > 50 then '#1b1b1b' else 'white'
+
+redraw = (L) ->
+  redrawSwatch()
+  width = 360
+  height = 200
+  dim = 4
+  xn = width / dim
+  yn = height / dim
+  for x in [0..xn]
+    for y in [0..yn]
+      return if L != current_L
+      h = x * dim + dim / 2
+      s = 100 * (1 - y * dim / height)
+      ctx.fillStyle = $.husl.husl h, s, L
+      ctx.fillRect x * dim, y * dim, dim, dim
+
+current_H = 200
+current_S = 80
+current_L = 50
+
+redraw current_L
+$('#picker .slider').slider
+  orientation: 'vertical'
+  value: current_L
+  slide: (event, ui) ->
+    current_L = ui.value
+    redraw ui.value
+
+$canvas.click (e) ->
+  offset = $(this).offset()
+  current_H = e.pageX - offset.left
+  current_S = 100 - (e.pageY - offset.top) / 2
+  redrawSwatch()

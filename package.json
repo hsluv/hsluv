@@ -17,6 +17,6 @@
     "onecolor": "*",
     "png": "*",
     "stylus": "*",
-    "mocha": "*"
+    "eco": "*"
   }
 }
