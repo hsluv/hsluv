@@ -45,13 +45,13 @@ $('#rainbow-hsl div').each (index) ->
 
 
 $canvas = $ '#picker canvas'
+$scope = $ '#picker .scope'
 ctx = $canvas[0].getContext '2d'
 
 redrawSwatch = do ->
 
   $swatch = $ '#picker .swatch'
   $hex = $ '#picker .hex'
-  $scope = $ '#picker .scope'
   $channels = {}
 
   for c in ['R', 'G', 'B', 'H', 'S', 'L', 'C']
@@ -104,8 +104,21 @@ $('#picker .slider').slider
     current_L = ui.value
     redraw ui.value
 
-$canvas.click (e) ->
-  offset = $(this).offset()
+update = (e) ->
+  e.stopPropagation()
+  e.preventDefault()
+  offset = $canvas.offset()
   current_H = e.pageX - offset.left
   current_S = 100 - (e.pageY - offset.top) / 2
   redrawSwatch()
+
+$canvas.mousedown (e) ->
+  $canvas.mousemove update
+  $scope.hide()
+  update(e)
+
+$(document).mouseup ->
+  $scope.show()
+  $canvas.unbind 'mousemove', update
+
+
