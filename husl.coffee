@@ -164,7 +164,7 @@ conv =
   'luv': {}
   'lch': {}
   'husl': {}
-  'husl2': {}
+  'huslp': {}
   'rgb': {}
   'hex': {}
 
@@ -242,9 +242,9 @@ conv.lch.husl = (tuple) ->
   S = C / max * 100
   return [H, S, L]
 
-## EXPERIMENTAL HUSL VARIANT
+## PASTEL HUSL
 
-conv.husl2.lch = (tuple) ->
+conv.huslp.lch = (tuple) ->
   [H, S, L] = tuple
   return [100, 0, H] if L > 99.9999999
   return [0, 0, H] if L < 0.00000001
@@ -255,7 +255,7 @@ conv.husl2.lch = (tuple) ->
   # C = Math.pow(S / 100,  1 / t) * max
   return [L, C, H]
 
-conv.lch.husl2 = (tuple) ->
+conv.lch.huslp = (tuple) ->
   [L, C, H] = tuple
   return [H, 0, 100] if L > 99.9999999
   return [H, 0, 0] if L < 0.00000001
@@ -281,10 +281,19 @@ conv.hex.rgb = (hex) ->
   [r, g, b].map (n) ->
     parseInt(n, 16) / 255
 
+conv.lch.rgb = (tuple) ->
+  conv.xyz.rgb conv.luv.xyz conv.lch.luv tuple
+conv.rgb.lch = (tuple) ->
+  conv.luv.lch conv.xyz.luv conv.rgb.xyz tuple
+
 conv.husl.rgb = (tuple) ->
-  conv.xyz.rgb conv.luv.xyz conv.lch.luv conv.husl.lch tuple
+  conv.lch.rgb conv.husl.lch tuple
 conv.rgb.husl = (tuple) ->
-  conv.lch.husl conv.luv.lch conv.xyz.luv conv.rgb.xyz tuple
+  conv.lch.husl conv.rgb.lch tuple
+conv.huslp.rgb = (tuple) ->
+  conv.lch.rgb conv.huslp.lch tuple
+conv.rgb.huslp = (tuple) ->
+  conv.lch.huslp conv.rgb.lch tuple
 
 root = {}
 
@@ -297,27 +306,28 @@ try
         # TODO: Assert passed types
         [R, G, B] = rgbPrepare conv.husl.rgb [H.val, S.val, L.val]
         new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
-      style.define 'husl2', (H, S, L, A) ->
-        [R, G, B] = rgbPrepare conv.xyz.rgb conv.luv.xyz conv.lch.luv conv.husl2.lch [H.val, S.val, L.val]
+      style.define 'huslp', (H, S, L, A) ->
+        [R, G, B] = rgbPrepare conv.huslp.rgb [H.val, S.val, L.val]
         new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
 
-root.husl = (H, S, L, noHex = false) ->
-  rgb = conv.husl.rgb [H, S, L]
-  return rgb if noHex
-  conv.rgb.hex rgb
-root.rgb = (R, G, B) ->
+root.fromRGB = (R, G, B) ->
   conv.rgb.husl [R, G, B]
-root.hex = (hex) ->
+root.fromHex = (hex) ->
   conv.rgb.husl conv.hex.rgb hex
-# TESTING
-root.husl2 = (H, S, L, noHex = false) ->
-  rgb = conv.xyz.rgb conv.luv.xyz conv.lch.luv conv.husl2.lch [H, S, L]
-  return rgb if noHex
-  conv.rgb.hex rgb
-root.rgb2 = (R, G, B) ->
-  conv.lch.husl2 conv.luv.lch conv.xyz.luv conv.rgb.xyz [R, G, B]
-root.hex2 = (hex) ->
-  conv.lch.husl2 conv.luv.lch conv.xyz.luv conv.rgb.xyz conv.hex.rgb hex
+root.toRGB = (H, S, L) ->
+  conv.husl.rgb [H, S, L]
+root.toHex = (H, S, L) ->
+  conv.rgb.hex conv.husl.rgb [H, S, L]
+root.p = {}
+root.p.toRGB = (H, S, L) ->
+  conv.xyz.rgb conv.luv.xyz conv.lch.luv conv.huslp.lch [H, S, L]
+root.p.toHex = (H, S, L) ->
+  conv.rgb.hex conv.xyz.rgb conv.luv.xyz conv.lch.luv conv.huslp.lch [H, S, L]
+root.p.fromRGB = (R, G, B) ->
+  conv.lch.huslp conv.luv.lch conv.xyz.luv conv.rgb.xyz [R, G, B]
+root.p.fromHex = (hex) ->
+  conv.lch.huslp conv.luv.lch conv.xyz.luv conv.rgb.xyz conv.hex.rgb hex
+
 root._conv = conv
 root._maxChroma = maxChroma
 root._rgbPrepare = rgbPrepare

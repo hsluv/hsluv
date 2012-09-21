@@ -49,19 +49,19 @@ task 'build:docs-images', 'Generate images', ->
     makeImage file, func2, width, height
 
   makeDemo 'husl', (x, y) ->
-    rgb = husl.husl x * 360, 100 - y * 100, 50, true
+    rgb = husl.toRGB x * 360, 100 - y * 100, 50
     return rgb
 
   makeDemo 'husl-chroma', (x, y) ->
-    rgb = husl.husl x * 360, 100 - y * 100, 50, true
+    rgb = husl.toRGB x * 360, 100 - y * 100, 50
     return chromaDemo colorspaces.make_color 'sRGB', rgb
 
   makeDemo 'husl-low', ((x, y) ->
-    rgb = husl.husl x * 360, 100 - y * 100, 10, true
+    rgb = husl.toRGB x * 360, 100 - y * 100, 10
     return rgb), 270, 150
 
   makeDemo 'husl-high', ((x, y) ->
-    rgb = husl.husl x * 360, 100 - y * 100, 95, true
+    rgb = husl.toRGB x * 360, 100 - y * 100, 95
     return rgb), 270, 150
 
   makeDemo 'cielchuv', (x, y) ->
@@ -115,23 +115,26 @@ task 'build', 'Build project', ->
       invoke 'build:docs'
 
 task 'snapshot', 'Take snapshot of the gamut for later testing', ->
-  width = 37
+  width = 37 + 37
   height = 21 * 21
 
   rgb = new Buffer width * height * 3
+  writePixel = (x, y, rgbVal) ->
+    pos = (y * width + x) * 3
+    rgb[pos + 0] = rgbVal[0]
+    rgb[pos + 1] = rgbVal[1]
+    rgb[pos + 2] = rgbVal[2]
+
   for Hs in [0..36]
     for Ss in [0..20]
       for Ls in [0..20]
         H = Hs * 10
         S = Ss * 5
         L = Ls * 5
-        rgbVal = husl._rgbPrepare husl.husl H, S, L, true
-        if L == 100 and rgbVal[0] != 255
-          console.log H, S, L, rgbVal
-        pos = (Ls * (37 * 21) + Ss * 37 + Hs) * 3
-        rgb[pos + 0] = rgbVal[0]
-        rgb[pos + 1] = rgbVal[1]
-        rgb[pos + 2] = rgbVal[2]
+        rgbVal = husl._rgbPrepare husl.toRGB H, S, L
+        writePixel Hs, Ls * 21 + Ss, rgbVal
+        rgbVal = husl._rgbPrepare husl.p.toRGB H, S, L
+        writePixel 37 + Hs, Ls * 21 + Ss, rgbVal
 
   png = new Png rgb, width, height, 'rgb'
   png_image = png.encodeSync()
