@@ -1,14 +1,21 @@
+p
+  padding-left 10px
+  padding-right 10px
+
 footer
 	margin-bottom 50px
 	margin-top 100px
 
+demoheight = 550px
+
 .dark
-	height 500px
+	height demoheight
 	position absolute
 	width 100%
 	background-color #1B1B1B
 	header.top
 		margin 40px
+		margin-bottom 70px
 		h1
 			color #555
 			text-align center
@@ -22,7 +29,7 @@ footer
 
 .light
 	position absolute
-	top 600px
+	top demoheight + 100px
 	width 100%
 
 abbr.initialism
@@ -56,9 +63,19 @@ div.demo
 	width 610px
 	height 200px
 	margin 0 auto
+	color #555
 	canvas
 		position absolute
 		cursor crosshair
+	.variants
+		position absolute
+		width 360px
+		top -30px
+		text-align center
+		.choice
+			color #555
+			&.selected
+				color #888
 	.slider
 		position absolute
 		top 10px
@@ -66,12 +83,11 @@ div.demo
 	.swatch
 		position absolute
 		top 0px
-		left 450px
+		right 0px
 		width 160px
 		height 160px
 		background-color #555
 	.coordinates
-		color #555
 		position absolute
 		top 15px
 		left 390px
@@ -96,7 +112,7 @@ div.demo
 
 .navbar
 	position absolute
-	top 500px
+	top demoheight
 	z-index 100
 	&.affix
 		top 0px

@@ -52,6 +52,10 @@ task 'build:docs-images', 'Generate images', ->
     rgb = husl.toRGB x * 360, 100 - y * 100, 50
     return rgb
 
+  makeDemo 'huslp', (x, y) ->
+    rgb = husl.p.toRGB x * 360, 100 - y * 100, 50
+    return rgb
+
   makeDemo 'husl-chroma', (x, y) ->
     rgb = husl.toRGB x * 360, 100 - y * 100, 50
     return chromaDemo colorspaces.make_color 'sRGB', rgb
@@ -72,12 +76,6 @@ task 'build:docs-images', 'Generate images', ->
       rgb = color.as 'sRGB'
     return rgb
 
-  makeDemo 'cielchuv-chroma', (x, y) ->
-    color = colorspaces.make_color 'CIELCHuv', [50, 200 - y * 200, x * 360]
-    if !color.is_displayable()
-      return [0, 0, 0]
-    return chromaDemo color
-
   makeDemo 'hsl', (x, y) ->
     return hslToRgb x, 1 - y, 0.5
 
@@ -89,6 +87,10 @@ task 'build:docs-images', 'Generate images', ->
 
   makeDemo 'hsl-chroma', (x, y) ->
     rgb = hslToRgb x, 1 - y, 0.5
+    return chromaDemo colorspaces.make_color 'sRGB', rgb
+
+  makeDemo 'huslp-chroma', (x, y) ->
+    rgb = husl.p.toRGB x * 360, 100 - y * 100, 50
     return chromaDemo colorspaces.make_color 'sRGB', rgb
 
 task 'build:docs', 'Build docs', ->

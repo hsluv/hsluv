@@ -8,7 +8,9 @@ There have long existed color spaces designed for perceptual uniformity. One of 
 
 [Demo, documentation etc.](http://boronine.com/husl)
 
-***
+# Testing
+
+Run `npm install` and `npm test`. Try `cake snapshot` to generate a picture of samples from the entire gamut. These picutures are used for regression tests
 
 Thanks to Lajos Ambrus for C and Java ports.
 
