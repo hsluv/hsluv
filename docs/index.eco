@@ -27,17 +27,20 @@
         <canvas width="360" height="200"></canvas>
         <div class="slider"></div>
         <div class="swatch"></div>
-        <div class="coordinates">
-          <div>R: <span class="c R"></span></div>
-          <div>G: <span class="c G"></span></div>
-          <div>B: <span class="c B"></span></div><br/>
-          <div>H: <span class="c H"></span></div>
-          <div>S: <span class="c S"></span></div>
-          <div>L: <span class="c L"></span></div><br/>
-          <div>Chroma: <span class="c C" style="position:static"></span></div>
+        <div class="coordinate-names">
+          R:<br/>G:</br>B:<br/><br/>H:<br/>S:<br/>L:
         </div>
+        <div class="coordinates">
+          <span class="R"></span><br/>
+          <span class="G"></span><br/>
+          <span class="B"></span><br/><br/>
+          <span class="H"></span><br/>
+          <span class="S"></span><br/>
+          <span class="L"></span><br/>
+        </div>
+        <div class="chroma"><span class="name">Chroma: </span><span class="C"></span></div>
         <div class="scope"></div>
-        <div class="hex"></div>
+        <input class="hex"/>
       </div>
     </div>
   </div>

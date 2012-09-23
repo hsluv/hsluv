@@ -47,6 +47,7 @@ do ->
 
   $canvas = $ '#picker canvas'
   $scope = $ '#picker .scope'
+  $hex = $ '#picker .hex'
   ctx = $canvas[0].getContext '2d'
 
   current_H = 200
@@ -54,10 +55,12 @@ do ->
   current_L = 50
   variant = $.husl
 
+  $hex.click ->
+    $(this).select()
+
   redrawSwatch = do ->
 
     $swatch = $ '#picker .swatch'
-    $hex = $ '#picker .hex'
     $channels = {}
 
     for c in ['R', 'G', 'B', 'H', 'S', 'L', 'C']
@@ -76,7 +79,7 @@ do ->
       $channels.B.text Math.round B * 255
       hex = variant.toHex current_H, current_S, current_L
       $swatch.css 'background-color', hex
-      $hex.text hex
+      $hex.attr 'value', hex
       C = conv(hex)[1]
       $channels.C.text Math.round C
       $scope.css 'left', current_H - 5

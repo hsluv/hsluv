@@ -8,6 +8,12 @@ footer
 
 demoheight = 550px
 
+no-select()
+	-webkit-user-select none
+	-moz-user-select none
+	-o-user-select none
+	user-select none
+
 .dark
 	height demoheight
 	position absolute
@@ -87,21 +93,37 @@ div.demo
 		width 160px
 		height 160px
 		background-color #555
-	.coordinates
+	.coordinate-names
+		no-select()
+		cursor default
 		position absolute
 		top 15px
 		left 390px
-		div
-			position relative
-			.c
-				position absolute
-				left 20px
-				color #888
+	.coordinates
+		position absolute
+		top 15px
+		left 410px
+		color #888
+	.chroma
+		position absolute
+		bottom 0px
+		left 390px
+		.C
+			color #888
+		.name
+			cursor default
+			no-select()
 	.hex
+		width 70px
+		padding-left 5px
+		padding-right 5px
 		color #888
 		position absolute
-		bottom 5px
-		right 5px
+		background transparent
+		border 1px solid #555
+		outline none
+		bottom 0px
+		right 0px
 	.scope
 		cursor crosshair
 		position absolute
