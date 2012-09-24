@@ -66,7 +66,7 @@ div.demo
 
 #picker
 	position relative
-	width 610px
+	width 645px
 	height 200px
 	margin 0 auto
 	color #555
@@ -84,8 +84,9 @@ div.demo
 				color #888
 	.slider
 		position absolute
-		top 10px
-		left 370px
+		top 30px
+		left 385px
+		height 140px
 	.swatch
 		position absolute
 		top 0px
@@ -98,21 +99,31 @@ div.demo
 		cursor default
 		position absolute
 		top 15px
-		left 390px
+		left 415px
 	.coordinates
 		position absolute
 		top 15px
-		left 410px
+		left 435px
 		color #888
 	.chroma
 		position absolute
-		bottom 0px
-		left 390px
+		bottom 3px
+		left 415px
 		.C
 			color #888
 		.name
 			cursor default
 			no-select()
+	.icon
+		display block
+		position absolute
+		left 380px
+		&.full
+			top 5px
+		&.empty
+			bottom 5px
+		path, circle
+			fill #666
 	.hex
 		width 70px
 		padding-left 5px
@@ -122,7 +133,7 @@ div.demo
 		background transparent
 		border 1px solid #555
 		outline none
-		bottom 0px
+		bottom 1px
 		right 0px
 	.scope
 		cursor crosshair
@@ -148,23 +159,20 @@ div.demo
 .ui-slider
 	position relative
 	text-align left
-	.ui-slider-handle
-		position absolute
-		z-index 2
-		width 10px
-		height 10px
-		cursor default
-		background-color white
-
-.ui-slider-vertical
 	width 6px
 	border-radius 3px
-	height 180px
 	background-color #555
 	.ui-slider-handle
-		border-radius 5px
-		margin-left -2px
-		margin-bottom -5px
+		margin-left -3px
+		margin-bottom -6px
+		outline none
+		position absolute
+		z-index 2
+		width 12px
+		height 12px
+		border-radius 6px
+		cursor default
+		background-color white
 	.ui-slider-range
 		left 0
 		width 100%
