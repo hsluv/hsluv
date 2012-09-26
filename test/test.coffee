@@ -4,7 +4,7 @@ meta = require '../package.json'
 {exec} = require 'child_process'
 
 
-describe 'HUSL', ->  
+describe 'HUSL', ->
   manySamples = (assertion) ->
     samples = '0123456789abcdef'
     for r in samples
@@ -12,14 +12,14 @@ describe 'HUSL', ->
         for b in samples
           assertion '#' + r + r + g + g + b + b
 
-  it 'should convert between HUSL and hex', ->  
+  it 'should convert between HUSL and hex', ->
     manySamples (hex) ->
       assert.deepEqual hex, husl.toHex (husl.fromHex hex)...
-  it 'should convert between HUSLp and hex', ->  
+  it 'should convert between HUSLp and hex', ->
     manySamples (hex) ->
       assert.deepEqual hex, husl.p.toHex (husl.p.fromHex hex)...
 
-  it 'should be able to work with Stylus programmatically', ->  
+  it 'should be able to work with Stylus programmatically', ->
     styl = """
     .someclass
       color husl(0, 50, 0, 0.1)

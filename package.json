@@ -13,12 +13,9 @@
   "homepage": "http://boronine.github.com/husl/",
   "devDependencies": {
     "coffee-script": "*",
-    "colorspaces": "*",
-    "onecolor": "*",
     "png": "*",
-    "stylus": "*",
-    "eco": "*",
     "mocha": "*",
+    "stylus": "*",
     "imagediff": "*"
   },
   "scripts": {
