@@ -15,7 +15,7 @@ task 'build', 'Build project', ->
     exec 'uglifyjs husl.js > husl.min.js', (err, stdout, stderr) ->
       throw err if err
 
-task 'snapshot', 'Take snapshot of the gamut for later testing', ->
+task 'snapshot', 'Take PNG snapshot of the gamut for later testing', ->
   width = 37 + 37
   height = 21 * 21
 
@@ -41,4 +41,23 @@ task 'snapshot', 'Take snapshot of the gamut for later testing', ->
   png_image = png.encodeSync()
   file = "test/snapshot-current.png"
   fs.writeFileSync file, png_image.toString('binary'), 'binary'
+
+task 'snapshot-json', 'Take JSON snapshot of the entire gamut', ->
+  json = {husl: [], huslp: []}
+
+  for Hs in [0..36]
+    json.husl.push []
+    json.huslp.push []
+    for Ss in [0..20]
+      json.husl[Hs].push []
+      json.huslp[Hs].push []
+      for Ls in [0..20]
+        H = Hs * 10
+        S = Ss * 5
+        L = Ls * 5
+        json.husl[Hs][Ss].push husl.toHex H, S, L
+        json.huslp[Hs][Ss].push husl.toHex H, S, L
+
+  file = "test/snapshot-current.json"
+  fs.writeFileSync file, JSON.stringify(json)
 
