@@ -2,6 +2,30 @@
 # DO NOT EXPECT TO UNDERSTAND THE MATH HERE, I used Maxima so
 # that neither of us has to!
 
+# All non-husl color math on this page comes from http://www.easyrgb.com
+# Thanks guys!
+
+# Used for rgb <-> xyz conversions
+m =
+  R: [3.2406, -1.5372, -0.4986]
+  G: [-0.9689, 1.8758,  0.0415]
+  B: [0.0557, -0.2040,  1.0570]
+m_inv =
+  X: [0.4124, 0.3576, 0.1805]
+  Y: [0.2126, 0.7152, 0.0722]
+  Z: [0.0193, 0.1192, 0.9505]
+
+# Hard-coded D65 standard illuminant
+refX = 0.95047
+refY = 1.00000
+refZ = 1.08883
+refU = 0.19784 # = (4 * refX) / (refX + (15 * refY) + (3 * refZ))
+refV = 0.46834 # = (9 * refY) / (refX + (15 * refY) + (3 * refZ))
+
+# CIE LAB and LUV constants
+lab_e = 0.008856
+lab_k = 903.3
+
 # For a given Lightness, Hue, RGB channel, and limit (1 or 0),
 # return Chroma, such that passing this chroma value will cause the
 # given channel to pass the given limit.
@@ -86,19 +110,6 @@ maxChromaD = (L) ->
       minima_C.push C
   Math.min minima_C...
 
-# All non-husl color math on this page comes from http://www.easyrgb.com
-# Thanks guys!
-
-# Used for rgb <-> xyz conversions
-m =
-  R: [3.2406, -1.5372, -0.4986]
-  G: [-0.9689, 1.8758,  0.0415]
-  B: [0.0557, -0.2040,  1.0570]
-m_inv =
-  X: [0.4124, 0.3576, 0.1805]
-  Y: [0.2126, 0.7152, 0.0722]
-  Z: [0.0193, 0.1192, 0.9505]
-
 dotProduct = (a, b) ->
   ret = 0
   for i in [0..a.length-1]
@@ -109,17 +120,6 @@ dotProduct = (a, b) ->
 round = (num, places) ->
   n = Math.pow 10, places
   return Math.round(num * n) / n
-
-# Hard-coded D65 standard illuminant
-refX = 0.95047
-refY = 1.00000
-refZ = 1.08883
-refU = 0.19784 # = (4 * refX) / (refX + (15 * refY) + (3 * refZ))
-refV = 0.46834 # = (9 * refY) / (refX + (15 * refY) + (3 * refZ))
-
-# CIE LAB and LUV constants
-lab_e = 0.008856
-lab_k = 903.3
 
 # Used for Lab and Luv conversions
 f = (t) ->
@@ -250,9 +250,6 @@ conv.huslp.lch = (tuple) ->
   return [0, 0, H] if L < 0.00000001
   max = maxChromaD L
   C = max / 100 * S
-  # I already tried this scaling function to improve the chroma
-  # uniformity. It did not work very well.
-  # C = Math.pow(S / 100,  1 / t) * max
   return [L, C, H]
 
 conv.lch.huslp = (tuple) ->

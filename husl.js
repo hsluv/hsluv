@@ -2,6 +2,32 @@
 (function() {
   var conv, dotProduct, f, f_inv, fromLinear, lab_e, lab_k, m, m_inv, maxChroma, maxChromaD, refU, refV, refX, refY, refZ, rgbPrepare, root, round, stylus, toLinear, _hradExtremum, _maxChroma, _maxChroma2;
 
+  m = {
+    R: [3.2406, -1.5372, -0.4986],
+    G: [-0.9689, 1.8758, 0.0415],
+    B: [0.0557, -0.2040, 1.0570]
+  };
+
+  m_inv = {
+    X: [0.4124, 0.3576, 0.1805],
+    Y: [0.2126, 0.7152, 0.0722],
+    Z: [0.0193, 0.1192, 0.9505]
+  };
+
+  refX = 0.95047;
+
+  refY = 1.00000;
+
+  refZ = 1.08883;
+
+  refU = 0.19784;
+
+  refV = 0.46834;
+
+  lab_e = 0.008856;
+
+  lab_k = 903.3;
+
   _maxChroma = function(L, H) {
     var cosH, hrad, sinH, sub1, sub2;
     hrad = H / 360 * 2 * Math.PI;
@@ -60,6 +86,8 @@
     };
   };
 
+  console.log(_hradExtremum(50));
+
   maxChroma = function(L, H) {
     var C, channel, limit, mc1, mc2, result, _i, _j, _len, _len1, _ref, _ref1;
     result = Infinity;
@@ -100,18 +128,6 @@
     return Math.min.apply(Math, minima_C);
   };
 
-  m = {
-    R: [3.2406, -1.5372, -0.4986],
-    G: [-0.9689, 1.8758, 0.0415],
-    B: [0.0557, -0.2040, 1.0570]
-  };
-
-  m_inv = {
-    X: [0.4124, 0.3576, 0.1805],
-    Y: [0.2126, 0.7152, 0.0722],
-    Z: [0.0193, 0.1192, 0.9505]
-  };
-
   dotProduct = function(a, b) {
     var i, ret, _i, _ref;
     ret = 0;
@@ -126,20 +142,6 @@
     n = Math.pow(10, places);
     return Math.round(num * n) / n;
   };
-
-  refX = 0.95047;
-
-  refY = 1.00000;
-
-  refZ = 1.08883;
-
-  refU = 0.19784;
-
-  refV = 0.46834;
-
-  lab_e = 0.008856;
-
-  lab_k = 903.3;
 
   f = function(t) {
     if (t > lab_e) {

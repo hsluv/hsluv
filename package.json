@@ -13,6 +13,7 @@
   "homepage": "http://boronine.github.com/husl/",
   "devDependencies": {
     "coffee-script": "*",
+    "uglify-js": "*",
     "png": "*",
     "mocha": "*",
     "stylus": "*",
