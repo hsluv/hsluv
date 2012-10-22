@@ -47,22 +47,6 @@ _maxChroma = (L, H) ->
       # goes any higher, the color will step outside of the RGB gamut.
       L * (top - 1.05122 * limit) / (bottom + 0.17266 * sinH * limit)
 
-# Same function as above, rewritten for different partial application order
-# (Hue is given in radians)
-_maxChroma2 = (L) ->
-  sub1 = Math.pow(L + 16, 3) / 1560896
-  sub2 = if sub1 > 0.008856 then sub1 else L / 903.3
-  (channel) ->
-    [m1, m2, m3] = m[channel]
-    top = (0.99915 * m1 + 1.05122 * m2 + 1.14460 * m3) * sub2
-    rbottom = 0.86330 * m3 - 0.17266 * m2
-    lbottom = 0.12949 * m3 - 0.38848 * m1
-    (limit, hrad) ->
-      sinH = Math.sin hrad
-      cosH = Math.cos hrad
-      bottom = (rbottom * sinH + lbottom * cosH) * sub2
-      L * (top - 1.05122 * limit) / (bottom + 0.17266 * sinH * limit)
-
 # Given Lightness, channel and limit, returns the Hue (in radians) at the point
 # where the maximum chroma (the chroma that will make the given channel pass
 # the given limit) is smallest. This is the dip in the curve.
@@ -100,13 +84,11 @@ maxChroma = (L, H) ->
 # gamut.
 maxChromaD = (L) ->
   minima_C = []
-  mc1 = _maxChroma2 L
   he1 = _hradExtremum L
   for channel in ['R', 'G', 'B']
-    mc2 = mc1 channel
     for limit in [0, 1]
       hrad = he1 channel, limit
-      C = mc2 limit, hrad
+      C = maxChroma L, hrad * 180 / Math.PI
       minima_C.push C
   Math.min minima_C...
 
