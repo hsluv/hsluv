@@ -56,7 +56,7 @@ task 'snapshot-json', 'Take JSON snapshot of the entire gamut', ->
         S = Ss * 5
         L = Ls * 5
         json.husl[Hs][Ss].push husl.toHex H, S, L
-        json.huslp[Hs][Ss].push husl.toHex H, S, L
+        json.huslp[Hs][Ss].push husl.p.toHex H, S, L
 
   file = "test/snapshot-current.json"
   fs.writeFileSync file, JSON.stringify(json)
