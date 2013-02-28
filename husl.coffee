@@ -315,3 +315,5 @@ root._rgbPrepare = rgbPrepare
 module.exports = root if module?
 # Export to jQuery
 jQuery.husl = root if jQuery?
+# Export to RequireJS
+define(root) if requirejs? and define?
