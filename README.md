@@ -18,7 +18,7 @@ This repo contains the canonical version. With the help of Robert McGinley, HUSL
 
 A work-in-progress of C and Java ports is included in the repo, done by Lajos Ambrus.
 
-A [Ruby port](https://github.com/soulcutter/husler) has been started by @soulcutter. I would love to see this done so that HUSL could be integrated into [SASS](http://sass-lang.com/).
+A [Ruby port](https://github.com/soulcutter/husler) has been started by [@soulcutter](https://github.com/soulcutter). I would love to see this done so that HUSL could be integrated into [SASS](http://sass-lang.com/).
 
 ***
 
