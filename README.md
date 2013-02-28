@@ -12,7 +12,13 @@ There have long existed color spaces designed for perceptual uniformity. One of 
 
 Run `npm install` and `npm test`. Try `cake snapshot` to generate a picture of samples from the entire gamut. These picutures are used for regression tests
 
-Thanks to Lajos Ambrus for C and Java ports.
+# Ports
+
+This repo contains the canonical version. With the help of Robert McGinley, HUSL was also [ported to Python](https://github.com/boronine/pyhusl).
+
+A work-in-progress of C and Java ports is included in the repo, done by Lajos Ambrus.
+
+A [Ruby port](https://github.com/soulcutter/husler) has been started by @soulcutter. I would love to see this done so that HUSL could be integrated into [SASS](http://sass-lang.com/).
 
 ***
 
