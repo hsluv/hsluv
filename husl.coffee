@@ -277,17 +277,18 @@ conv.rgb.huslp = (tuple) ->
 root = {}
 
 # If Stylus is installed, make module.exports work as a plugin
-try
-  stylus = require 'stylus'
-  root = ->
-    (style) ->
-      style.define 'husl', (H, S, L, A) ->
-        # TODO: Assert passed types
-        [R, G, B] = rgbPrepare conv.husl.rgb [H.val, S.val, L.val]
-        new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
-      style.define 'huslp', (H, S, L, A) ->
-        [R, G, B] = rgbPrepare conv.huslp.rgb [H.val, S.val, L.val]
-        new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
+if require?
+  try
+    stylus = require 'stylus'
+    root = ->
+      (style) ->
+        style.define 'husl', (H, S, L, A) ->
+          # TODO: Assert passed types
+          [R, G, B] = rgbPrepare conv.husl.rgb [H.val, S.val, L.val]
+          new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
+        style.define 'huslp', (H, S, L, A) ->
+          [R, G, B] = rgbPrepare conv.huslp.rgb [H.val, S.val, L.val]
+          new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
 
 root.fromRGB = (R, G, B) ->
   conv.rgb.husl [R, G, B]

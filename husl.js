@@ -372,23 +372,25 @@
 
   root = {};
 
-  try {
-    stylus = require('stylus');
-    root = function() {
-      return function(style) {
-        style.define('husl', function(H, S, L, A) {
-          var B, G, R, _ref;
-          _ref = rgbPrepare(conv.husl.rgb([H.val, S.val, L.val])), R = _ref[0], G = _ref[1], B = _ref[2];
-          return new stylus.nodes.RGBA(R, G, B, (A != null ? A.val : 1));
-        });
-        return style.define('huslp', function(H, S, L, A) {
-          var B, G, R, _ref;
-          _ref = rgbPrepare(conv.huslp.rgb([H.val, S.val, L.val])), R = _ref[0], G = _ref[1], B = _ref[2];
-          return new stylus.nodes.RGBA(R, G, B, (A != null ? A.val : 1));
-        });
+  if (typeof require !== "undefined" && require !== null) {
+    try {
+      stylus = require('stylus');
+      root = function() {
+        return function(style) {
+          style.define('husl', function(H, S, L, A) {
+            var B, G, R, _ref;
+            _ref = rgbPrepare(conv.husl.rgb([H.val, S.val, L.val])), R = _ref[0], G = _ref[1], B = _ref[2];
+            return new stylus.nodes.RGBA(R, G, B, (A != null ? A.val : 1));
+          });
+          return style.define('huslp', function(H, S, L, A) {
+            var B, G, R, _ref;
+            _ref = rgbPrepare(conv.huslp.rgb([H.val, S.val, L.val])), R = _ref[0], G = _ref[1], B = _ref[2];
+            return new stylus.nodes.RGBA(R, G, B, (A != null ? A.val : 1));
+          });
+        };
       };
-    };
-  } catch (_error) {}
+    } catch (_error) {}
+  }
 
   root.fromRGB = function(R, G, B) {
     return conv.rgb.husl([R, G, B]);
