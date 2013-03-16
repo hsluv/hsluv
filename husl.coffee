@@ -277,17 +277,18 @@ conv.rgb.huslp = (tuple) ->
 root = {}
 
 # If Stylus is installed, make module.exports work as a plugin
-try
-  stylus = require 'stylus'
-  root = ->
-    (style) ->
-      style.define 'husl', (H, S, L, A) ->
-        # TODO: Assert passed types
-        [R, G, B] = rgbPrepare conv.husl.rgb [H.val, S.val, L.val]
-        new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
-      style.define 'huslp', (H, S, L, A) ->
-        [R, G, B] = rgbPrepare conv.huslp.rgb [H.val, S.val, L.val]
-        new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
+if require?
+  try
+    stylus = require 'stylus'
+    root = ->
+      (style) ->
+        style.define 'husl', (H, S, L, A) ->
+          # TODO: Assert passed types
+          [R, G, B] = rgbPrepare conv.husl.rgb [H.val, S.val, L.val]
+          new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
+        style.define 'huslp', (H, S, L, A) ->
+          [R, G, B] = rgbPrepare conv.huslp.rgb [H.val, S.val, L.val]
+          new stylus.nodes.RGBA R, G, B, (if A? then A.val else 1)
 
 root.fromRGB = (R, G, B) ->
   conv.rgb.husl [R, G, B]
@@ -311,6 +312,9 @@ root._conv = conv
 root._maxChroma = maxChroma
 root._rgbPrepare = rgbPrepare
 
+# If no framework is available, just export to the global object (window.HUSL
+# in the browser)
+@HUSL = root unless module? or jQuery? or requirejs?
 # Export to Node.js
 module.exports = root if module?
 # Export to jQuery
