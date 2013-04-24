@@ -1,10 +1,10 @@
 assert = require 'assert'
 husl = require '../husl.coffee'
 meta = require '../package.json'
+tools = require './tools.coffee'
 {exec} = require 'child_process'
 
-
-describe 'HUSL', ->
+describe 'HUSL consistency', ->
   manySamples = (assertion) ->
     samples = '0123456789abcdef'
     for r in samples
@@ -18,6 +18,8 @@ describe 'HUSL', ->
   it 'should convert between HUSLp and hex', ->
     manySamples (hex) ->
       assert.deepEqual hex, husl.p.toHex (husl.p.fromHex hex)...
+
+describe 'Stylus integration', ->
 
   it 'should be able to work with Stylus programmatically', ->
     styl = """
@@ -41,19 +43,25 @@ describe 'HUSL', ->
       throw err if err
       assert.equal test_css, css
 
-  it 'should match the stable snapshot', (done) ->
-    cake = 'node_modules/coffee-script/bin/cake'
-    imagediff = 'node_modules/imagediff/bin/imagediff'
-    exec "#{cake} snapshot", (err, stdout, stderr) ->
-      throw err if err
-      current = "test/snapshot-current.png"
-      major = meta.version.split('.')[0]
-      stable = "test/snapshot-#{major}.x.x.png"
-      exec "#{imagediff} -e #{current} #{stable}", (err, stdout, stderr) ->
-        throw err if err
-        if stdout != 'true\n'
-          throw new Error "The snapshots don't match"
-        done()
+
+describe 'HUSL snapshot', ->
+
+  it 'should match the stable snapshot', ->
+
+    current = tools.snapshot()
+    stable = require './snapshot-2.x.x.json'
+
+    for hex, stableSamples of stable
+      currentSamples = current[hex]
+      for tag, stableTuple of stableSamples
+        currentTuple = currentSamples[tag]
+        for i in [0..2]
+          diff = Math.abs currentTuple[i] - stableTuple[i]
+          assert (diff < 0.00000001), """
+            The snapshots for #{hex} don't match at #{tag}
+            Stable:  #{stableTuple}
+            Current: #{currentTuple}
+            """
 
 
 

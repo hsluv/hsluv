@@ -14,10 +14,8 @@
   "devDependencies": {
     "coffee-script": "*",
     "uglify-js": "*",
-    "png": "*",
     "mocha": "*",
-    "stylus": "*",
-    "imagediff": "*"
+    "stylus": "*"
   },
   "scripts": {
     "test": "mocha --compilers coffee:coffee-script"

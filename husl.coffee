@@ -309,6 +309,7 @@ root.p.fromHex = (hex) ->
   conv.lch.huslp conv.luv.lch conv.xyz.luv conv.rgb.xyz conv.hex.rgb hex
 
 root._conv = conv
+root._round = round
 root._maxChroma = maxChroma
 root._rgbPrepare = rgbPrepare
 
