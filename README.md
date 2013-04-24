@@ -10,7 +10,19 @@ There have long existed color spaces designed for perceptual uniformity. One of 
 
 # Testing
 
-Run `npm install` and `npm test`. Try `cake snapshot` to generate a picture of samples from the entire gamut. These picutures are used for regression tests
+Run `npm install` and `npm test`. Try `cake snapshot` to generate a JSON file of the entire gamut to be used for debugging and regression tests. The format of the file is as follows:
+
+    {
+      "#000000": {
+        rgb: [ 0, 0, 0 ],
+        xyz: [ 0, 0, 0 ],
+        luv: [ 0, 0, 0 ],
+        lch: [ 0, 0, 0 ],
+        husl: [ 0, 0, 0 ],
+        huslp: [ 0, 0, 0 ]
+      },
+      ...
+    }
 
 # Ports
 
