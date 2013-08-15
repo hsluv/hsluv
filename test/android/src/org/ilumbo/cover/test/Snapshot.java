@@ -1,17 +1,52 @@
 package org.ilumbo.cover.test;
 
+import java.util.Iterator;
+
 import android.util.SparseArray;
 
 /**
  * A map which maps color strings (such as "##FFCC32") to color data objects.
  */
-public final class Snapshot {
+public final class Snapshot implements Iterable<Integer> {
+	private final class SnapshotIterator implements Iterator<Integer> {
+		private int index;
+		private int length;
+		public SnapshotIterator() {
+			index = 0;
+			length = members.size();
+		}
+		@Override
+		public final boolean hasNext() {
+			return index != length;
+		}
+		@Override
+		public final Integer next() {
+			return members.keyAt(index++);
+		}
+		@Override
+		public final void remove() {
+			throw new UnsupportedOperationException();
+		}
+	}
 	private final SparseArray<ColorData> members;
 	public Snapshot() {
 		members = new SparseArray<ColorData>(4096);
 	}
 	public final void addMember(String colorString, ColorData data) {
 		members.put(Integer.parseInt(colorString.substring(1), 0x10), data);
+	}
+	public final void addMember(int color, ColorData data) {
+		members.put(color, data);
+	}
+	@Override
+	public final Iterator<Integer> iterator() {
+		return new SnapshotIterator();
+	}
+	public final ColorData getMember(String colorString) {
+		return members.get(Integer.parseInt(colorString.substring(1)));
+	}
+	public final ColorData getMember(int color) {
+		return members.get(color);
 	}
 	@Override
 	public final String toString() {
