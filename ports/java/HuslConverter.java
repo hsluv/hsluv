@@ -1,5 +1,7 @@
+package com.boronine.husl;
+
 public class HuslConverter {
-	
+
 	//Pass in HUSL values and get back RGB values, H ranges from 0 to 360, S and L from 0 to 100.
 	//RGB values will range from 0 to 1.
 	public static float[] HUSLtoRGB( float h, float s,float l )
@@ -12,23 +14,26 @@ public class HuslConverter {
 	public static float[] RGBtoHUSL( float r, float g, float b )
 	{
 		return LCH_HUSL(LUV_LCH(XYZ_LUV(RGB_XYZ(new float[] {r, g, b}))));
-	}	
-	
+	}
+
 	private static double PI = 3.1415926535897932384626433832795;
-	private static float m[][] = {{3.2406f, -1.5372f, -0.4986f}, 
-								  {-0.9689f, 1.8758f, 0.0415f}, 
+	// Used for rgb ↔ xyz conversions.
+	private static float m[][] = {{3.2406f, -1.5372f, -0.4986f},
+								  {-0.9689f, 1.8758f, 0.0415f},
 								  {0.0557f, -0.2040f, 1.0570f}};
-	private static float m_inv[][] = {{0.4124f, 0.3576f, 0.1805f}, 
-									  {0.2126f, 0.7152f, 0.0722f}, 
+	private static float m_inv[][] = {{0.4124f, 0.3576f, 0.1805f},
+									  {0.2126f, 0.7152f, 0.0722f},
 									  {0.0193f, 0.1192f, 0.9505f}};
+	// Hard-coded D65 standard illuminant.
 	private static float refX = 0.95047f;
 	private static float refY = 1.00000f;
 	private static float refZ = 1.08883f;
-	private static float refU = 0.19784f;
-	private static float refV = 0.46834f;
+	private static float refU = 0.19784f; // 4 * refX / (refX + 15 * refY + 3 * refZ)
+	private static float refV = 0.46834f; // 9 * refY / (refX + 15 * refY + 3 * refZ)
+	// CIE LAB and LUV constants.
 	private static float lab_e = 0.008856f;
 	private static float lab_k = 903.3f;
-	
+
 	private static float maxChroma(float L, float H){
 
 		float C, bottom, cosH, hrad, lbottom, m1, m2, m3, rbottom, result, sinH, sub1, sub2, t, top;
@@ -37,9 +42,9 @@ public class HuslConverter {
 		float _ref[] = {0.0f, 1.0f};
 
 
-		hrad = (float) ((H / 360.0f) * 2 * PI);
-		sinH = (float) (Math.sin(hrad));
-		cosH = (float) (Math.cos(hrad));
+		hrad = (float) (H / 360.0f * 2 * PI);
+		sinH = (float) Math.sin(hrad);
+		cosH = (float) Math.cos(hrad);
 		sub1 = (float) (Math.pow(L + 16, 3) / 1560896.0);
 		sub2 = sub1 > 0.008856 ? sub1 : (float) (L / 903.3);
 		result = Float.POSITIVE_INFINITY;
@@ -56,7 +61,7 @@ public class HuslConverter {
 			for (_j = 0, _len1 = 2; _j < _len1; ++_j) {
 				t = _ref[_j];
 				C = (float) (L * (top - 1.05122 * t) / (bottom + 0.17266 * sinH * t));
-				if ((C > 0 && C < result)) {
+				if (C > 0 && C < result) {
 					result = C;
 				}
 			}
@@ -78,14 +83,14 @@ public class HuslConverter {
 	private static float round( float num, int places )
 	{
 		float n;
-		n = (float) (Math.pow(10.0f, places));
+		n = (float) Math.pow(10.0f, places);
 		return (float) (Math.floor(num * n) / n);
 	}
 
 	private static float f( float t )
 	{
 		if (t > lab_e) {
-			return (float) (Math.pow(t, 1.0f / 3.0f));
+			return (float) Math.pow(t, 1.0f / 3.0f);
 		} else {
 			return (float) (7.787 * t + 16 / 116.0);
 		}
@@ -94,7 +99,7 @@ public class HuslConverter {
 	private static float f_inv( float t )
 	{
 		if (Math.pow(t, 3) > lab_e) {
-			return (float) (Math.pow(t, 3));
+			return (float) Math.pow(t, 3);
 		} else {
 			return (116 * t - 16) / lab_k;
 		}
@@ -114,7 +119,7 @@ public class HuslConverter {
 		float a = 0.055f;
 
 		if (c > 0.04045) {
-			return (float) (Math.pow((c + a) / (1 + a), 2.4f));
+			return (float) Math.pow((c + a) / (1 + a), 2.4f);
 		} else {
 			return (float) (c / 12.92);
 		}
@@ -128,11 +133,13 @@ public class HuslConverter {
 			tuple[i] = round(tuple[i], 3);
 
 			if (tuple[i] < 0 || tuple[i] > 1) {
-				if(tuple[i] < 0)
+				if(tuple[i] < 0) {
 					tuple[i] = 0;
-				else
+				}
+				else {
 					tuple[i] = 1;
 				//System.out.println("Illegal rgb value: " + tuple[i]);
+				}
 			}
 
 			tuple[i] = round(tuple[i]*255, 0);
@@ -161,7 +168,7 @@ public class HuslConverter {
 		float rgbl[] = new float[3];
 
 		R = tuple[0];
-		G = tuple[1]; 
+		G = tuple[1];
 		B = tuple[2];
 
 		rgbl[0] = toLinear(R);
@@ -183,12 +190,12 @@ public class HuslConverter {
 	{
 		float L, U, V, X, Y, Z, varU, varV;
 
-		X = tuple[0]; 
-		Y = tuple[1]; 
+		X = tuple[0];
+		Y = tuple[1];
 		Z = tuple[2];
 
-		varU = (4 * X) / (X + (15.0f * Y) + (3 * Z));
-		varV = (9 * Y) / (X + (15.0f * Y) + (3 * Z));
+		varU = 4 * X / (X + 15.0f * Y + 3 * Z);
+		varV = 9 * Y / (X + 15.0f * Y + 3 * Z);
 		L = 116 * f(Y / refY) - 16;
 		U = 13 * L * (varU - refU);
 		V = 13 * L * (varV - refV);
@@ -204,8 +211,8 @@ public class HuslConverter {
 	{
 		float L, U, V, X, Y, Z, varU, varV, varY;
 
-		L = tuple[0]; 
-		U = tuple[1]; 
+		L = tuple[0];
+		U = tuple[1];
 		V = tuple[2];
 
 		if (L == 0) {
@@ -217,8 +224,8 @@ public class HuslConverter {
 		varU = U / (13.0f * L) + refU;
 		varV = V / (13.0f * L) + refV;
 		Y = varY * refY;
-		X = 0 - (9 * Y * varU) / ((varU - 4.0f) * varV - varU * varV);
-		Z = (9 * Y - (15 * varV * Y) - (varV * X)) / (3.0f * varV);
+		X = 0 - 9 * Y * varU / ((varU - 4.0f) * varV - varU * varV);
+		Z = (9 * Y - 15 * varV * Y - varV * X) / (3.0f * varV);
 
 		tuple[0] = X;
 		tuple[1] = Y;
@@ -231,12 +238,12 @@ public class HuslConverter {
 	{
 		float C, H, Hrad, L, U, V;
 
-		L = tuple[0]; 
-		U = tuple[1]; 
+		L = tuple[0];
+		U = tuple[1];
 		V = tuple[2];
 
-		C = (float) (Math.pow(Math.pow(U, 2) + Math.pow(V, 2), (1 / 2.0f)));
-		Hrad = (float) (Math.atan2(V, U));
+		C = (float) Math.pow(Math.pow(U, 2) + Math.pow(V, 2), 1 / 2.0f);
+		Hrad = (float) Math.atan2(V, U);
 		H = (float) (Hrad * 360.0f / 2.0f / PI);
 		if (H < 0) {
 			H = 360 + H;
@@ -253,8 +260,8 @@ public class HuslConverter {
 	{
 		float C, H, Hrad, L, U, V;
 
-		L = tuple[0]; 
-		C = tuple[1]; 
+		L = tuple[0];
+		C = tuple[1];
 		H = tuple[2];
 
 		Hrad = (float) (H / 360.0 * 2.0 * PI);
@@ -272,8 +279,8 @@ public class HuslConverter {
 	{
 		float C, H, L, S, max;
 
-		H = tuple[0]; 
-		S = tuple[1]; 
+		H = tuple[0];
+		S = tuple[1];
 		L = tuple[2];
 
 		max = maxChroma(L, H);
@@ -290,18 +297,18 @@ public class HuslConverter {
 	{
 		float C, H, L, S, max;
 
-		L = tuple[0]; 
-		C = tuple[1]; 
+		L = tuple[0];
+		C = tuple[1];
 		H = tuple[2];
 
 		max = maxChroma(L, H);
 		S = C / max * 100;
-		
+
 		tuple[0] = H;
 		tuple[1] = S;
 		tuple[2] = L;
 
 		return tuple;
 	}
-	
+
 }
