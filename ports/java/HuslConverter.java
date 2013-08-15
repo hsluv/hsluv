@@ -2,20 +2,6 @@ package com.boronine.husl;
 
 public class HuslConverter {
 
-	//Pass in HUSL values and get back RGB values, H ranges from 0 to 360, S and L from 0 to 100.
-	//RGB values will range from 0 to 1.
-	public static float[] HUSLtoRGB( float h, float s,float l )
-	{
-		return XYZ_RGB(LUV_XYZ(LCH_LUV(HUSL_LCH(new float[] {h, s, l}))));
-	}
-
-	//Pass in RGB values ranging from 0 to 1 and get back HUSL values.
-	//H ranges from 0 to 360, S and L from 0 to 100.
-	public static float[] RGBtoHUSL( float r, float g, float b )
-	{
-		return LCH_HUSL(LUV_LCH(XYZ_LUV(RGB_XYZ(new float[] {r, g, b}))));
-	}
-
 	private static double PI = 3.1415926535897932384626433832795;
 	// Used for rgb ↔ xyz conversions.
 	private static float m[][] = {{3.2406f, -1.5372f, -0.4986f},
@@ -147,9 +133,11 @@ public class HuslConverter {
 
 		return tuple;
 	}
-
-	private static float[] XYZ_RGB( float tuple[] )
-	{
+	
+	/**
+	 * Converts an XYZ tuple to an RGB one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertXyzToRgb(float tuple[]) {
 		float B, G, R;
 		R = fromLinear(dotProduct(m[0], tuple, 3));
 		G = fromLinear(dotProduct(m[1], tuple, 3));
@@ -158,12 +146,22 @@ public class HuslConverter {
 		tuple[0] = R;
 		tuple[1] = G;
 		tuple[2] = B;
-
-		return tuple;
+	}
+	
+	/**
+	 * Converts an XYZ tuple to an RGB one.
+	 */
+	public static float[] convertXyzToRgb(float xyzTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{xyzTuple[0], xyzTuple[1], xyzTuple[2]};
+		unsafeConvertXyzToRgb(result);
+		return result;
 	}
 
-	private static float[] RGB_XYZ( float tuple[] )
-	{
+	/**
+	 * Converts an RGB tuple to an XYZ one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertRgbToXyz(float tuple[]) {
 		float B, G, R, X, Y, Z;
 		float rgbl[] = new float[3];
 
@@ -182,20 +180,30 @@ public class HuslConverter {
 		tuple[0] = X;
 		tuple[1] = Y;
 		tuple[2] = Z;
-
-		return tuple;
+	}
+	
+	/**
+	 * Converts an RGB tuple to an XYZ one.
+	 */
+	public static float[] convertRgbToXyz(float rgbTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{rgbTuple[0], rgbTuple[1], rgbTuple[2]};
+		unsafeConvertRgbToXyz(result);
+		return result;
 	}
 
-	private static float[] XYZ_LUV( float tuple[] )
-	{
+	/**
+	 * Converts an XYZ tuple to an LUV one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertXyzToLuv(float tuple[]) {
 		float L, U, V, X, Y, Z, varU, varV;
 
 		X = tuple[0];
 		Y = tuple[1];
 		Z = tuple[2];
 
-		varU = 4 * X / (X + 15.0f * Y + 3 * Z);
-		varV = 9 * Y / (X + 15.0f * Y + 3 * Z);
+		varU = 4 * X / (X + 15f * Y + 3 * Z);
+		varV = 9 * Y / (X + 15f * Y + 3 * Z);
 		L = 116 * f(Y / refY) - 16;
 		U = 13 * L * (varU - refU);
 		V = 13 * L * (varV - refV);
@@ -203,12 +211,22 @@ public class HuslConverter {
 		tuple[0] = L;
 		tuple[1] = U;
 		tuple[2] = V;
-
-		return tuple;
+	}
+	
+	/**
+	 * Converts an XYZ tuple to an LUV one.
+	 */
+	public static float[] convertXyzToLuv(float xzyTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{xzyTuple[0], xzyTuple[1], xzyTuple[2]};
+		unsafeConvertXyzToLuv(result);
+		return result;
 	}
 
-	private static float[] LUV_XYZ( float tuple[] )
-	{
+	/**
+	 * Converts an LUV tuple to an XYZ one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertLuvToXyz(float tuple[]) {
 		float L, U, V, X, Y, Z, varU, varV, varY;
 
 		L = tuple[0];
@@ -216,26 +234,36 @@ public class HuslConverter {
 		V = tuple[2];
 
 		if (L == 0) {
-			tuple[2] = tuple[1] = tuple[0] = 0.0f;
-			return tuple;
+			tuple[2] = tuple[1] = tuple[0] = 0f;
+			return;
 		}
 
-		varY = f_inv((L + 16) / 116.0f);
+		varY = f_inv((L + 16) / 116f);
 		varU = U / (13.0f * L) + refU;
 		varV = V / (13.0f * L) + refV;
 		Y = varY * refY;
 		X = 0 - 9 * Y * varU / ((varU - 4.0f) * varV - varU * varV);
-		Z = (9 * Y - 15 * varV * Y - varV * X) / (3.0f * varV);
+		Z = (9 * Y - 15 * varV * Y - varV * X) / (3f * varV);
 
 		tuple[0] = X;
 		tuple[1] = Y;
 		tuple[2] = Z;
-
-		return tuple;
+	}
+	
+	/**
+	 * Converts an LUV tuple to an XYZ one.
+	 */
+	public static float[] convertLuvToXyz(float luvTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{luvTuple[0], luvTuple[1], luvTuple[2]};
+		unsafeConvertLuvToXyz(result);
+		return result;
 	}
 
-	private static float[] LUV_LCH( float tuple[] )
-	{
+	/**
+	 * Converts an LUV tuple to an LCH one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertLuvToLch(float tuple[]) {
 		float C, H, Hrad, L, U, V;
 
 		L = tuple[0];
@@ -252,12 +280,22 @@ public class HuslConverter {
 		tuple[0] = L;
 		tuple[1] = C;
 		tuple[2] = H;
-
-		return tuple;
+	}
+	
+	/**
+	 * Converts an LUV tuple to an LCH one.
+	 */
+	public static float[] convertLuvToLch(float luvTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{luvTuple[0], luvTuple[1], luvTuple[2]};
+		unsafeConvertLuvToLch(result);
+		return result;
 	}
 
-	private static float[] LCH_LUV( float tuple[] )
-	{
+	/**
+	 * Converts an LCH tuple to an LUV one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertLchToLuv(float tuple[]) {
 		float C, H, Hrad, L, U, V;
 
 		L = tuple[0];
@@ -271,12 +309,22 @@ public class HuslConverter {
 		tuple[0] = L;
 		tuple[1] = U;
 		tuple[2] = V;
-
-		return tuple;
+	}
+	
+	/**
+	 * Converts an LCH tuple to an LUV one.
+	 */
+	public static float[] convertLchToLuv(float lchTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{lchTuple[0], lchTuple[1], lchTuple[2]};
+		unsafeConvertLchToLuv(result);
+		return result;
 	}
 
-	private static float[] HUSL_LCH( float tuple[] )
-	{
+	/**
+	 * Converts an HUSL tuple to an LCH one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertHuslToLch(float tuple[]) {
 		float C, H, L, S, max;
 
 		H = tuple[0];
@@ -289,12 +337,22 @@ public class HuslConverter {
 		tuple[0] = L;
 		tuple[1] = C;
 		tuple[2] = H;
-
-		return tuple;
+	}
+	
+	/**
+	 * Converts an HUSL tuple to an LCH one.
+	 */
+	public static float[] convertHuslToLch(float huslTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{huslTuple[0], huslTuple[1], huslTuple[2]};
+		unsafeConvertHuslToLch(result);
+		return result;
 	}
 
-	private static float[] LCH_HUSL( float tuple[] )
-	{
+	/**
+	 * Converts an LCH tuple to an HUSL one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertLchToHusl(float tuple[]) {
 		float C, H, L, S, max;
 
 		L = tuple[0];
@@ -307,8 +365,50 @@ public class HuslConverter {
 		tuple[0] = H;
 		tuple[1] = S;
 		tuple[2] = L;
-
-		return tuple;
+	}
+	
+	/**
+	 * Converts an LCH tuple to an HUSL one.
+	 */
+	public static float[] convertLchToHusl(float lchTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{lchTuple[0], lchTuple[1], lchTuple[2]};
+		unsafeConvertLchToHusl(result);
+		return result;
+	}
+	
+	/**
+	 * Converts an HUSL tuple to an RGB one.
+	 */
+	public static float[] convertHuslToRgb(float huslTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{huslTuple[0], huslTuple[1], huslTuple[2]};
+		// Calculate the LCH values.
+		convertHuslToLch(result);
+		// Calculate the LUV values.
+		convertLchToLuv(result);
+		// Calculate the XYZ values.
+		convertLuvToXyz(result);
+		// Calculate the RGB values.
+		convertXyzToRgb(result);
+		return result;
+	}
+	
+	/**
+	 * Converts an RGB tuple to an HUSL one.
+	 */
+	public static float[] convertRgbToHusl(float rgbTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{rgbTuple[0], rgbTuple[1], rgbTuple[2]};
+		// Calculate the XYZ values.
+		convertRgbToXyz(result);
+		// Calculate the LUV values.
+		convertXyzToLuv(result);
+		// Calculate the LCH values.
+		convertLuvToLch(result);
+		// Calculate the HUSL values.
+		convertLchToHusl(result);
+		return result;
 	}
 
 }
