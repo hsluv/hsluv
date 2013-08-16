@@ -283,6 +283,17 @@ public class HuslConverter {
 		final float H = tuple[0];
 		final float S = tuple[1];
 		final float L = tuple[2];
+		// Bad things happen when you reach a limit.
+		if (L > 99.9999999f) {
+			tuple[0] = 100;
+			tuple[1] = 0;
+			tuple[2] = H;
+			return;
+		} else if (L < 0.00000001f) {
+			tuple[0] = tuple[1] = 0;
+			tuple[2] = H;
+			return;
+		}
 
 		final float max = maxChroma(L, H);
 		final float C = max / 100 * S;
@@ -309,6 +320,17 @@ public class HuslConverter {
 		final float L = tuple[0];
 		final float C = tuple[1];
 		final float H = tuple[2];
+		// Bad things happen when you reach a limit.
+		if (L > 99.9999999f) {
+			tuple[0] = H;
+			tuple[1] = 0;
+			tuple[2] = 100;
+			return;
+		} else if (L < 0.00000001f) {
+			tuple[0] = H;
+			tuple[1] = tuple[2] = 0;
+			return;
+		}
 
 		final float max = maxChroma(L, H);
 		final float S = C / max * 100;
