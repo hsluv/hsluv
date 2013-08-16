@@ -89,9 +89,9 @@ public final class SnapshotTestCase extends ActivityTestCase {
 			assertNotNull(message, stable);
 			final ColorData current = currentSnapshot.getMember(color);
 			message += ", current: " + current.toString(ColorData.PROPERTIES_RGB);
-			assertEquals(message, stable.rgb[0], current.rgb[0], 1e-6f);
-			assertEquals(message, stable.rgb[1], current.rgb[1], 1e-6f);
-			assertEquals(message, stable.rgb[2], current.rgb[2], 1e-6f);
+			assertEquals(message, stable.rgb[0], current.rgb[0], 1e-3f);
+			assertEquals(message, stable.rgb[1], current.rgb[1], 1e-3f);
+			assertEquals(message, stable.rgb[2], current.rgb[2], 1e-3f);
 		}
 	}
 	public final void testStep1Xyz() {
@@ -101,9 +101,9 @@ public final class SnapshotTestCase extends ActivityTestCase {
 			assertNotNull(message, stable);
 			final ColorData current = currentSnapshot.getMember(color);
 			message += ", current: " + current.toString(ColorData.PROPERTIES_RGB_XYZ);
-			assertEquals(message, stable.xyz[0], current.xyz[0], 1e-6f);
-			assertEquals(message, stable.xyz[1], current.xyz[1], 1e-6f);
-			assertEquals(message, stable.xyz[2], current.xyz[2], 1e-6f);
+			assertEquals(message, stable.xyz[0], current.xyz[0], 1e-3f);
+			assertEquals(message, stable.xyz[1], current.xyz[1], 1e-3f);
+			assertEquals(message, stable.xyz[2], current.xyz[2], 1e-3f);
 		}
 	}
 	public final void testStep2Luv() {
@@ -113,9 +113,9 @@ public final class SnapshotTestCase extends ActivityTestCase {
 			assertNotNull(message, stable);
 			final ColorData current = currentSnapshot.getMember(color);
 			message += ", current: " + current.toString(ColorData.PROPERTIES_RGB_THROUGH_LUV);
-			assertEquals(message, stable.luv[0], current.luv[0], 1e-3f);
-			assertEquals(message, stable.luv[1], current.luv[1], 1e-3f);
-			assertEquals(message, stable.luv[2], current.luv[2], 1e-3f);
+			assertEquals(message, stable.luv[0], current.luv[0], 1e-1f);
+			assertEquals(message, stable.luv[1], current.luv[1], 1e-1f);
+			assertEquals(message, stable.luv[2], current.luv[2], 1e-1f);
 		}
 	}
 	public final void testStep3Lch() {
@@ -125,9 +125,9 @@ public final class SnapshotTestCase extends ActivityTestCase {
 			assertNotNull(message, stable);
 			final ColorData current = currentSnapshot.getMember(color);
 			message += ", current: " + current.toString(ColorData.PROPERTIES_RGB_THROUGH_LCH);
-			assertEquals(message, stable.lch[0], current.lch[0], 1e-3f);
-			assertEquals(message, stable.lch[1], current.lch[1], 1e-3f);
-			assertEquals(message, stable.lch[2], current.lch[2], 1e-3f);
+			assertEquals(message, stable.lch[0], current.lch[0], 1e-1f);
+			assertEquals(message, stable.lch[1], current.lch[1], 1e-1f);
+			assertEquals(message, stable.lch[2], current.lch[2], 1e-1f);
 		}
 	}
 	public final void testStep4Husl() {
@@ -137,9 +137,9 @@ public final class SnapshotTestCase extends ActivityTestCase {
 			assertNotNull(message, stable);
 			final ColorData current = currentSnapshot.getMember(color);
 			message += ", current: " + current.toString(ColorData.PROPERTIES_RGB_THROUGH_HUSL);
-			assertEquals(message, stable.husl[0], current.husl[0], 1e-3f);
-			assertEquals(message, stable.husl[1], current.husl[1], 1e-3f);
-			assertEquals(message, stable.husl[2], current.husl[2], 1e-3f);
+			assertEquals(message, stable.husl[0], current.husl[0], 1e-1f);
+			assertEquals(message, stable.husl[1], current.husl[1], 1e-1f);
+			assertEquals(message, stable.husl[2], current.husl[2], 1e-1f);
 		}
 	}
 	public final void testStep4Huslp() {
