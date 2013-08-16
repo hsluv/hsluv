@@ -1,307 +1,389 @@
-public class HuslConverter {
-	
-	//Pass in HUSL values and get back RGB values, H ranges from 0 to 360, S and L from 0 to 100.
-	//RGB values will range from 0 to 1.
-	public static float[] HUSLtoRGB( float h, float s,float l )
-	{
-		return XYZ_RGB(LUV_XYZ(LCH_LUV(HUSL_LCH(new float[] {h, s, l}))));
-	}
+package com.boronine.husl;
 
-	//Pass in RGB values ranging from 0 to 1 and get back HUSL values.
-	//H ranges from 0 to 360, S and L from 0 to 100.
-	public static float[] RGBtoHUSL( float r, float g, float b )
-	{
-		return LCH_HUSL(LUV_LCH(XYZ_LUV(RGB_XYZ(new float[] {r, g, b}))));
-	}	
-	
-	private static double PI = 3.1415926535897932384626433832795;
-	private static float m[][] = {{3.2406f, -1.5372f, -0.4986f}, 
-								  {-0.9689f, 1.8758f, 0.0415f}, 
+
+public class HuslConverter {
+
+	/* package */ static float PI = 3.1415926535897932384626433832795f;
+	// Used for rgb ↔ xyz conversions.
+	/* package */ static float m[][] = {{3.2406f, -1.5372f, -0.4986f},
+								  {-0.9689f, 1.8758f, 0.0415f},
 								  {0.0557f, -0.2040f, 1.0570f}};
-	private static float m_inv[][] = {{0.4124f, 0.3576f, 0.1805f}, 
-									  {0.2126f, 0.7152f, 0.0722f}, 
+	private static float m_inv[][] = {{0.4124f, 0.3576f, 0.1805f},
+									  {0.2126f, 0.7152f, 0.0722f},
 									  {0.0193f, 0.1192f, 0.9505f}};
+	// Hard-coded D65 standard illuminant.
 	private static float refX = 0.95047f;
 	private static float refY = 1.00000f;
 	private static float refZ = 1.08883f;
-	private static float refU = 0.19784f;
-	private static float refV = 0.46834f;
+	private static float refU = 0.19784f; // 4 * refX / (refX + 15 * refY + 3 * refZ)
+	private static float refV = 0.46834f; // 9 * refY / (refX + 15 * refY + 3 * refZ)
+	// CIE LAB and LUV constants.
 	private static float lab_e = 0.008856f;
 	private static float lab_k = 903.3f;
 	
-	private static float maxChroma(float L, float H){
+	private static final int RGB_R = 0;
+	private static final int RGB_G = 1;
+	private static final int RGB_B = 2;
 
-		float C, bottom, cosH, hrad, lbottom, m1, m2, m3, rbottom, result, sinH, sub1, sub2, t, top;
-		int _i, _j, _len, _len1;
-		float row[];
-		float _ref[] = {0.0f, 1.0f};
+	private static final int XYZ_X = 0;
+	private static final int XYZ_Y = 1;
+	private static final int XYZ_Z = 2;
 
+	private static final int LUV_L = 0;
+	private static final int LUV_U = 1;
+	private static final int LUV_V = 2;
 
-		hrad = (float) ((H / 360.0f) * 2 * PI);
-		sinH = (float) (Math.sin(hrad));
-		cosH = (float) (Math.cos(hrad));
-		sub1 = (float) (Math.pow(L + 16, 3) / 1560896.0);
-		sub2 = sub1 > 0.008856 ? sub1 : (float) (L / 903.3);
-		result = Float.POSITIVE_INFINITY;
-		for (_i = 0, _len = 3; _i < _len; ++_i) {
-			row = m[_i];
-			m1 = row[0];
-			m2 = row[1];
-			m3 = row[2];
-			top = (float) ((0.99915 * m1 + 1.05122 * m2 + 1.14460 * m3) * sub2);
-			rbottom = (float) (0.86330 * m3 - 0.17266 * m2);
-			lbottom = (float) (0.12949 * m3 - 0.38848 * m1);
-			bottom = (rbottom * sinH + lbottom * cosH) * sub2;
+	private static final int LCH_L = 0;
+	private static final int LCH_C = 1;
+	private static final int LCH_H = 2;
 
-			for (_j = 0, _len1 = 2; _j < _len1; ++_j) {
-				t = _ref[_j];
-				C = (float) (L * (top - 1.05122 * t) / (bottom + 0.17266 * sinH * t));
-				if ((C > 0 && C < result)) {
-					result = C;
-				}
+	private static final int HUSL_H = 0;
+	private static final int HUSL_S = 1;
+	private static final int HUSL_L = 2;
+
+	/**
+	 * For a given lightness and hue, return the maximum chroma that fits in the RGB gamut.
+	 */
+	public static float maxChroma(float L, float H) {
+		// The CoffeeScript and JavaScript versions of HUSL have this function broken up into several
+		// schönfinkeling/currying-style functions. This however doesn't work as well in Java. Therefore, everything is cramped
+		// up into one function.
+		float result = Float.POSITIVE_INFINITY;
+		final float hrad = H / 360 * 2 * HuslConverter.PI;
+		final float sinH = (float) Math.sin(hrad);
+		final float cosH = (float) Math.cos(hrad);
+		final float sub1 = (float) Math.pow(L + 16, 3) / 1560896f;
+		final float sub2 = sub1 > 0.008856f ? sub1 : L / 903.3f;
+		// Loop over the channels (red, green and blue).
+		for (int channel = 0; 3 != channel; channel++) {
+			final float[] channelM = HuslConverter.m[channel];
+			final float top = (0.99915f * channelM[0] + 1.05122f * channelM[1] + 1.14460f * channelM[2]) * sub2;
+			final float rbottom = 0.86330f * channelM[2] - 0.17266f * channelM[1];
+			final float lbottom = 0.12949f * channelM[2] - 0.38848f * channelM[0];
+			final float bottom = (rbottom * sinH + lbottom * cosH) * sub2;
+			// Calculate the C values that you can put together with the given L and H to produce a colour that with
+			// <RGB channel> = 1 or 2. This means that if C goes any higher, the colour will step outside of the RGB gamut.
+			final float C0 = L * top / bottom;
+			if (C0 > 0 && C0 < result) {
+				result = C0;
+			}
+			final float C1 = L * (top - 1.05122f * 1) / (bottom + 0.17266f * sinH);
+			if (C1 > 0 && C1 < result) {
+				result = C1;
 			}
 		}
 		return result;
 	}
 
-	private static float dotProduct(float a[], float b[], int len){
-
-		int i, _i, _ref;
-		float ret = 0.0f;
-		for (i = _i = 0, _ref = len - 1;    0 <= _ref ? _i <= _ref : _i >= _ref;    i = 0 <= _ref ? ++_i : --_i) {
-			ret += a[i] * b[i];
+	private static float dotProduct(float a[], float b[]) {
+		float result = 0;
+		for (int index = 0; 3 != index; index++) {
+			result += a[index] * b[index];
 		}
-		return ret;
-
+		return result;
 	}
 
-	private static float round( float num, int places )
-	{
+	private static float round(float num, int places) {
 		float n;
-		n = (float) (Math.pow(10.0f, places));
+		n = (float) Math.pow(10.0f, places);
 		return (float) (Math.floor(num * n) / n);
 	}
 
-	private static float f( float t )
-	{
+	// Used for Lab and Luv conversions.
+	private static float f(float t) {
 		if (t > lab_e) {
-			return (float) (Math.pow(t, 1.0f / 3.0f));
+			return (float) Math.pow(t, 1f / 3);
 		} else {
-			return (float) (7.787 * t + 16 / 116.0);
+			return 7.787f * t + 16 / 116f;
 		}
 	}
-
-	private static float f_inv( float t )
-	{
-		if (Math.pow(t, 3) > lab_e) {
-			return (float) (Math.pow(t, 3));
+	private static float f_inv(float t) {
+		final float proposedResult = (float) Math.pow(t, 3);
+		if (proposedResult > lab_e) {
+			return proposedResult;
 		} else {
 			return (116 * t - 16) / lab_k;
 		}
 	}
 
-	private static float fromLinear( float c )
-	{
-		if (c <= 0.0031308) {
+	// Used for RGB conversions.
+	private static float fromLinear(float c) {
+		if (c <= 0.0031308f) {
 			return 12.92f * c;
 		} else {
-			return (float) (1.055 * Math.pow(c, 1 / 2.4f) - 0.055);
+			return 1.055f * (float) Math.pow(c, 1 / 2.4f) - 0.055f;
 		}
 	}
-
-	private static float toLinear( float c )
-	{
-		float a = 0.055f;
-
-		if (c > 0.04045) {
-			return (float) (Math.pow((c + a) / (1 + a), 2.4f));
+	private static float toLinear(float c) {
+		if (c > 0.04045f) {
+			return (float) Math.pow((c + 0.055f) / 1.055f, 2.4f);
 		} else {
-			return (float) (c / 12.92);
+			return c / 12.92f;
 		}
 	}
 
-	private static float[] rgbPrepare( float tuple[] )
-	{
-		int i;
+	/**
+	 * Converts an XYZ tuple to an RGB one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertXyzToRgb(float tuple[]) {
+		// Tuple represents input.
+		final float R = fromLinear(dotProduct(m[0], tuple));
+		final float G = fromLinear(dotProduct(m[1], tuple));
+		// Tuple is being filled with output.
+		tuple[RGB_B] = fromLinear(dotProduct(m[2], tuple));
+		tuple[RGB_R] = R;
+		tuple[RGB_G] = G;
+	}
 
-		for(i = 0; i < 3; ++i){
-			tuple[i] = round(tuple[i], 3);
+	/**
+	 * Converts an XYZ tuple to an RGB one.
+	 */
+	public static float[] convertXyzToRgb(float xyzTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{xyzTuple[0], xyzTuple[1], xyzTuple[2]};
+		unsafeConvertXyzToRgb(result);
+		return result;
+	}
 
-			if (tuple[i] < 0 || tuple[i] > 1) {
-				if(tuple[i] < 0)
-					tuple[i] = 0;
-				else
-					tuple[i] = 1;
-				//System.out.println("Illegal rgb value: " + tuple[i]);
-			}
+	/**
+	 * Converts an RGB tuple to an XYZ one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertRgbToXyz(float tuple[]) {
+		// Tuple represents input.
+		float rgbl[] = new float[]{toLinear(tuple[0]), toLinear(tuple[1]), toLinear(tuple[2])};
+		// Tuple is being filled with output.
+		tuple[XYZ_X] = dotProduct(m_inv[0], rgbl);
+		tuple[XYZ_Y] = dotProduct(m_inv[1], rgbl);
+		tuple[XYZ_Z] = dotProduct(m_inv[2], rgbl);
+	}
 
-			tuple[i] = round(tuple[i]*255, 0);
+	/**
+	 * Converts an RGB tuple to an XYZ one.
+	 */
+	public static float[] convertRgbToXyz(float rgbTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{rgbTuple[0], rgbTuple[1], rgbTuple[2]};
+		unsafeConvertRgbToXyz(result);
+		return result;
+	}
+
+	/**
+	 * Converts an XYZ tuple to an LUV one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertXyzToLuv(float tuple[]) {
+		// Tuple represents input.
+		final float X = tuple[XYZ_X];
+		final float Y = tuple[XYZ_Y];
+		final float Z = tuple[XYZ_Z];
+		final float varU = 4 * X / (X + 15 * Y + 3 * Z);
+		final float varV = 9 * Y / (X + 15 * Y + 3 * Z);
+		// Tuple is being filled with output.
+		final float L;
+		// Black will create a divide-by-zero error.
+		if (0 == (L = 116 * f(Y / refY) - 16)) {
+			tuple[0] = tuple[1] = tuple[2] = 0;
+			return;
 		}
-
-		return tuple;
+		tuple[LUV_L] = L;
+		tuple[LUV_U] = 13 * L * (varU - refU);
+		tuple[LUV_V] = 13 * L * (varV - refV);
 	}
 
-	private static float[] XYZ_RGB( float tuple[] )
-	{
-		float B, G, R;
-		R = fromLinear(dotProduct(m[0], tuple, 3));
-		G = fromLinear(dotProduct(m[1], tuple, 3));
-		B = fromLinear(dotProduct(m[2], tuple, 3));
-
-		tuple[0] = R;
-		tuple[1] = G;
-		tuple[2] = B;
-
-		return tuple;
+	/**
+	 * Converts an XYZ tuple to an LUV one.
+	 */
+	public static float[] convertXyzToLuv(float xzyTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{xzyTuple[0], xzyTuple[1], xzyTuple[2]};
+		unsafeConvertXyzToLuv(result);
+		return result;
 	}
 
-	private static float[] RGB_XYZ( float tuple[] )
-	{
-		float B, G, R, X, Y, Z;
-		float rgbl[] = new float[3];
-
-		R = tuple[0];
-		G = tuple[1]; 
-		B = tuple[2];
-
-		rgbl[0] = toLinear(R);
-		rgbl[1] = toLinear(G);
-		rgbl[2] = toLinear(B);
-
-		X = dotProduct(m_inv[0], rgbl, 3);
-		Y = dotProduct(m_inv[1], rgbl, 3);
-		Z = dotProduct(m_inv[2], rgbl, 3);
-
-		tuple[0] = X;
-		tuple[1] = Y;
-		tuple[2] = Z;
-
-		return tuple;
-	}
-
-	private static float[] XYZ_LUV( float tuple[] )
-	{
-		float L, U, V, X, Y, Z, varU, varV;
-
-		X = tuple[0]; 
-		Y = tuple[1]; 
-		Z = tuple[2];
-
-		varU = (4 * X) / (X + (15.0f * Y) + (3 * Z));
-		varV = (9 * Y) / (X + (15.0f * Y) + (3 * Z));
-		L = 116 * f(Y / refY) - 16;
-		U = 13 * L * (varU - refU);
-		V = 13 * L * (varV - refV);
-
-		tuple[0] = L;
-		tuple[1] = U;
-		tuple[2] = V;
-
-		return tuple;
-	}
-
-	private static float[] LUV_XYZ( float tuple[] )
-	{
-		float L, U, V, X, Y, Z, varU, varV, varY;
-
-		L = tuple[0]; 
-		U = tuple[1]; 
-		V = tuple[2];
-
-		if (L == 0) {
-			tuple[2] = tuple[1] = tuple[0] = 0.0f;
-			return tuple;
+	/**
+	 * Converts an LUV tuple to an XYZ one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertLuvToXyz(float tuple[]) {
+		// Tuple represents input. Black will create a divide-by-zero error.
+		if (tuple[LUV_L] == 0) {
+			// Tuple is being filled with output. The X = L in the tuple is left untouched.
+			/* tuple[XYZ_X] = */ tuple[XYZ_Y] = tuple[XYZ_Z] = 0;
+			return;
 		}
-
-		varY = f_inv((L + 16) / 116.0f);
-		varU = U / (13.0f * L) + refU;
-		varV = V / (13.0f * L) + refV;
-		Y = varY * refY;
-		X = 0 - (9 * Y * varU) / ((varU - 4.0f) * varV - varU * varV);
-		Z = (9 * Y - (15 * varV * Y) - (varV * X)) / (3.0f * varV);
-
-		tuple[0] = X;
-		tuple[1] = Y;
-		tuple[2] = Z;
-
-		return tuple;
+		final float L = tuple[LUV_L];
+		final float varY = f_inv((L + 16) / 116);
+		final float varU = tuple[LUV_U] / (13 * L) + refU;
+		final float varV = tuple[LUV_V] / (13 * L) + refV;
+		// Tuple is being filled with output.
+		final float Y = tuple[XYZ_Y] = varY * refY;
+		final float X = tuple[XYZ_X] = -9 * Y * varU / ((varU - 4) * varV - varU * varV);
+		/* final float Z = */ tuple[XYZ_Z] = (9 * Y - 15 * varV * Y - varV * X) / (3 * varV);
 	}
 
-	private static float[] LUV_LCH( float tuple[] )
-	{
-		float C, H, Hrad, L, U, V;
+	/**
+	 * Converts an LUV tuple to an XYZ one.
+	 */
+	public static float[] convertLuvToXyz(float luvTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{luvTuple[0], luvTuple[1], luvTuple[2]};
+		unsafeConvertLuvToXyz(result);
+		return result;
+	}
 
-		L = tuple[0]; 
-		U = tuple[1]; 
-		V = tuple[2];
-
-		C = (float) (Math.pow(Math.pow(U, 2) + Math.pow(V, 2), (1 / 2.0f)));
-		Hrad = (float) (Math.atan2(V, U));
-		H = (float) (Hrad * 360.0f / 2.0f / PI);
+	/**
+	 * Converts an LUV tuple to an LCH one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertLuvToLch(float tuple[]) {
+		// Tuple represents input.
+		final float U = tuple[LUV_U];
+		final float V = tuple[LUV_V];
+		// Tuple is being filled with output. The L in the tuple is left untouched.
+		tuple[LCH_C] = (float) Math.sqrt(U * U + V * V);
+		final float Hrad = (float) Math.atan2(V, U);
+		float H = Hrad * 360 / 2 / PI;
 		if (H < 0) {
-			H = 360 + H;
+			H += 360;
 		}
-
-		tuple[0] = L;
-		tuple[1] = C;
-		tuple[2] = H;
-
-		return tuple;
+		tuple[LCH_H] = H;
 	}
 
-	private static float[] LCH_LUV( float tuple[] )
-	{
-		float C, H, Hrad, L, U, V;
-
-		L = tuple[0]; 
-		C = tuple[1]; 
-		H = tuple[2];
-
-		Hrad = (float) (H / 360.0 * 2.0 * PI);
-		U = (float) (Math.cos(Hrad) * C);
-		V = (float) (Math.sin(Hrad) * C);
-
-		tuple[0] = L;
-		tuple[1] = U;
-		tuple[2] = V;
-
-		return tuple;
+	/**
+	 * Converts an LUV tuple to an LCH one.
+	 */
+	public static float[] convertLuvToLch(float luvTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{luvTuple[0], luvTuple[1], luvTuple[2]};
+		unsafeConvertLuvToLch(result);
+		return result;
 	}
 
-	private static float[] HUSL_LCH( float tuple[] )
-	{
-		float C, H, L, S, max;
-
-		H = tuple[0]; 
-		S = tuple[1]; 
-		L = tuple[2];
-
-		max = maxChroma(L, H);
-		C = max / 100.0f * S;
-
-		tuple[0] = L;
-		tuple[1] = C;
-		tuple[2] = H;
-
-		return tuple;
+	/**
+	 * Converts an LCH tuple to an LUV one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertLchToLuv(float tuple[]) {
+		// Tuple represents input.
+		final float C = tuple[LCH_C];
+		final float Hrad = tuple[LCH_H] / 360 * 2 * PI;
+		// Tuple is being filled with output. The L in the tuple is left untouched.
+		tuple[LUV_U] = (float) Math.cos(Hrad) * C;
+		tuple[LUV_V] = (float) Math.sin(Hrad) * C;
 	}
 
-	private static float[] LCH_HUSL( float tuple[] )
-	{
-		float C, H, L, S, max;
-
-		L = tuple[0]; 
-		C = tuple[1]; 
-		H = tuple[2];
-
-		max = maxChroma(L, H);
-		S = C / max * 100;
-		
-		tuple[0] = H;
-		tuple[1] = S;
-		tuple[2] = L;
-
-		return tuple;
+	/**
+	 * Converts an LCH tuple to an LUV one.
+	 */
+	public static float[] convertLchToLuv(float lchTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{lchTuple[0], lchTuple[1], lchTuple[2]};
+		unsafeConvertLchToLuv(result);
+		return result;
 	}
-	
+
+	/**
+	 * Converts an HUSL tuple to an LCH one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertHuslToLch(float tuple[]) {
+		// Tuple represents input.
+		final float H = tuple[HUSL_H];
+		final float L = tuple[HUSL_L];
+		// Bad things happen when you reach a limit.
+		if (L > 99.9999f) {
+			// Tuple is being filled with output. 
+			tuple[LCH_L] = 100;
+			tuple[LCH_C] = 0;
+			tuple[LCH_H] = H;
+			return;
+		} else if (L < 0.00001f) {
+			// Tuple is being filled with output. 
+			tuple[LCH_L] = tuple[LCH_C] = 0;
+			tuple[LCH_H] = H;
+			return;
+		}
+		// Tuple is being filled with output.
+		// I already tried this scaling function to improve the chroma uniformity. It did not work very well.
+		// tuple[LCH_C] = Math.pow(tuple[HUSL_S] / 100,  1 / t) * maxChroma(L, H)
+		tuple[LCH_C] = maxChroma(L, H) / 100 * tuple[HUSL_S];
+		tuple[LCH_L] = L;
+		tuple[LCH_H] = H;
+	}
+
+	/**
+	 * Converts an HUSL tuple to an LCH one.
+	 */
+	public static float[] convertHuslToLch(float huslTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{huslTuple[0], huslTuple[1], huslTuple[2]};
+		unsafeConvertHuslToLch(result);
+		return result;
+	}
+
+	/**
+	 * Converts an LCH tuple to an HUSL one, altering the passed array to represent the output (discarding the input).
+	 */
+	private static void unsafeConvertLchToHusl(float tuple[]) {
+		// Tuple represents input.
+		final float L = tuple[LCH_L];
+		final float H = tuple[LCH_H];
+		// Bad things happen when you reach a limit.
+		if (L > 99.9999f) {
+			// Tuple is being filled with output. 
+			tuple[HUSL_H] = H;
+			tuple[HUSL_S] = 0;
+			tuple[HUSL_L] = 100;
+			return;
+		} else if (L < 0.00001f) {
+			// Tuple is being filled with output. 
+			tuple[HUSL_H] = H;
+			tuple[HUSL_S] = tuple[HUSL_L] = 0;
+			return;
+		}
+		// Tuple is being filled with output. 
+		tuple[HUSL_S] = tuple[LCH_C] / maxChroma(L, H) * 100;
+		tuple[HUSL_H] = H;
+		tuple[HUSL_L] = L;
+	}
+
+	/**
+	 * Converts an LCH tuple to an HUSL one.
+	 */
+	public static float[] convertLchToHusl(float lchTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{lchTuple[0], lchTuple[1], lchTuple[2]};
+		unsafeConvertLchToHusl(result);
+		return result;
+	}
+
+	/**
+	 * Converts an HUSL tuple to an RGB one.
+	 */
+	public static float[] convertHuslToRgb(float huslTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{huslTuple[0], huslTuple[1], huslTuple[2]};
+		// Calculate the LCH values.
+		convertHuslToLch(result);
+		// Calculate the LUV values.
+		convertLchToLuv(result);
+		// Calculate the XYZ values.
+		convertLuvToXyz(result);
+		// Calculate the RGB values.
+		convertXyzToRgb(result);
+		return result;
+	}
+
+	/**
+	 * Converts an RGB tuple to an HUSL one.
+	 */
+	public static float[] convertRgbToHusl(float rgbTuple[]) {
+		// Clone the tuple, to avoid changing the input.
+		final float[] result = new float[]{rgbTuple[0], rgbTuple[1], rgbTuple[2]};
+		// Calculate the XYZ values.
+		convertRgbToXyz(result);
+		// Calculate the LUV values.
+		convertXyzToLuv(result);
+		// Calculate the LCH values.
+		convertLuvToLch(result);
+		// Calculate the HUSL values.
+		convertLchToHusl(result);
+		return result;
+	}
+
 }
