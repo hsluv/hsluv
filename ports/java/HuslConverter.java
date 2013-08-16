@@ -45,6 +45,9 @@ public class HuslConverter {
 	 * For a given lightness and hue, return the maximum chroma that fits in the RGB gamut.
 	 */
 	public static float maxChroma(float L, float H) {
+		// The CoffeeScript and JavaScript versions of HUSL have this function broken up into several
+		// schönfinkeling/currying-style functions. This however doesn't work as well in Java. Therefore, everything is cramped
+		// up into one function.
 		float result = Float.POSITIVE_INFINITY;
 		final float hrad = H / 360 * 2 * HuslConverter.PI;
 		final float sinH = (float) Math.sin(hrad);
@@ -74,8 +77,7 @@ public class HuslConverter {
 
 	private static float dotProduct(float a[], float b[]) {
 		float result = 0;
-		final int length = a.length;
-		for (int index = 0; length != index; index++) {
+		for (int index = 0; 3 != index; index++) {
 			result += a[index] * b[index];
 		}
 		return result;
@@ -87,6 +89,7 @@ public class HuslConverter {
 		return (float) (Math.floor(num * n) / n);
 	}
 
+	// Used for Lab and Luv conversions.
 	private static float f(float t) {
 		if (t > lab_e) {
 			return (float) Math.pow(t, 1f / 3);
@@ -94,7 +97,6 @@ public class HuslConverter {
 			return 7.787f * t + 16 / 116f;
 		}
 	}
-
 	private static float f_inv(float t) {
 		final float proposedResult = (float) Math.pow(t, 3);
 		if (proposedResult > lab_e) {
@@ -104,6 +106,7 @@ public class HuslConverter {
 		}
 	}
 
+	// Used for RGB conversions.
 	private static float fromLinear(float c) {
 		if (c <= 0.0031308f) {
 			return 12.92f * c;
@@ -111,7 +114,6 @@ public class HuslConverter {
 			return 1.055f * (float) Math.pow(c, 1 / 2.4f) - 0.055f;
 		}
 	}
-
 	private static float toLinear(float c) {
 		if (c > 0.04045f) {
 			return (float) Math.pow((c + 0.055f) / 1.055f, 2.4f);
@@ -296,7 +298,9 @@ public class HuslConverter {
 			tuple[LCH_H] = H;
 			return;
 		}
-		// Tuple is being filled with output. 
+		// Tuple is being filled with output.
+		// I already tried this scaling function to improve the chroma uniformity. It did not work very well.
+		// tuple[LCH_C] = Math.pow(tuple[HUSL_S] / 100,  1 / t) * maxChroma(L, H)
 		tuple[LCH_C] = maxChroma(L, H) / 100 * tuple[HUSL_S];
 		tuple[LCH_L] = L;
 		tuple[LCH_H] = H;
