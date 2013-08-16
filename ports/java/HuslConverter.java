@@ -1,6 +1,5 @@
 package com.boronine.husl;
 
-import android.util.FloatMath;
 
 public class HuslConverter {
 
@@ -21,6 +20,26 @@ public class HuslConverter {
 	// CIE LAB and LUV constants.
 	private static float lab_e = 0.008856f;
 	private static float lab_k = 903.3f;
+	
+	private static final int RGB_R = 0;
+	private static final int RGB_G = 1;
+	private static final int RGB_B = 2;
+
+	private static final int XYZ_X = 0;
+	private static final int XYZ_Y = 1;
+	private static final int XYZ_Z = 2;
+
+	private static final int LUV_L = 0;
+	private static final int LUV_U = 1;
+	private static final int LUV_V = 2;
+
+	private static final int LCH_L = 0;
+	private static final int LCH_C = 1;
+	private static final int LCH_H = 2;
+
+	private static final int HUSL_H = 0;
+	private static final int HUSL_S = 1;
+	private static final int HUSL_L = 2;
 
 	/**
 	 * For a given lightness and hue, return the maximum chroma that fits in the RGB gamut.
@@ -105,13 +124,13 @@ public class HuslConverter {
 	 * Converts an XYZ tuple to an RGB one, altering the passed array to represent the output (discarding the input).
 	 */
 	private static void unsafeConvertXyzToRgb(float tuple[]) {
+		// Tuple represents input.
 		final float R = fromLinear(dotProduct(m[0], tuple));
 		final float G = fromLinear(dotProduct(m[1], tuple));
-		final float B = fromLinear(dotProduct(m[2], tuple));
-
-		tuple[0] = R;
-		tuple[1] = G;
-		tuple[2] = B;
+		// Tuple is being filled with output.
+		tuple[RGB_B] = fromLinear(dotProduct(m[2], tuple));
+		tuple[RGB_R] = R;
+		tuple[RGB_G] = G;
 	}
 
 	/**
@@ -128,15 +147,12 @@ public class HuslConverter {
 	 * Converts an RGB tuple to an XYZ one, altering the passed array to represent the output (discarding the input).
 	 */
 	private static void unsafeConvertRgbToXyz(float tuple[]) {
+		// Tuple represents input.
 		float rgbl[] = new float[]{toLinear(tuple[0]), toLinear(tuple[1]), toLinear(tuple[2])};
-
-		final float X = dotProduct(m_inv[0], rgbl);
-		final float Y = dotProduct(m_inv[1], rgbl);
-		final float Z = dotProduct(m_inv[2], rgbl);
-
-		tuple[0] = X;
-		tuple[1] = Y;
-		tuple[2] = Z;
+		// Tuple is being filled with output.
+		tuple[XYZ_X] = dotProduct(m_inv[0], rgbl);
+		tuple[XYZ_Y] = dotProduct(m_inv[1], rgbl);
+		tuple[XYZ_Z] = dotProduct(m_inv[2], rgbl);
 	}
 
 	/**
@@ -153,24 +169,22 @@ public class HuslConverter {
 	 * Converts an XYZ tuple to an LUV one, altering the passed array to represent the output (discarding the input).
 	 */
 	private static void unsafeConvertXyzToLuv(float tuple[]) {
-		final float X = tuple[0];
-		final float Y = tuple[1];
-		final float Z = tuple[2];
-
+		// Tuple represents input.
+		final float X = tuple[XYZ_X];
+		final float Y = tuple[XYZ_Y];
+		final float Z = tuple[XYZ_Z];
 		final float varU = 4 * X / (X + 15 * Y + 3 * Z);
 		final float varV = 9 * Y / (X + 15 * Y + 3 * Z);
+		// Tuple is being filled with output.
 		final float L;
 		// Black will create a divide-by-zero error.
 		if (0 == (L = 116 * f(Y / refY) - 16)) {
 			tuple[0] = tuple[1] = tuple[2] = 0;
 			return;
 		}
-		final float U = 13 * L * (varU - refU);
-		final float V = 13 * L * (varV - refV);
-
-		tuple[0] = L;
-		tuple[1] = U;
-		tuple[2] = V;
+		tuple[LUV_L] = L;
+		tuple[LUV_U] = 13 * L * (varU - refU);
+		tuple[LUV_V] = 13 * L * (varV - refV);
 	}
 
 	/**
@@ -187,26 +201,20 @@ public class HuslConverter {
 	 * Converts an LUV tuple to an XYZ one, altering the passed array to represent the output (discarding the input).
 	 */
 	private static void unsafeConvertLuvToXyz(float tuple[]) {
-		final float L = tuple[0];
-		final float U = tuple[1];
-		final float V = tuple[2];
-
-		// Black will create a divide-by-zero error.
-		if (L == 0) {
-			tuple[2] = tuple[1] = tuple[0] = 0;
+		// Tuple represents input. Black will create a divide-by-zero error.
+		if (tuple[LUV_L] == 0) {
+			// Tuple is being filled with output. The X = L in the tuple is left untouched.
+			/* tuple[XYZ_X] = */ tuple[XYZ_Y] = tuple[XYZ_Z] = 0;
 			return;
 		}
-
+		final float L = tuple[LUV_L];
 		final float varY = f_inv((L + 16) / 116);
-		final float varU = U / (13 * L) + refU;
-		final float varV = V / (13 * L) + refV;
-		final float Y = varY * refY;
-		final float X = 0 - 9 * Y * varU / ((varU - 4) * varV - varU * varV);
-		final float Z = (9 * Y - 15 * varV * Y - varV * X) / (3 * varV);
-
-		tuple[0] = X;
-		tuple[1] = Y;
-		tuple[2] = Z;
+		final float varU = tuple[LUV_U] / (13 * L) + refU;
+		final float varV = tuple[LUV_V] / (13 * L) + refV;
+		// Tuple is being filled with output.
+		final float Y = tuple[XYZ_Y] = varY * refY;
+		final float X = tuple[XYZ_X] = -9 * Y * varU / ((varU - 4) * varV - varU * varV);
+		/* final float Z = */ tuple[XYZ_Z] = (9 * Y - 15 * varV * Y - varV * X) / (3 * varV);
 	}
 
 	/**
@@ -223,20 +231,17 @@ public class HuslConverter {
 	 * Converts an LUV tuple to an LCH one, altering the passed array to represent the output (discarding the input).
 	 */
 	private static void unsafeConvertLuvToLch(float tuple[]) {
-		final float L = tuple[0];
-		final float U = tuple[1];
-		final float V = tuple[2];
-
-		final float C = FloatMath.sqrt(U * U + V * V);
+		// Tuple represents input.
+		final float U = tuple[LUV_U];
+		final float V = tuple[LUV_V];
+		// Tuple is being filled with output. The L in the tuple is left untouched.
+		tuple[LCH_C] = (float) Math.sqrt(U * U + V * V);
 		final float Hrad = (float) Math.atan2(V, U);
 		float H = Hrad * 360 / 2 / PI;
 		if (H < 0) {
 			H += 360;
 		}
-
-		tuple[0] = L;
-		tuple[1] = C;
-		tuple[2] = H;
+		tuple[LCH_H] = H;
 	}
 
 	/**
@@ -253,17 +258,12 @@ public class HuslConverter {
 	 * Converts an LCH tuple to an LUV one, altering the passed array to represent the output (discarding the input).
 	 */
 	private static void unsafeConvertLchToLuv(float tuple[]) {
-		final float L = tuple[0];
-		final float C = tuple[1];
-		final float H = tuple[2];
-
-		final float Hrad = H / 360 * 2 * PI;
-		final float U = (float) Math.cos(Hrad) * C;
-		final float V = (float) Math.sin(Hrad) * C;
-
-		tuple[0] = L;
-		tuple[1] = U;
-		tuple[2] = V;
+		// Tuple represents input.
+		final float C = tuple[LCH_C];
+		final float Hrad = tuple[LCH_H] / 360 * 2 * PI;
+		// Tuple is being filled with output. The L in the tuple is left untouched.
+		tuple[LUV_U] = (float) Math.cos(Hrad) * C;
+		tuple[LUV_V] = (float) Math.sin(Hrad) * C;
 	}
 
 	/**
@@ -280,27 +280,26 @@ public class HuslConverter {
 	 * Converts an HUSL tuple to an LCH one, altering the passed array to represent the output (discarding the input).
 	 */
 	private static void unsafeConvertHuslToLch(float tuple[]) {
-		final float H = tuple[0];
-		final float S = tuple[1];
-		final float L = tuple[2];
+		// Tuple represents input.
+		final float H = tuple[HUSL_H];
+		final float L = tuple[HUSL_L];
 		// Bad things happen when you reach a limit.
-		if (L > 99.9999999f) {
-			tuple[0] = 100;
-			tuple[1] = 0;
-			tuple[2] = H;
+		if (L > 99.9999f) {
+			// Tuple is being filled with output. 
+			tuple[LCH_L] = 100;
+			tuple[LCH_C] = 0;
+			tuple[LCH_H] = H;
 			return;
-		} else if (L < 0.00000001f) {
-			tuple[0] = tuple[1] = 0;
-			tuple[2] = H;
+		} else if (L < 0.00001f) {
+			// Tuple is being filled with output. 
+			tuple[LCH_L] = tuple[LCH_C] = 0;
+			tuple[LCH_H] = H;
 			return;
 		}
-
-		final float max = maxChroma(L, H);
-		final float C = max / 100 * S;
-
-		tuple[0] = L;
-		tuple[1] = C;
-		tuple[2] = H;
+		// Tuple is being filled with output. 
+		tuple[LCH_C] = maxChroma(L, H) / 100 * tuple[HUSL_S];
+		tuple[LCH_L] = L;
+		tuple[LCH_H] = H;
 	}
 
 	/**
@@ -317,27 +316,26 @@ public class HuslConverter {
 	 * Converts an LCH tuple to an HUSL one, altering the passed array to represent the output (discarding the input).
 	 */
 	private static void unsafeConvertLchToHusl(float tuple[]) {
-		final float L = tuple[0];
-		final float C = tuple[1];
-		final float H = tuple[2];
+		// Tuple represents input.
+		final float L = tuple[LCH_L];
+		final float H = tuple[LCH_H];
 		// Bad things happen when you reach a limit.
-		if (L > 99.9999999f) {
-			tuple[0] = H;
-			tuple[1] = 0;
-			tuple[2] = 100;
+		if (L > 99.9999f) {
+			// Tuple is being filled with output. 
+			tuple[HUSL_H] = H;
+			tuple[HUSL_S] = 0;
+			tuple[HUSL_L] = 100;
 			return;
-		} else if (L < 0.00000001f) {
-			tuple[0] = H;
-			tuple[1] = tuple[2] = 0;
+		} else if (L < 0.00001f) {
+			// Tuple is being filled with output. 
+			tuple[HUSL_H] = H;
+			tuple[HUSL_S] = tuple[HUSL_L] = 0;
 			return;
 		}
-
-		final float max = maxChroma(L, H);
-		final float S = C / max * 100;
-
-		tuple[0] = H;
-		tuple[1] = S;
-		tuple[2] = L;
+		// Tuple is being filled with output. 
+		tuple[HUSL_S] = tuple[LCH_C] / maxChroma(L, H) * 100;
+		tuple[HUSL_H] = H;
+		tuple[HUSL_L] = L;
 	}
 
 	/**
