@@ -204,7 +204,10 @@ public class HuslConverter {
 
 		varU = 4 * X / (X + 15f * Y + 3 * Z);
 		varV = 9 * Y / (X + 15f * Y + 3 * Z);
-		L = 116 * f(Y / refY) - 16;
+		if (0 == (L = 116 * f(Y / refY) - 16)) {
+			tuple[0] = tuple[1] = tuple[2] = 0;
+			return;
+		}
 		U = 13 * L * (varU - refU);
 		V = 13 * L * (varV - refV);
 
@@ -233,6 +236,7 @@ public class HuslConverter {
 		U = tuple[1];
 		V = tuple[2];
 
+		// Black will create a divide-by-zero error.
 		if (L == 0) {
 			tuple[2] = tuple[1] = tuple[0] = 0f;
 			return;
