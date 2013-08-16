@@ -51,6 +51,9 @@ public final class SnapshotTestCase extends ActivityTestCase {
 	}
 	@Override
 	protected final void setUp() throws Exception {
+		if (null != stableSnapshot && null != currentSnapshot) {
+			return;
+		}
 		// Load the stable snapshot.
 		stableSnapshot = loadStableSnapshot();
 		// Generate the "current" (or actual) snapshot.
@@ -70,7 +73,7 @@ public final class SnapshotTestCase extends ActivityTestCase {
 					final float luv[] = HuslConverter.convertXyzToLuv(xyz);
 					final float lch[] = HuslConverter.convertLuvToLch(luv);
 					final float husl[] = HuslConverter.convertLchToHusl(lch);
-					// The Java port doesn't convert to HUSLp, so simply use the HUSL value. This wil cause the test to fail.
+					// The Java port doesn't convert to HUSLp, so simply use the HUSL value. This will cause the test to fail.
 					final float huslp[] = husl;
 					currentSnapshot.addMember(rgbString,
 							new ColorData(rgb, xyz, luv, lch, husl, huslp));
@@ -82,9 +85,10 @@ public final class SnapshotTestCase extends ActivityTestCase {
 		// This is kind-of a sanity check.
 		for (final int color : currentSnapshot) {
 			final ColorData stable = stableSnapshot.getMember(color);
-			final String message = "Color: " + Integer.toHexString(color);
+			String message = "color: " + Integer.toHexString(color);
 			assertNotNull(message, stable);
 			final ColorData current = currentSnapshot.getMember(color);
+			message += ", current: " + current.toString(ColorData.PROPERTIES_RGB);
 			assertEquals(message, stable.rgb[0], current.rgb[0], 1e-6f);
 			assertEquals(message, stable.rgb[1], current.rgb[1], 1e-6f);
 			assertEquals(message, stable.rgb[2], current.rgb[2], 1e-6f);
@@ -93,9 +97,10 @@ public final class SnapshotTestCase extends ActivityTestCase {
 	public final void testStep1Xyz() {
 		for (final int color : currentSnapshot) {
 			final ColorData stable = stableSnapshot.getMember(color);
-			final String message = "Color: " + Integer.toHexString(color);
+			String message = "color: " + Integer.toHexString(color);
 			assertNotNull(message, stable);
 			final ColorData current = currentSnapshot.getMember(color);
+			message += ", current: " + current.toString(ColorData.PROPERTIES_RGB_XYZ);
 			assertEquals(message, stable.xyz[0], current.xyz[0], 1e-6f);
 			assertEquals(message, stable.xyz[1], current.xyz[1], 1e-6f);
 			assertEquals(message, stable.xyz[2], current.xyz[2], 1e-6f);
@@ -104,9 +109,10 @@ public final class SnapshotTestCase extends ActivityTestCase {
 	public final void testStep2Luv() {
 		for (final int color : currentSnapshot) {
 			final ColorData stable = stableSnapshot.getMember(color);
-			final String message = "Color: " + Integer.toHexString(color);
+			String message = "color: " + Integer.toHexString(color);
 			assertNotNull(message, stable);
 			final ColorData current = currentSnapshot.getMember(color);
+			message += ", current: " + current.toString(ColorData.PROPERTIES_RGB_THROUGH_LUV);
 			assertEquals(message, stable.luv[0], current.luv[0], 1e-3f);
 			assertEquals(message, stable.luv[1], current.luv[1], 1e-3f);
 			assertEquals(message, stable.luv[2], current.luv[2], 1e-3f);
@@ -115,9 +121,10 @@ public final class SnapshotTestCase extends ActivityTestCase {
 	public final void testStep3Lch() {
 		for (final int color : currentSnapshot) {
 			final ColorData stable = stableSnapshot.getMember(color);
-			final String message = "Color: " + Integer.toHexString(color);
+			String message = "Color: " + Integer.toHexString(color);
 			assertNotNull(message, stable);
 			final ColorData current = currentSnapshot.getMember(color);
+			message += ", current: " + current.toString(ColorData.PROPERTIES_RGB_THROUGH_LCH);
 			assertEquals(message, stable.lch[0], current.lch[0], 1e-3f);
 			assertEquals(message, stable.lch[1], current.lch[1], 1e-3f);
 			assertEquals(message, stable.lch[2], current.lch[2], 1e-3f);
@@ -126,9 +133,10 @@ public final class SnapshotTestCase extends ActivityTestCase {
 	public final void testStep4Husl() {
 		for (final int color : currentSnapshot) {
 			final ColorData stable = stableSnapshot.getMember(color);
-			final String message = "Color: " + Integer.toHexString(color);
+			String message = "Color: " + Integer.toHexString(color);
 			assertNotNull(message, stable);
 			final ColorData current = currentSnapshot.getMember(color);
+			message += ", current: " + current.toString(ColorData.PROPERTIES_RGB_THROUGH_HUSL);
 			assertEquals(message, stable.husl[0], current.husl[0], 1e-3f);
 			assertEquals(message, stable.husl[1], current.husl[1], 1e-3f);
 			assertEquals(message, stable.husl[2], current.husl[2], 1e-3f);
@@ -137,9 +145,10 @@ public final class SnapshotTestCase extends ActivityTestCase {
 	public final void testStep4Huslp() {
 		for (final int color : currentSnapshot) {
 			final ColorData stable = stableSnapshot.getMember(color);
-			final String message = "Color: " + Integer.toHexString(color);
+			String message = "Color: " + Integer.toHexString(color);
 			assertNotNull(message, stable);
 			final ColorData current = currentSnapshot.getMember(color);
+			message += ", current: " + current.toString(ColorData.PROPERTIES_RGB_THROUGH_HUSL_HUSLP);
 			assertEquals(message, stable.huslp[0], current.huslp[0], 1e-3f);
 			assertEquals(message, stable.huslp[1], current.huslp[1], 1e-3f);
 			assertEquals(message, stable.huslp[2], current.huslp[2], 1e-3f);
