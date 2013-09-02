@@ -28,7 +28,7 @@ Run `npm install` and `npm test`. Try `cake snapshot` to generate a JSON file of
 
 This repo contains the canonical version. With the help of Robert McGinley, HUSL was also [ported to Python](https://github.com/boronine/pyhusl).
 
-A work-in-progress of C and Java ports is included in the repo, done by Lajos Ambrus. The Java port has some tests, added by @Pimm, but they are currently made to work with the Android SDK. It would be nice if someone made them more generic.
+A work-in-progress of C and Java ports is included in the repo, done by Lajos Ambrus. The Java port has some tests, added by [@Pimm](https://github.com/Pimm), but they are currently made to work with the Android SDK. It would be nice if someone made them more generic.
 
 A [Ruby port](https://github.com/soulcutter/husler) has been started by [@soulcutter](https://github.com/soulcutter). I would love to see this done so that HUSL could be integrated into [SASS](http://sass-lang.com/).
 
