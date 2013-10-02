@@ -359,13 +359,13 @@ public class HuslConverter {
 		// Clone the tuple, to avoid changing the input.
 		final float[] result = new float[]{huslTuple[0], huslTuple[1], huslTuple[2]};
 		// Calculate the LCH values.
-		convertHuslToLch(result);
+		unsafeConvertHuslToLch(result);
 		// Calculate the LUV values.
-		convertLchToLuv(result);
+		unsafeConvertLchToLuv(result);
 		// Calculate the XYZ values.
-		convertLuvToXyz(result);
+		unsafeConvertLuvToXyz(result);
 		// Calculate the RGB values.
-		convertXyzToRgb(result);
+		unsafeConvertXyzToRgb(result);
 		return result;
 	}
 
@@ -376,13 +376,13 @@ public class HuslConverter {
 		// Clone the tuple, to avoid changing the input.
 		final float[] result = new float[]{rgbTuple[0], rgbTuple[1], rgbTuple[2]};
 		// Calculate the XYZ values.
-		convertRgbToXyz(result);
+		unsafeConvertRgbToXyz(result);
 		// Calculate the LUV values.
-		convertXyzToLuv(result);
+		unsafeConvertXyzToLuv(result);
 		// Calculate the LCH values.
-		convertLuvToLch(result);
+		unsafeConvertLuvToLch(result);
 		// Calculate the HUSL values.
-		convertLchToHusl(result);
+		unsafeConvertLchToHusl(result);
 		return result;
 	}
 
