@@ -34,7 +34,7 @@
     sinH = Math.sin(hrad);
     cosH = Math.cos(hrad);
     sub1 = Math.pow(L + 16, 3) / 1560896;
-    sub2 = sub1 > 216 / 24389 ? sub1 : 27 * L / 24389;
+    sub2 = sub1 > epsilon ? sub1 : L / kappa;
     return function(channel) {
       var bottom, lbottom, m1, m2, m3, rbottom, top, _ref;
       _ref = m[channel], m1 = _ref[0], m2 = _ref[1], m3 = _ref[2];
@@ -51,7 +51,7 @@
   _hradExtremum = function(L) {
     var lhs, rhs, sub;
     lhs = (Math.pow(L, 3) + 48 * Math.pow(L, 2) + 768 * L + 4096) / 1560896;
-    rhs = 216 / 24389;
+    rhs = epsilon;
     sub = lhs > rhs ? lhs : 10 * L / 9033;
     return function(channel, limit) {
       var bottom, hrad, m1, m2, m3, top, _ref;

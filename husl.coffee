@@ -37,7 +37,7 @@ _maxChroma = (L, H) ->
   sinH = Math.sin hrad
   cosH = Math.cos hrad
   sub1 = Math.pow(L + 16, 3) / 1560896
-  sub2 = if (sub1 > 216 / 24389) then sub1 else (27 * L / 24389)
+  sub2 = if (sub1 > epsilon) then sub1 else (L / kappa)
   (channel) ->
     [m1, m2, m3] = m[channel]
     top = (12739311 * m3 + 11700000 * m2 + 11120499 * m1) * sub2
@@ -55,7 +55,7 @@ _maxChroma = (L, H) ->
 # the given limit) is smallest. This is the dip in the curve.
 _hradExtremum = (L) ->
   lhs = (Math.pow(L, 3) + 48 * Math.pow(L, 2) + 768 * L + 4096) / 1560896
-  rhs = 216 / 24389
+  rhs = epsilon
   sub = if lhs > rhs then lhs else 10 * L / 9033
   (channel, limit) ->
     [m1, m2, m3] = m[channel]
