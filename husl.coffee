@@ -119,7 +119,7 @@ toLinear = (c) ->
   else
     c / 12.92
 
-# Represents rgb [0-1] values as [0-225] values. Errors out if value
+# Represents rgb [0-1] values as [0-255] values. Errors out if value
 # out of the range
 rgbPrepare = (tuple) ->
   tuple = (round(n, 3) for n in tuple)
