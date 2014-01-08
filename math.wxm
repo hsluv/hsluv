@@ -1,24 +1,62 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 11.08.0 ] */
+/* [ Created with wxMaxima version 13.04.2 ] */
 
 /* [wxMaxima: input   start ] */
-from_linear(c):=(if(c<=0.0031308) then 12.92 * c else 1.055 * c ^ (1 / 2.4) - 0.055);
-/* [wxMaxima: input   end   ] */
+/* Authors: Alexei Boronine, Bastien Dejean */
 
-/* [wxMaxima: input   start ] */
-/* This should be wrapped in from_linear, but since we are only
- looking at 0 and 1, it is unnecessary (plug in 0 and 1 above) */
-RGBval(x, y, z, m1, m2, m3):=(x * m1 + y * m2 + z * m3);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
+/* References: */
+/* https://gist.github.com/baskerville/8297428 */
+/* http://www.brucelindbloom.com/ */
+/* https://github.com/jrus/chromatist */
+/* https://github.com/boronine/husl */
+ 
+/* D65 white point */
 refX: 0.95047;
 refY: 1.0;
 refZ: 1.08883;
-lab_e: 0.008856;
-lab_k: 903.3;
+ 
+lab_e: (6 / 29) ^ 3;
+lab_k: (29 / 3) ^ 3;
 refU: (4 * refX) / (refX + (15 * refY) + (3 * refZ));
 refV: (9 * refY) / (refX + (15 * refY) + (3 * refZ));
+
+/* Source: */
+/* http://www.brucelindbloom.com/index.html?WorkingSpaceInfo.html */
+ 
+x_r: 0.64;
+y_r: 0.33;
+x_g: 0.30;
+y_g: 0.60;
+x_b: 0.15;
+y_b: 0.06;
+ 
+X_r: x_r / y_r;
+Y_r: 1;
+Z_r: (1 - x_r - y_r) / y_r;
+ 
+X_g: x_g / y_g;
+Y_g: 1;
+Z_g: (1 - x_g - y_g) / y_g;
+ 
+X_b: x_b / y_b;
+Y_b: 1;
+Z_b: (1 - x_b - y_b) / y_b;
+ 
+M_P: matrix([X_r, X_g, X_b],
+[Y_r, Y_g, Y_b],
+[Z_r, Z_g, Z_b]);
+ 
+M_S: invert(M_P) . [refX, refY, refZ];
+ 
+/* sRGB D65 matrices */
+M_RGB_XYZ: M_P * transpose(addcol(M_S, M_S, M_S));
+M_XYZ_RGB: invert(M_RGB_XYZ);
+
+from_linear(c):=(if(c<=0.0031308) then 12.92 * c else 1.055 * c ^ (1 / 2.4) - 0.055);
+/* This should be wrapped in from_linear, but since we are only
+ looking at 0 and 1, it is unnecessary (plug in 0 and 1 above) */
+RGBval(x, y, z, m1, m2, m3):=(x * m1 + y * m2 + z * m3);
+
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -40,7 +78,6 @@ channelFromLUV(L, U, V, m1, m2, m3) := block(
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-/* CORRECT */
 channelFromLCH(L, C, H, m1, m2, m3) := block(
     [hrad, U, V],
     hrad: H / 360 * 2 * %pi,
@@ -57,28 +94,11 @@ maxChroma(L, H, m1, m2, m3, t) := rhs(
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
+solve(channelFromLCH(L, C, H, m1, m2, m3) = t, C);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
 fpprec : 6;
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-solve(diff(maxChroma(L, H, m1, m2, m3, t), H) = 0, H);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-/* Manually rewritten for code */
-maxChroma2(L, H, m1, m2, m3, t) := block(
-    [hrad, subH, cosH, sub1, sub2, sub3, sub4, sub5],
-    hrad : (%pi * H) / 180,
-    sinH : sin(hrad),
-    cosH : cos(hrad),
-    sub1 : (L + 16) ^ 3 / 1560896,
-    sub2 : (if sub1 > 1107 / 125000 then sub1 else (10 * L) / 9033),
-    top  : (1.1446b1 * m3 + 1.05122b1 * m2 + 9.99149b0 * m1) * sub2,
-    print(top),
-    sub4 : (8.63298b0 * m3 - 1.7266b0 * m2) * sinH,
-    sub5 : (1.29495b0 * m3 - 3.88484b0 * m1) * cosH,
-    L * (top - 1.05122b1 * t)/((sub4 + sub5) * sub2 + 1.7266b0 * t * sinH)
-);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -86,13 +106,13 @@ block(
 [L],
 L: 50,
 plot2d([
-    maxChroma2(L, x, 3.2406, -1.5372, -0.4986, 0),
-    maxChroma2(L, x, 3.2406, -1.5372, -0.4986, 1),
-    maxChroma2(L, x, -0.9689, 1.8758,  0.0415, 0),
-    maxChroma2(L, x, -0.9689, 1.8758,  0.0415, 1),
-    maxChroma2(L, x, 0.0557, -0.2040,  1.0570, 0),
-    maxChroma2(L, x, 0.0557, -0.2040,  1.0570, 1)
-], [x,0,360], [y,0,400], [
+    maxChroma(L, x, M_XYZ_RGB[1][1], M_XYZ_RGB[1][2], M_XYZ_RGB[1][3], 0),
+    maxChroma(L, x, M_XYZ_RGB[1][1], M_XYZ_RGB[1][2], M_XYZ_RGB[1][3], 1),
+    maxChroma(L, x, M_XYZ_RGB[2][1], M_XYZ_RGB[2][2], M_XYZ_RGB[2][3], 0),
+    maxChroma(L, x, M_XYZ_RGB[2][1], M_XYZ_RGB[2][2], M_XYZ_RGB[2][3], 1),
+    maxChroma(L, x, M_XYZ_RGB[3][1], M_XYZ_RGB[3][2], M_XYZ_RGB[3][3], 0),
+    maxChroma(L, x, M_XYZ_RGB[3][1], M_XYZ_RGB[3][2], M_XYZ_RGB[3][3], 1)
+], [x,0,360], [y,0,200], [
     legend,
     "red = 0",
     "red = 1",
@@ -108,6 +128,10 @@ plot2d([
     "chroma"
 ])
 );
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+solve(diff(maxChroma(L, H, m1, m2, m3, t), H) = 0, H);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

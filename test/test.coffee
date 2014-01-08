@@ -33,8 +33,8 @@ describe 'Stylus integration', ->
     .someclass {
       color: rgba(0,0,0,0.1);
       color: #1d1b1a;
-      color: rgba(50,48,47,0.3);
-      color: #484644;
+      color: rgba(51,48,46,0.3);
+      color: #494643;
     }
 
     """
@@ -49,7 +49,7 @@ describe 'HUSL snapshot', ->
   it 'should match the stable snapshot', ->
 
     current = tools.snapshot()
-    stable = require './snapshot-2.x.x.json'
+    stable = require './snapshot-3.x.x.json'
 
     for hex, stableSamples of stable
       currentSamples = current[hex]

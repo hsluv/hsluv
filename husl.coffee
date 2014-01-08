@@ -5,16 +5,6 @@
 # All non-husl color math on this page comes from http://www.easyrgb.com
 # Thanks guys!
 
-# Used for rgb <-> xyz conversions
-m =
-  R: [3.2406, -1.5372, -0.4986]
-  G: [-0.9689, 1.8758,  0.0415]
-  B: [0.0557, -0.2040,  1.0570]
-m_inv =
-  X: [0.4124, 0.3576, 0.1805]
-  Y: [0.2126, 0.7152, 0.0722]
-  Z: [0.0193, 0.1192, 0.9505]
-
 # Hard-coded D65 standard illuminant
 refX = 0.95047
 refY = 1.00000
@@ -22,9 +12,25 @@ refZ = 1.08883
 refU = 0.19784 # = (4 * refX) / (refX + (15 * refY) + (3 * refZ))
 refV = 0.46834 # = (9 * refY) / (refX + (15 * refY) + (3 * refZ))
 
-# CIE LAB and LUV constants
-lab_e = 0.008856
-lab_k = 903.3
+refU = (4 * refX) / (refX + (15 * refY) + (3 * refZ))
+refV = (9 * refY) / (refX + (15 * refY) + (3 * refZ))
+
+# Used for rgb <-> xyz conversions
+# Numbers taken from Maxima file
+m =
+  R: [ 3.240454162114103, -1.537138512797715, -0.49853140955601 ]
+  G: [ -0.96926603050518, 1.876010845446694,  0.041556017530349 ]
+  B: [ 0.055643430959114, -0.20402591351675,  1.057225188223179 ]
+m_inv =
+  X: [ 0.41245643908969,  0.3575760776439,  0.18043748326639  ]
+  Y: [ 0.21267285140562,  0.71515215528781, 0.072174993306559 ]
+  Z: [ 0.019333895582329, 0.1191920258813,  0.95030407853636  ]
+
+
+# CIE LUV constants
+# http://www.brucelindbloom.com/index.html?LContinuity.html
+kappa = 24389 / 27
+epsilon = 216 / 24389
 
 # For a given Lightness, Hue, RGB channel, and limit (1 or 0),
 # return Chroma, such that passing this chroma value will cause the
@@ -34,30 +40,30 @@ _maxChroma = (L, H) ->
   sinH = Math.sin hrad
   cosH = Math.cos hrad
   sub1 = Math.pow(L + 16, 3) / 1560896
-  sub2 = if sub1 > 0.008856 then sub1 else L / 903.3
+  sub2 = if (sub1 > 216 / 24389) then sub1 else (27 * L / 24389)
   (channel) ->
     [m1, m2, m3] = m[channel]
-    top = (0.99915 * m1 + 1.05122 * m2 + 1.14460 * m3) * sub2
-    rbottom = 0.86330 * m3 - 0.17266 * m2
-    lbottom = 0.12949 * m3 - 0.38848 * m1
+    top = (12739311 * m3 + 11700000 * m2 + 11120499 * m1) * sub2
+    rbottom = 9608480 * m3 - 1921696 * m2
+    lbottom = 1441272 * m3 - 4323816 * m1
     bottom = (rbottom * sinH + lbottom * cosH) * sub2
     (limit) ->
       # This is the C value that you can put together with the given L and H
       # to produce a color that with <RGB channel> = 1 or 2. This means that if C
       # goes any higher, the color will step outside of the RGB gamut.
-      L * (top - 1.05122 * limit) / (bottom + 0.17266 * sinH * limit)
+      L * (top - 11700000 * limit) / (bottom + 1921696 * sinH * limit)
 
 # Given Lightness, channel and limit, returns the Hue (in radians) at the point
 # where the maximum chroma (the chroma that will make the given channel pass
 # the given limit) is smallest. This is the dip in the curve.
 _hradExtremum = (L) ->
   lhs = (Math.pow(L, 3) + 48 * Math.pow(L, 2) + 768 * L + 4096) / 1560896
-  rhs = 1107 / 125000
+  rhs = 216 / 24389
   sub = if lhs > rhs then lhs else 10 * L / 9033
   (channel, limit) ->
     [m1, m2, m3] = m[channel]
-    top = -3015466475 * m3 * sub + 603093295 * m2 * sub - 603093295 * limit
-    bottom = 1356959916 * m1 * sub - 452319972 * m3 * sub
+    top = (20 * m3 - 4 * m2) * sub + 4 * limit
+    bottom = (3 * m3 - 9 * m1) * sub
     hrad = Math.atan2(top, bottom)
     # This is a math hack to deal with tan quadrants, I'm too lazy to figure
     # out how to do this properly
@@ -102,18 +108,6 @@ dotProduct = (a, b) ->
 round = (num, places) ->
   n = Math.pow 10, places
   return Math.round(num * n) / n
-
-# Used for Lab and Luv conversions
-f = (t) ->
-  if t > lab_e
-    Math.pow(t, 1 / 3)
-  else
-    7.787 * t + 16 / 116
-f_inv = (t) ->
-  if Math.pow(t, 3) > lab_e
-    Math.pow(t, 3)
-  else
-    (116 * t - 16) / lab_k
 
 # Used for rgb conversions
 fromLinear = (c) ->
@@ -164,11 +158,23 @@ conv.rgb.xyz = (tuple) ->
   Z = dotProduct m_inv.Z, rgbl
   [X, Y, Z]
 
+# http://en.wikipedia.org/wiki/CIELUV
+Y_to_L = (Y) ->
+  if Y <= epsilon
+    (Y / refY) * kappa
+  else
+    116 * Math.pow((Y / refY), 1/3) - 16
+L_to_Y = (L) ->
+  if L <= 8
+    refY * L / kappa
+  else
+    refY * Math.pow((L + 16) / 116, 3)
+
 conv.xyz.luv = (tuple) ->
   [X, Y, Z] = tuple
   varU = (4 * X) / (X + (15 * Y) + (3 * Z))
   varV = (9 * Y) / (X + (15 * Y) + (3 * Z))
-  L = 116 * f(Y / refY) - 16
+  L = Y_to_L(Y)
   # Black will create a divide-by-zero error
   if L is 0
     return [0, 0, 0]
@@ -181,10 +187,9 @@ conv.luv.xyz = (tuple) ->
   # Black will create a divide-by-zero error
   if L is 0
     return [0, 0, 0]
-  varY = f_inv((L + 16) / 116)
   varU = U / (13 * L) + refU
   varV = V / (13 * L) + refV
-  Y = varY * refY
+  Y = L_to_Y(L)
   X = 0 - (9 * Y * varU) / ((varU - 4) * varV - varU * varV)
   Z = (9 * Y - (15 * varV * Y) - (varV * X)) / (3 * varV)
   [X, Y, Z]

@@ -8,6 +8,10 @@ There have long existed color spaces designed for perceptual uniformity. One of 
 
 [Demo, documentation etc.](http://boronine.com/husl)
 
+# Versioning
+
+This repo contains the canonical implementation of HUSL, its source code being HUSL's informal specification. Following [semantic versioning](http://semver.org/), the major version must be incremented whenever the color math changes. These changes can be tested for with snapshot files.
+
 # Testing
 
 Run `npm install` and `npm test`. Try `cake snapshot` to generate a JSON file of the entire gamut to be used for debugging and regression tests. The format of the file is as follows:
@@ -26,13 +30,13 @@ Run `npm install` and `npm test`. Try `cake snapshot` to generate a JSON file of
 
 # Ports
 
-This repo contains the canonical version. With the help of Robert McGinley, HUSL was also [ported to Python](https://github.com/boronine/pyhusl).
+With the help of Robert McGinley, HUSL was also [ported to Python](https://github.com/boronine/pyhusl) (version 2 only).
 
 A work-in-progress of C and Java ports is included in the repo, done by Lajos Ambrus. The Java port has some tests, added by [@Pimm](https://github.com/Pimm), but they are currently made to work with the Android SDK. It would be nice if someone made them more generic.
 
 A [Ruby port](https://github.com/soulcutter/husler) has been started by [@soulcutter](https://github.com/soulcutter). I would love to see this done so that HUSL could be integrated into [SASS](http://sass-lang.com/).
 
-***
+# License
 
 Copyright (C) 2012 Alexei Boronine
 
