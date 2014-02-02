@@ -1,0 +1,401 @@
+<!doctype html>
+<head>
+  <meta charset="utf-8">
+  <title>HUSL - Human-friendly HSL</title>
+  <meta name="description" content="">
+  <meta name="author" content="Alexei Boronine">
+  <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="http://yandex.st/highlightjs/7.2/styles/default.min.css">
+</head>
+<body data-spy="scroll" data-target=".navbar-fixed-top" data-offset="50">
+  <div class="dark">
+    <a href="https://github.com/boronine/husl"><img style="position:absolute;top:0;right:0;border:0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+    <div class="container top">
+      <header class="top">
+        <h1><em>HUSL</em></h1>
+        <h2 class="tagline">
+          <em>
+            Human-friendly HSL
+          </em>
+        </h2>
+      </header>
+      <div id="picker">
+        <div class="variants">
+          <a class="choice original selected" href="#">original</a> / 
+          <a class="choice pastel" href="#">pastel</a>
+        </div>
+        <canvas width="360" height="200"></canvas>
+
+        <svg class="icon full" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 100 100" style="enable-background:new 0 0 99.988 100;" xml:space="preserve">
+          <path d="M56.25,6.25c0,3.455-2.808,6.25-6.25,6.25c-3.467,0-6.25-2.795-6.25-6.25C43.75,2.795,46.533,0,50,0  C53.442,0,56.25,2.795,56.25,6.25z"/>
+          <path d="M43.75,93.75c0-3.467,2.783-6.25,6.25-6.25s6.25,2.783,6.25,6.25c0,3.455-2.783,6.25-6.25,6.25  S43.75,97.205,43.75,93.75z"/>
+          <path d="M6.25,43.744c3.442,0,6.25,2.795,6.25,6.25c0,3.461-2.808,6.25-6.25,6.25  c-3.467,0-6.25-2.789-6.25-6.25C0,46.539,2.783,43.744,6.25,43.744z"/>
+          <path d="M93.738,56.244c-3.431,0-6.238-2.796-6.238-6.244c0-3.467,2.808-6.25,6.274-6.25  c3.431,0,6.25,2.789,6.214,6.244C100.024,53.455,97.205,56.25,93.738,56.244z"/>
+          <path d="M50,25c-13.818,0-25,11.193-25,25s11.182,25,25,25c13.794,0,25-11.193,25-25S63.794,25,50,25L50,25z"/>
+          <path d="M23.169,14.331c2.441,2.441,2.441,6.396,0,8.838c-2.441,2.447-6.396,2.441-8.838,0  s-2.441-6.391,0-8.838C16.772,11.89,20.728,11.89,23.169,14.331z"/>
+          <circle cx="18.75" cy="81.25" r="6.249"/>
+          <path d="M76.855,85.669c-2.441-2.441-2.441-6.396,0-8.838s6.396-2.441,8.838,0  c2.466,2.441,2.466,6.396,0,8.838C83.252,88.11,79.297,88.11,76.855,85.669z"/>
+          <path d="M85.693,23.175c-2.441,2.436-6.396,2.436-8.838,0c-2.441-2.453-2.441-6.396,0-8.844  c2.441-2.436,6.396-2.441,8.838,0.006C88.159,16.778,88.159,20.74,85.693,23.175z"/>
+        </svg>
+
+        <svg class="icon empty" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 100 100" style="enable-background:new 0 0 99.988 100;" xml:space="preserve">
+          <path d="M56.25,6.25c0,3.455-2.795,6.25-6.25,6.25s-6.25-2.795-6.25-6.25C43.75,2.795,46.545,0,50,0  S56.25,2.795,56.25,6.25z"/>
+          <path d="M43.75,93.75c0-3.467,2.795-6.25,6.25-6.25c3.467,0,6.25,2.783,6.25,6.25  c0,3.442-2.783,6.25-6.25,6.25C46.545,100,43.75,97.192,43.75,93.75z"/>
+          <path d="M6.25,43.744c3.455,0,6.25,2.795,6.25,6.25c0,3.461-2.795,6.25-6.25,6.25  c-3.455,0-6.25-2.789-6.25-6.25C0,46.539,2.795,43.744,6.25,43.744z"/>
+          <path d="M93.738,56.244c-3.443,0-6.238-2.796-6.238-6.244c0-3.467,2.783-6.25,6.25-6.25  c3.442,0,6.25,2.789,6.25,6.244C100,53.455,97.192,56.25,93.738,56.244z"/>
+          <path d="M50,37.5c6.885,0,12.5,5.609,12.5,12.5S56.885,62.5,50,62.5S37.5,56.891,37.5,50S43.115,37.5,50,37.5   M50,25c-13.807,0-25,11.193-25,25s11.193,25,25,25s25-11.193,25-25S63.807,25,50,25L50,25z"/>
+          <path d="M23.169,14.331c2.441,2.441,2.441,6.396,0,8.838c-2.441,2.447-6.396,2.441-8.838,0  s-2.441-6.391,0-8.838C16.772,11.89,20.728,11.89,23.169,14.331z"/>
+          <circle cx="18.75" cy="81.25" r="6.249"/>
+          <path d="M76.855,85.669c-2.441-2.441-2.441-6.396,0-8.838c2.453-2.441,6.396-2.441,8.838,0  s2.453,6.396,0,8.838C83.252,88.11,79.297,88.11,76.855,85.669z"/>
+          <path d="M85.693,23.175c-2.441,2.436-6.396,2.436-8.838,0c-2.441-2.453-2.441-6.396,0-8.844  c2.441-2.436,6.396-2.441,8.838,0.006C88.135,16.778,88.135,20.74,85.693,23.175z"/>
+        </svg>
+
+        <div class="slider"></div>
+        <div class="swatch"></div>
+        <div class="coordinate-names">
+          R:<br/>G:</br>B:<br/><br/>H:<br/>S:<br/>L:
+        </div>
+        <div class="coordinates">
+          <span class="R"></span><br/>
+          <span class="G"></span><br/>
+          <span class="B"></span><br/><br/>
+          <span class="H"></span><br/>
+          <span class="S"></span><br/>
+          <span class="L"></span><br/>
+        </div>
+        <div class="chroma"><span class="name">Chroma: </span><span class="C"></span></div>
+        <div class="scope"></div>
+        <input class="hex"/>
+      </div>
+    </div>
+  </div>
+  <div class="light">
+    <div class="container">
+      <div class="row">
+        <div class="span6">
+          <h2 id="overview">What is <abbr class="initialism">HUSL</abbr>?</h2>
+          <p><abbr class="initialism">HUSL</abbr> is a <a href="http://boronine.com/2012/03/26/Color-Spaces-for-Human-Beings/">human-friendly</a> alternative to the <abbr class="initialism">HSL</abbr> color space. <abbr class="initialism">HSL</abbr> was designed back in the 70s to be computationally cheap. It is a clever geometric transformation of the <abbr class="initialism">RGB</abbr> color space and it does not take into account the complexities of human color vision.</p>
+          <p>There have long existed color spaces designed for perceptual uniformity. One of these color spaces is <a href="http://en.wikipedia.org/wiki/CIELUV"><abbr class="initialism">CIELUV</abbr></a> (and its cylindrically shaped brother <abbr class="initialism">CIE LCh<sub>uv</sub></abbr>). Like <abbr class="initialism">HSL</abbr>, it defines hue and lightness, but instead of saturation it defines chroma. The problem with its chroma component is that it doesn't fit into a specific range. This makes it very hard to define colors programmatically. <strong><abbr class="husl initialism">HUSL</abbr> is a modified version of the <abbr class="initialism">CIE LCh<sub>uv</sub></abbr> color space with a new saturation component</strong>.</p>
+        </div>
+        <div class="span6">
+          <div class="alert alert-info">
+            <b>NEW</b>: <a href="http://boronine.com/husl/syntax">See HUSL in action</a>
+          </div>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th></th>
+                <th>HSL</th>
+                <th>CIE&nbsp;LCh<sub>uv</sub></th>
+                <th>HUSL</th>
+                <th>HUSLp</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Lightness</th>
+                <td><span class="label label-important">Relative</span></td>
+                <td><span class="label label-success">Absolute</span></td>
+                <td><span class="label label-success">Absolute</span></td>
+                <td><span class="label label-success">Absolute</span></td>
+              </tr>
+              <tr>
+                <th>Saturation<sup>*</sup></th>
+                <td><span class="label label-important">Relative</span></td>
+                <td><span class="label label-success">Absolute</span></td>
+                <td><span class="label label-important">Relative</span></td>
+                <td><span class="label label-success">Absolute</span></td>
+              </tr>
+              <tr>
+                <th>Hue uniformity</th>
+                <td><span class="label label-important">Poor</span></td>
+                <td><span class="label label-success">Good</span></td>
+                <td><span class="label label-success">Good</span></td>
+                <td><span class="label label-success">Good</span></td>
+              </tr>
+              <tr>
+                <th>Component ranges</th>
+                <td><span class="label label-success">Defined</span></td>
+                <td><span class="label label-important">Undefined</span></td>
+                <td><span class="label label-success">Defined</span></td>
+                <td><span class="label label-success">Defined</span></td>
+              </tr>
+              <tr>
+                <th>Saturated colors</th>
+                <td><span class="label label-success">Yes</span></td>
+                <td><span class="label label-success">Yes</span></td>
+                <td><span class="label label-success">Yes</span></td>
+                <td><span class="label label-important">No</span></td>
+              </tr>
+              <tr>
+                <td colspan="5">
+                  <sup>*</sup> Saturation and chroma are actually distinct concepts
+                </td>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <div class="row" id="comparison">
+        <div class="span4 offset4">
+          <h2 class="center">CIE LCh<sub>uv</sub></h2>
+        </div>
+      </div>
+      <div class="row" id="comparison">
+        <div class="span4 offset4">
+          <img src="img/demo/cielchuv.png" class="demo"/>
+        </div>
+        <div class="span4">
+          <p>The chroma component of <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> is absolute. Unlike <abbr class="initialist">HSL</abbr>'s saturation you can effectively use it to compare two different colors. The dips in the graph represent impossible colors (such as dark saturated yellow). <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> doesn't warn you about them, making it unsuitable for generating colors.</p> 
+        </div>
+      </div>
+      <div class="row">
+        <div class="span4">
+          <h2 class="center">HSL</h2>
+          <img src="img/demo/hsl.png" class="demo"/>
+        </div>
+        <div class="span4">
+          <h2 class="center">HUSL</h2>
+          <img src="img/demo/husl.png" class="demo"/>
+          <p><abbr class="initialism">HUSL</abbr> preserves the lightness and hue components of <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> and stretches its chroma vertically so that every color has the same range, defined as a percentage.</p>
+        </div>
+        <div class="span4">
+          <h2 class="center">HUSLp</h2>
+          <img src="img/demo/huslp.png" class="demo"/>
+          <p><abbr class="initialism">HUSLp</abbr> takes as many colors as it can from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> without distorting the chroma. As you can see, the resulting color space is smooth, but only "pastel" colors can be included.</p>
+        </div>
+      </div>
+      <h2>Chroma</h2>
+      <div class="row">
+        <div class="span4">
+          <img src="img/demo/hsl-chroma.png" class="demo"/>
+        </div>
+        <div class="span4">
+          <img src="img/demo/husl-chroma.png" class="demo"/>
+          <p>Both <abbr class="initialism">HSL</abbr> and <abbr class="initialism">HUSL</abbr> have a distorted chroma map, this is a trade-off of their convenient shape. <abbr class="initialism">HUSL</abbr>'s chroma has more sudden shifts, perhaps it can be improved with a better scaling function. <a href="https://github.com/boronine/husl">Fork my code!</a></p>
+        </div>
+        <div class="span4">
+          <img src="img/demo/huslp-chroma.png" class="demo"/>
+        </div>
+      </div>
+      <h2>Lightness</h2>
+      <div class="row">
+        <div class="span4">
+          <img src="img/demo/hsl-lightness.png" class="demo"/>
+        </div>
+        <div class="span6">
+          <p>Have you ever tried to use HSL to work out contrast? Define background and text colors? I know I have, with horrible results.</p>
+          <p><i class="icon-hand-left"></i> This is why. Two different colors with the same lightness as defined by <abbr class="initialism">HSL</abbr> can actually have very different lightness. For this demo I am using <abbr class="initialism">CIE</abbr>'s definition of lightness. Both <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> and <abbr class="initialism">HUSL</abbr> use this component, so their picture would be an even grey. This definition of lightness is based on experimental results, you will find that it works very well.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="span8">
+          <p style="margin-top:20px">Let's try to generate some random background colors:</p>
+          <pre><code class="javascript">function randomHue() {
+  return Math.floor(Math.random() * 360);
+}
+// HUSL demo
+$(...).css('background-color', $.husl.husl(randomHue(), 90, 60));
+// HSL demo
+$(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
+        </div>
+        <div class="span2">
+          <button class="btn btn-large btn-block" id="demo1">Test HUSL</button>
+          <div class="demo">Lightness: 60%</div>
+          <div class="demo">Lightness: 60%</div>
+          <div class="demo">Lightness: 60%</div>
+          <div class="demo">Lightness: 60%</div>
+          <div class="demo">Lightness: 60%</div>
+          <div class="demo">Lightness: 60%</div>
+        </div>
+        <div class="span2">
+          <button class="btn btn-large btn-block" id="demo2">Test HSL</button>
+          <div class="demo">Lightness: 60%</div>
+          <div class="demo">Lightness: 60%</div>
+          <div class="demo">Lightness: 60%</div>
+          <div class="demo">Lightness: 60%</div>
+          <div class="demo">Lightness: 60%</div>
+          <div class="demo">Lightness: 60%</div>
+        </div>
+      </div>
+      <h2>Hue</h2>
+      <div class="row">
+        <div class="span8">
+          <p><abbr class="initialism">HUSL</abbr>'s uniform hue means random colors will be truly random. Iterating over colors will also produce better results.</p>
+          <pre><code class="javascript">// HUSL demo
+$('#rainbow-husl div').each(function(index) {
+  $(this).css('background-color', $.husl.husl(index * 36, 90, 60));
+});
+// HSL demo
+$('#rainbow-hsl div').each(function(index) {
+  $(this).css('background-color', hslToHex(index * 36, 90, 60));
+});</code></pre>
+        </div>
+        <div class="span2" id="rainbow-husl">
+          <h3 class="center"><abbr class="initialism">HUSL</abbr></h3>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+        <div class="span2" id="rainbow-hsl">
+          <h3 class="center"><abbr class="initialism">HSL</abbr></h3>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+      <h1 id="status">Status</h1>
+      <div class="row">
+        <div class="span6">
+          <p><strong><abbr class="initialism">HUSL</abbr> is a work in progress.</strong> It works well already, but has some problems too. The project uses <a href="http://semver.org/">semantic versioning</a>, so any backwards-incompatible change will be marked clearly (by incrementing the x in x.y.z). I am not an expert on colors, so I greatly welcome anyone's insight. You can fork this project on <a href="https://github.com/boronine/husl">GitHub</a> or talk to me via <a href="mailto://alexei.boronine@gmail.com">email</a>. The code is released under the <a href="https://raw.github.com/boronine/husl/master/LICENSE">MIT</a> license, the math behind it is in the public domain.</p>
+          <p>I think <abbr class="initialism">HUSL</abbr> could benefit from a better scaling function, I haven't yet found one that is simple and would work well. Another option for further development is to use <abbr class="initialism">CIECAM02</abbr> as the base color space, since it is more recent that <abbr class="initialism">CIELUV</abbr>.</p>
+        </div>
+        <div class="span3">
+          <h4 class="center">Lightness: 10%</h4>
+          <img src="img/demo/husl-low.png" class="demo"/>
+        </div>
+        <div class="span3">
+          <h4 class="center">Lightness: 95%</h4>
+          <img src="img/demo/husl-high.png" class="demo"/>
+        </div>
+      </div>
+      <h2>How does <abbr class="initialism">HUSL</abbr> currently work?</h2>
+      <div class="row">
+        <div class="span6">
+          <p><abbr class="initialism">HUSL</abbr> is defined as a conversion to and from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>. This conversion is a two step process.</p>
+          <p><strong>HUSL:</strong></p>
+          <ol>
+            <li>Find the maximum chroma for a given lightness and hue</li>
+            <li>Scale the saturation to fit inside that chroma range (currently linear)</li>
+          </ol>
+          <p>Finding the maximum chroma involves building three functions that take <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>'s components as input and return <abbr class="initialism">RGB</abbr> channel values, one for each channel. We equate each to 1 and 0, and solve the 6 resulting equations for C. When we plot the 6 solutions with a fixed lightness and hue for x, we get the picture on the right. As expected, it looks like <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>.</p>
+          <p><strong>HUSLp:</strong></p>
+          <ol>
+            <li>Find the hue with the lowest maximum chroma for a given lightness</li>
+            <li>Use that lowest maximum chroma point as a cut-off point; scale the resulting rectangle linearly</li>
+          </ol>
+          <p>To find the extrema we differentiate the curves.</p>
+          <p>I used <a href="http://maxima.sourceforge.net/">Maxima</a> to build and solve these equations, and <a href="https://github.com/boronine/husl/blob/master/math.wxm">a wxMaxima file</a> is bundled with the code.</p>
+        </div>
+        <div class="span6">
+          <img src="img/plot.png"/>
+        </div>
+      </div>
+      <h1 id="ports">Ports</h1>
+      <div class="row">
+        <div class="span8">
+          <p>The canonical implementation of <abbr class="initialism">HUSL</abbr> is written in CoffeeScript, but I encourage you to port it to your language of choice.</p>
+          <p>Lajos Ambrus kindly ported <abbr class="initialism">HUSL</abbr> to <a href="https://github.com/boronine/husl/tree/master/src-java">Java</a> and <a href="https://github.com/boronine/husl/tree/master/src-c">C</a>. (These ports do not support HUSLp)</p>
+          <p>With Robert McGinley's help HUSL is fully ported to <a href="https://github.com/boronine/pyhusl">Python</a>.</p>
+          <p>A <a href="https://github.com/soulcutter/husler">Ruby</a> port has been started.</p>
+        </div>
+      </div>
+      <h1 id="usage">Usage</h1>
+      <div class="row">
+        <div class="span8">
+          <p><abbr class="initialism">HUSL</abbr> is written in CoffeeScript, you can use it server-side with <code>npm install husl</code> or client-side as a jQuery plugin&nbsp;(<code>$.husl</code>).</p>
+          <dl>
+            <dt>husl.toHex(hue, saturation, lightness)</dt>
+            <dd><i>hue</i> is a number between 0 and 360, <i>saturation</i> and <i>lightness</i> are numbers between 0 and 100. This function returns the resulting color as a hex string.</dd>
+            <dt>husl.toRGB(hue, saturation, lightness)</dt>
+            <dd>Like above, but returns an array of 3 numbers between 0 and 1, for each RGB channel.</dd>
+            <dt>husl.fromHex(hex)</dt>
+            <dd>Takes a hex string and returns the <abbr class="initialism">HUSL</abbr> color as defined above.</dd>
+            <dt>husl.fromRGB(red, green, blue)</dt>
+            <dd>Like above, but <i>red</i>, <i>green</i> and <i>blue</i> are passed as numbers between 0 and 1.</dd>
+          </dl>
+          <p>Use <strong>husl.p.toHex</strong>, <strong>husl.p.toRGB</strong>, <strong>husl.p.fromHex</strong> and <strong>husl.p.fromRGB</strong> for the "pastel" variant.</p>
+          <p><abbr class="initialism">HUSL</abbr> can also be used as a <a href="http://learnboost.github.com/stylus/">Stylus</a> plugin. To use from command line, run stylus like this:</p>
+          <pre><code class="bash">stylus &lt; input.styl &gt; output.css -u /path/to/husl.js</code></pre>
+          <p>To use programmatically, do this:</p>
+          <pre><code class="javascript">var husl = require('husl');
+app.use(stylus.middleware({
+  src: __dirname + '/app/views',
+  dest: __dirname + '/public',
+  compile: function(str, path) {
+    return stylus(str)
+      .set('filename', path);
+      .use(husl());
+  }
+});</code></pre>
+          <p>Now you can use <abbr class="initialism">HUSL</abbr> in your stylesheets!</p>
+          <pre><code>.tinted(hue)
+  background-color husl(hue, 90, 80)
+  color husl(hue, 90, 10)</code></pre>
+          <br/>
+        </div>
+      </div>
+      <hr/>
+      <footer>© Copyright 2012 by Alexei Boronine. (<a href="https://twitter.com/#!/boronine">@boronine</a>)<br/> <small>Icons courtesy of P.J. Onori, from <a href="http://thenounproject.com/">The Noun Project</a></small></footer>
+    </div>
+  </div>
+  <div class="navbar navbar-static-top" data-spy="affix" data-offset-top="550">
+    <div class="navbar-inner">
+      <div class="container">
+        <ul class="nav">
+          <li>
+            <a href="#overview">Overview</a>
+          </li>
+          <li>
+            <a href="#comparison">Comparison</a>
+          </li>
+          <li>
+            <a href="#status">Status</a>
+          </li>
+          <li>
+            <a href="#ports">Ports</a>
+          </li>
+          <li>
+            <a href="#usage">Usage</a>
+          </li>
+        </ul>
+        <ul class="nav pull-right">
+          <li><a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-url="http://boronine.com/husl" data-via="boronine">Tweet</a></li>
+          <li>
+            <a href="https://raw.github.com/boronine/husl/v3.0.0/husl.js">
+              husl.js (3.0.0)
+            </a>
+          </li>
+          <li>
+            <a href="https://raw.github.com/boronine/husl/v3.0.0/husl.min.js">
+              husl.min.js (3.0.0)
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script src="js/jquery-1.7.2.min.js"></script>
+  <script src="js/jquery-ui-1.8.23.custom.min.js"></script>
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+  <script src="js/colorspaces.min.js"></script>
+  <script src="http://yandex.st/highlightjs/7.2/highlight.min.js"></script>
+  <script src="js/husl.min.js"></script>
+  <script src="js/main.js"></script>
+  <script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-31795350-1']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+  </script>
+  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</body>
+</html>

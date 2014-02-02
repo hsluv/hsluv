@@ -1,5 +1,5 @@
-/gh-pages
 /node_modules
+/docs/node_modules
 /test/snapshot-current.png
 /test/snapshot-current.json
 

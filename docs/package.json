@@ -1,0 +1,15 @@
+{
+  "name": "husl-docs",
+  "version": "0.0.1",
+  "devDependencies": {
+    "coffee-script": "*",
+    "colorspaces": "*",
+    "husl": "*",
+    "onecolor": "*",
+    "png": "*",
+    "stylus": "*",
+    "eco": "*",
+    "mocha": "*",
+    "imagediff": "*"
+  }
+}
