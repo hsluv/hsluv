@@ -29,6 +29,10 @@ describe 'Fits within RGB ranges', ->
           for channel in RGB
             assert -0.000000001 <= channel <= 1.000000001, "#{[H, S, L]} -> #{RGB}"
 
+          RGB = husl.p.toRGB H, S, L
+          for channel in RGB
+            assert -0.000000001 <= channel <= 1.000000001, "#{[H, S, L]} -> #{RGB}"
+
 describe 'Stylus integration', ->
 
   it 'should be able to work with Stylus programmatically', ->
