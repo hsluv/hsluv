@@ -19,6 +19,6 @@
     "stylus": "*"
   },
   "scripts": {
-    "test": "mocha --compilers coffee:coffee-script"
+    "test": "mocha --compilers coffee:coffee-script/register"
   }
 }
