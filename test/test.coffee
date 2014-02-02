@@ -27,11 +27,11 @@ describe 'Fits within RGB ranges', ->
         for L in (n for n in [0..100] by 5)
           RGB = husl.toRGB H, S, L
           for channel in RGB
-            assert -0.000000001 <= channel <= 1.000000001, "#{[H, S, L]} -> #{RGB}"
+            assert -0.1 <= channel <= 1.1, "HUSL: #{[H, S, L]} -> #{RGB}"
 
           RGB = husl.p.toRGB H, S, L
           for channel in RGB
-            assert -0.000000001 <= channel <= 1.000000001, "#{[H, S, L]} -> #{RGB}"
+            assert -0.1 <= channel <= 1.1, "HUSLp: #{[H, S, L]} -> #{RGB}"
 
 describe 'Stylus integration', ->
 
