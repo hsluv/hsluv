@@ -56,7 +56,6 @@ from_linear(c):=(if(c<=0.0031308) then 12.92 * c else 1.055 * c ^ (1 / 2.4) - 0.
 /* This should be wrapped in from_linear, but since we are only
  looking at 0 and 1, it is unnecessary (plug in 0 and 1 above) */
 RGBval(x, y, z, m1, m2, m3):=(x * m1 + y * m2 + z * m3);
-
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -95,6 +94,10 @@ maxChroma(L, H, m1, m2, m3, t) := rhs(
 
 /* [wxMaxima: input   start ] */
 solve(channelFromLCH(L, C, H, m1, m2, m3) = t, C);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+trigsimp(solve(diff(maxChroma(L, H, m1, m2, m3, limit), H) = 0, H)[1]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */

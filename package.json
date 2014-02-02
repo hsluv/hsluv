@@ -13,11 +13,12 @@
   "homepage": "http://boronine.github.com/husl/",
   "devDependencies": {
     "coffee-script": "*",
+    "underscore": "*",
     "uglify-js": "*",
     "mocha": "*",
     "stylus": "*"
   },
   "scripts": {
-    "test": "mocha --compilers coffee:coffee-script"
+    "test": "mocha --compilers coffee:coffee-script/register"
   }
 }

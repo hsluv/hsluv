@@ -3,6 +3,7 @@ husl = require '../husl.coffee'
 meta = require '../package.json'
 tools = require './tools.coffee'
 {exec} = require 'child_process'
+_ = require 'underscore'
 
 describe 'HUSL consistency', ->
   manySamples = (assertion) ->
@@ -18,6 +19,19 @@ describe 'HUSL consistency', ->
   it 'should convert between HUSLp and hex', ->
     manySamples (hex) ->
       assert.deepEqual hex, husl.p.toHex (husl.p.fromHex hex)...
+
+describe 'Fits within RGB ranges', ->
+  it 'should fit', ->
+    for H in (n for n in [0..360] by 5)
+      for S in (n for n in [0..100] by 5)
+        for L in (n for n in [0..100] by 5)
+          RGB = husl.toRGB H, S, L
+          for channel in RGB
+            assert -0.1 <= channel <= 1.1, "HUSL: #{[H, S, L]} -> #{RGB}"
+
+          RGB = husl.p.toRGB H, S, L
+          for channel in RGB
+            assert -0.1 <= channel <= 1.1, "HUSLp: #{[H, S, L]} -> #{RGB}"
 
 describe 'Stylus integration', ->
 
