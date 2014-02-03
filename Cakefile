@@ -1,3 +1,6 @@
+CoffeeScript = require 'coffee-script'
+CoffeeScript.register()
+
 {exec} = require 'child_process'
 tools = require './test/tools.coffee'
 

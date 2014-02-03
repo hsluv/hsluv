@@ -1,4 +1,5 @@
-husl = require '../husl.coffee'
+require 'coffee-script'
+husl = require '../husl'
 
 snapshot = ->
   samples = {}

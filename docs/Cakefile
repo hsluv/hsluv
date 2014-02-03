@@ -1,11 +1,14 @@
 {exec} = require 'child_process'
 
+CoffeeScript = require 'coffee-script'
+CoffeeScript.register()
+
 fs  = require 'fs'
 Png = require('png').Png
 Buffer = require('buffer').Buffer
-meta = require './node_modules/husl/package.json'
+meta = require '../package.json'
 
-husl = require 'husl'
+husl = require '../husl.coffee'
 colorspaces = require 'colorspaces'
 onecolor = require 'onecolor'
 

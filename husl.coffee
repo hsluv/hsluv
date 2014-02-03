@@ -56,7 +56,7 @@ _maxChroma = (L, H) ->
 _hradExtremum = (L) ->
   lhs = (Math.pow(L, 3) + 48 * Math.pow(L, 2) + 768 * L + 4096) / 1560896
   rhs = epsilon
-  sub = if lhs > rhs then lhs else 27 * L / 24389
+  sub = if lhs > rhs then lhs else L / kappa
   (channel, limit) ->
     [m1, m2, m3] = m[channel]
     top = (20 * m3 - 4 * m2) * sub + 4 * limit
@@ -64,7 +64,7 @@ _hradExtremum = (L) ->
     hrad = Math.atan2(top, bottom)
     # This is a math hack to deal with tan quadrants, I'm too lazy to figure
     # out how to do this properly
-    if limit == 0
+    if limit == 1
       hrad += Math.PI
     return hrad
 
@@ -314,6 +314,7 @@ root._conv = conv
 root._round = round
 root._maxChroma = maxChroma
 root._maxChromaD = maxChromaD
+root._hradExtremum = _hradExtremum
 root._rgbPrepare = rgbPrepare
 
 # If no framework is available, just export to the global object (window.HUSL
