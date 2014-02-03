@@ -46,7 +46,7 @@ task 'build:docs-images', 'Generate images', ->
 
   makeDemo = (name, func, width = 360, height = 200) ->
     console.log " - #{name}"
-    file = "./img/demo/#{name}.png"
+    file = "build/img/demo/#{name}.png"
     func2 = (x, y) ->
       try
         husl._rgbPrepare func x, y
@@ -105,15 +105,15 @@ task 'build:docs-images', 'Generate images', ->
 
 task 'build', 'Build docs', ->
   console.log "Building index.html"
-  template = (fs.readFileSync 'docs/index.eco').toString()
-  fs.writeFile 'index.html', eco.render template,
+  template = (fs.readFileSync 'index.eco').toString()
+  fs.writeFile 'build/index.html', eco.render template,
     version: meta.version
 
   console.log "Building js/main.js"
-  exec "#{coffee} --compile --output js docs/main.coffee", (err, stdout, stderr) ->
+  exec "#{coffee} --compile --output build/js main.coffee", (err, stdout, stderr) ->
     throw err if err
     console.log "Building css/main.css"
-    exec "#{stylus} < docs/main.styl > css/main.css", (err, stdout, stderr) ->
+    exec "#{stylus} < main.styl > build/css/main.css", (err, stdout, stderr) ->
       throw err if err
       invoke 'build:docs-images'
 

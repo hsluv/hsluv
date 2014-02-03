@@ -1,5 +1,9 @@
 /node_modules
 /docs/node_modules
+/docs/build/index.html
+/docs/build/img/demo
+/docs/build/css/main.css
+/docs/build/js/main.js
 /test/snapshot-current.png
 /test/snapshot-current.json
 
