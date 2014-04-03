@@ -1,8 +1,18 @@
-FROM ubuntu:12.10
+FROM debian:7.4
+RUN echo "deb http://http.debian.net/debian/ wheezy-backports main" >> /etc/apt/sources.list
 RUN apt-get update
-RUN apt-get install -y nodejs nodejs-legacy npm
+
+RUN apt-get install -y nodejs nodejs-legacy
+RUN apt-get install -y curl moreutils
+RUN curl https://www.npmjs.org/install.sh | sponge | clean=no sh
+
+# Stuff necessary for PNG
+RUN apt-get install -y build-essential
+RUN apt-get install -y python
+RUN apt-get install -y libpng-dev
+RUN apt-get install -y pkg-config
 RUN apt-get install -y libcairo2-dev
+
 ADD . /docs
 RUN rm -rf /docs/node_modules
-RUN cd docs; npm install
-# Fails to install. Why? -no-cache doesn't help.
+RUN cd docs && npm install
