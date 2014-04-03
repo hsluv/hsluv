@@ -13,6 +13,14 @@ RUN apt-get install -y libpng-dev
 RUN apt-get install -y pkg-config
 RUN apt-get install -y libcairo2-dev
 
-ADD . /docs
-RUN rm -rf /docs/node_modules
-RUN cd docs && npm install
+RUN npm install -g coffee-script
+RUN npm install -g colorspaces
+RUN npm install -g husl
+RUN npm install -g onecolor
+RUN npm install -g png
+RUN npm install -g stylus
+RUN npm install -g eco
+RUN npm install -g mocha
+RUN npm install -g imagediff
+
+#RUN cd docs && npm install
