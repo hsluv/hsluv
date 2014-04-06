@@ -29,6 +29,7 @@ RUN npm install png@3.0.3
 
 ENV PATH $PATH:/node_modules/.bin
 
+RUN passwd --delete root
 RUN groupadd --gid 1000 admin
 RUN useradd --gid 1000 --uid 1000 admin
 USER admin
