@@ -46,6 +46,8 @@ do ->
     
   task 'build:docs-images', 'Generate images', ->
     console.log "Generating demo images:"
+    try
+      fs.mkdirSync 'docs/build/img/demo'
 
     hslToRgb = (h, s, l) ->
       h *= 360
@@ -141,6 +143,8 @@ do ->
     exec "coffee --compile --output docs/build/js docs/src/main.coffee", (err, stdout, stderr) ->
       throw err if err
       console.log "Building css/main.css"
+      try
+        fs.mkdirSync 'docs/build/css'
       exec "stylus < docs/src/main.styl > docs/build/css/main.css", (err, stdout, stderr) ->
         throw err if err
         invoke 'build:docs-images'
