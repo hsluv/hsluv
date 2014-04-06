@@ -29,4 +29,8 @@ RUN npm install png
 
 ENV PATH $PATH:/node_modules/.bin
 
+RUN groupadd --gid 1000 admin
+RUN useradd --gid 1000 --uid 1000 admin
+USER admin
+
 WORKDIR /husl
