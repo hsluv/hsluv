@@ -12,7 +12,7 @@ There have long existed color spaces designed for perceptual uniformity. One of 
 
 This repo contains the canonical implementation of HUSL, its source code being HUSL's informal specification. Following [semantic versioning](http://semver.org/), the major version must be incremented whenever the color math changes. These changes can be tested for with snapshot files.
 
-# Testing
+# Testing and Building Documentation
 
 Run `npm install` and `npm test`. Try `cake snapshot` to generate a JSON file of the entire gamut to be used for debugging and regression tests. The format of the file is as follows:
 
@@ -27,6 +27,8 @@ Run `npm install` and `npm test`. Try `cake snapshot` to generate a JSON file of
       },
       ...
     }
+
+Building documentation requires some libraries to be installed. If you are running [Docker](https://www.docker.io/), a wise way to do it would be to run `cake docker:build` followed by `cake docker:run`. You will find yourself inside a Docker container with everything set up to run `cake build:docs`.
 
 # Ports
 
