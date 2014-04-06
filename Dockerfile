@@ -2,6 +2,7 @@ FROM debian:7.4
 RUN echo "deb http://http.debian.net/debian/ wheezy-backports main" >> /etc/apt/sources.list
 RUN apt-get update
 
+# Install node and NPM
 RUN apt-get install -y nodejs nodejs-legacy
 RUN apt-get install -y curl moreutils
 RUN curl https://www.npmjs.org/install.sh | sponge | clean=no sh
@@ -13,14 +14,19 @@ RUN apt-get install -y libpng-dev
 RUN apt-get install -y pkg-config
 RUN apt-get install -y libcairo2-dev
 
-RUN npm install -g coffee-script
-RUN npm install -g colorspaces
-RUN npm install -g husl
-RUN npm install -g onecolor
-RUN npm install -g png
-RUN npm install -g stylus
-RUN npm install -g eco
-RUN npm install -g mocha
-RUN npm install -g imagediff
+# Basics for building and testing
+RUN npm install coffee-script
+RUN npm install uglify-js
+RUN npm install underscore
+RUN npm install stylus
+RUN npm install mocha
 
-#RUN cd docs && npm install
+# Stuff for generating docs
+RUN npm install colorspaces
+RUN npm install onecolor
+RUN npm install eco
+RUN npm install png
+
+ENV PATH $PATH:/node_modules/.bin
+
+WORKDIR /husl
