@@ -1,10 +1,7 @@
-CoffeeScript = require 'coffee-script'
-CoffeeScript.register()
-
-{exec, spawn} = require 'child_process'
-
 fs  = require 'fs'
 Buffer = require('buffer').Buffer
+
+{exec, spawn} = require 'child_process'
 
 meta = require './package.json'
 husl = require './husl.coffee'
