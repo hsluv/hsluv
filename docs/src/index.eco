@@ -75,12 +75,12 @@
       <div class="row">
         <div class="span6">
           <h2 id="overview">What is <abbr class="initialism">HUSL</abbr>?</h2>
-          <p><abbr class="initialism">HUSL</abbr> is a <a href="http://boronine.com/2012/03/26/Color-Spaces-for-Human-Beings/">human-friendly</a> alternative to the <abbr class="initialism">HSL</abbr> color space. <abbr class="initialism">HSL</abbr> was designed back in the 70s to be computationally cheap. It is a clever geometric transformation of the <abbr class="initialism">RGB</abbr> color space and it does not take into account the complexities of human color vision.</p>
+          <p><abbr class="initialism">HUSL</abbr> is a <a href="http://www.boronine.com/2012/03/26/Color-Spaces-for-Human-Beings/">human-friendly</a> alternative to the <abbr class="initialism">HSL</abbr> color space. <abbr class="initialism">HSL</abbr> was designed back in the 70s to be computationally cheap. It is a clever geometric transformation of the <abbr class="initialism">RGB</abbr> color space and it does not take into account the complexities of human color vision.</p>
           <p>There have long existed color spaces designed for perceptual uniformity. One of these color spaces is <a href="http://en.wikipedia.org/wiki/CIELUV"><abbr class="initialism">CIELUV</abbr></a> (and its cylindrically shaped brother <abbr class="initialism">CIE LCh<sub>uv</sub></abbr>). Like <abbr class="initialism">HSL</abbr>, it defines hue and lightness, but instead of saturation it defines chroma. The problem with its chroma component is that it doesn't fit into a specific range. This makes it very hard to define colors programmatically. <strong><abbr class="husl initialism">HUSL</abbr> is a modified version of the <abbr class="initialism">CIE LCh<sub>uv</sub></abbr> color space with a new saturation component</strong>.</p>
         </div>
         <div class="span6">
           <div class="alert alert-info">
-            <b>NEW</b>: <a href="http://boronine.com/husl/syntax">See HUSL in action</a>
+            <b>NEW</b>: <a href="http://www.boronine.com/husl/syntax">See HUSL in action</a>
           </div>
           <table class="table table-bordered">
             <thead>
@@ -409,7 +409,7 @@ app.use(stylus.middleware({
           </li>
         </ul>
         <ul class="nav pull-right">
-          <li><a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-url="http://boronine.com/husl" data-via="boronine">Tweet</a></li>
+          <li><a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-url="http://www.boronine.com/husl" data-via="boronine">Tweet</a></li>
           <li>
             <a href="https://raw.github.com/boronine/husl/v<%= @version %>/husl.js">
               husl.js (<%= @version %>)
