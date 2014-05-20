@@ -3,6 +3,8 @@ Buffer = require('buffer').Buffer
 
 {exec, spawn} = require 'child_process'
 
+require 'coffee-script/register'
+
 meta = require './package.json'
 husl = require './husl.coffee'
 tools = require './test/tools.coffee'
