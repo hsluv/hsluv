@@ -73,8 +73,8 @@
           params.push(key + '=' + color.substring(1));
         }
         params = params.join('&');
-        $('#vim').attr('href', 'http://base16-api.herokuapp.com/vim?' + params);
-        $('#textmate').attr('href', 'http://base16-api.herokuapp.com/textmate?' + params);
+        $('#vim').attr('href', 'http://base16api.boronine.com/vim?' + params);
+        $('#textmate').attr('href', 'http://base16api.boronine.com/textmate?' + params);
         $('body').css('background-color', $.husl.toHex(H[0], backS, 3));
         $('.well').css('background-color', $.husl.toHex(H[0], backS, 85));
       };
