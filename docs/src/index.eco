@@ -285,7 +285,7 @@ $('#rainbow-hsl div').each(function(index) {
                 <td>Python</td>
                 <td></td>
                 <td><a href="https://github.com/boronine/pyhusl/tree/v2.1.0">v2.1.0</a></td>
-                <td></td>
+                <td><a href="https://github.com/boronine/pyhusl/tree/v3.0.0">v3.0.0</a></td>
               </tr>
               <tr>
                 <td>
