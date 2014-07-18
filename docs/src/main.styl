@@ -16,7 +16,6 @@ no-select()
 
 .dark
 	height demoheight
-	position absolute
 	width 100%
 	background-color #1B1B1B
 	header.top
@@ -33,14 +32,13 @@ no-select()
 			font-size 30px
 			margin 0px
 
-.light
-	position absolute
-	top demoheight + 100px
-	width 100%
-
 abbr.initialism
 	/* I can do my own capitalization, thank you :) */
 	text-transform none
+ 
+.navbar
+  width 100%
+  top 0px
 
 h2, h1
 	margin 30px
@@ -52,7 +50,8 @@ h4
 	text-align center
 
 img.demo
-	margin-bottom 20px
+  margin-bottom 20px
+  max-width 100%
 
 div.demo
 	padding 5px
@@ -142,16 +141,6 @@ div.demo
 		border-radius 5px
 		height 6px
 		width 6px
-
-.navbar
-	position absolute
-	top demoheight
-	z-index 100
-	&.affix
-		top 0px
-		position fixed
-	.twitter-share-button
-		padding-top 10px
 
 .ui-widget:active
 	outline none
