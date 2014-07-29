@@ -6,7 +6,7 @@ HUSL is a [human-friendly](http://www.boronine.com/2012/03/26/Color-Spaces-for-H
 
 There have long existed color spaces designed for perceptual uniformity. One of these color spaces is [CIELUV](http://en.wikipedia.org/wiki/CIELUV) (and its cylindrically shaped brother CIE LCh<sub>uv</sub>. Like HSL, it defines hue and lightness, but instead of saturation it defines chroma. The problem with its chroma component is that it doesn't fit into a specific range. This makes it very hard to define colors programmatically. **HUSL is a modified version of the CIE LCh<sub>uv</sub> color space with a new saturation component**.
 
-[Demo, documentation etc.](http://www.boronine.com/husl)
+[Demo, documentation, ports etc.](http://www.boronine.com/husl)
 
 # Versioning
 
@@ -34,17 +34,9 @@ Building documentation requires some libraries to be installed. If you are runni
 
 If you are not using Docker, you can install the dependencies manually, they are listed in the Dockerfile.
 
-# Ports
-
-With the help of Robert McGinley, HUSL was also [ported to Python](https://github.com/boronine/pyhusl) (version 2 only).
-
-A work-in-progress of C and Java ports is included in the repo, done by Lajos Ambrus. The Java port has some tests, added by [@Pimm](https://github.com/Pimm), but they are currently made to work with the Android SDK. It would be nice if someone made them more generic.
-
-A [Ruby port](https://github.com/soulcutter/husler) has been started by [@soulcutter](https://github.com/soulcutter). I would love to see this done so that HUSL could be integrated into [SASS](http://sass-lang.com/).
-
 # License
 
-Copyright (C) 2012 Alexei Boronine
+Copyright (C) 2014 Alexei Boronine
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
