@@ -313,7 +313,7 @@ $('#rainbow-hsl div').each(function(index) {
                 </td>
                 <td><a href="https://github.com/boronine/husl/tree/v1.0.2">v1.0.2</a></td>
                 <td><a href="https://github.com/boronine/husl/tree/v2.0.0">v2.0.0</a></td>
-                <td><a href="https://github.com/boronine/husl/tree/v4.0.1">v4.0.1</a></td>
+                <td><a href="https://github.com/boronine/husl/tree/v<%= @version %>">v<%= @version %></a></td>
               </tr>
               <tr>
                 <td>Python</td>
@@ -403,8 +403,15 @@ $('#rainbow-hsl div').each(function(index) {
           <p>Use <strong>husl.p.toHex</strong>, <strong>husl.p.toRGB</strong>, <strong>husl.p.fromHex</strong> and <strong>husl.p.fromRGB</strong> for the "pastel" variant.</p>
           <p><abbr class="initialism">HUSL</abbr> can also be used as a <a href="http://learnboost.github.com/stylus/">Stylus</a> plugin. See <a href="https://github.com/boronine/husl-stylus">here</a>.</p>
         </div>
-      <hr/>
-      <footer>© Copyright 2014 by Alexei Boronine. (<a href="https://twitter.com/#!/boronine">@boronine</a>)<br/> <small>Icons courtesy of P.J. Onori, from <a href="http://thenounproject.com/">The Noun Project</a></small></footer>
+      <div class="row">
+        <div class="col-xs-12">
+          <footer>
+            © Copyright 2014 by Alexei Boronine. (<a href="https://twitter.com/#!/boronine">@boronine</a>)
+            <br/>
+            <small>Icons courtesy of P.J. Onori, from <a href="http://thenounproject.com/">The Noun Project</a></small>
+          </footer>
+        </div>
+      </div>
     </div>
   </div>
   <script src="js/jquery-1.7.2.min.js"></script>
