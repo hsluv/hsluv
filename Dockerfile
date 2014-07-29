@@ -18,7 +18,6 @@ RUN apt-get install -y libcairo2-dev
 RUN npm install coffee-script@1.7.1
 RUN npm install uglify-js@2.4.13
 RUN npm install underscore@1.6.0
-RUN npm install stylus@0.43.0
 RUN npm install mocha@1.7.0
 
 # Stuff for generating docs

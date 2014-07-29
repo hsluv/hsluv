@@ -1,9 +1,9 @@
 {
   "name": "husl",
   "description": "Replacement for the HSL color space",
-  "keywords": ["color", "color space", "CIE", "RGB", "stylus", "HUSL", "HSL"],
-  "version": "4.0.0",
-  "author": "Alexei Boronine <alexei.boronine@gmail.com>",
+  "keywords": ["color", "color space", "CIE", "RGB", "HUSL", "HSL"],
+  "version": "4.0.1",
+  "author": "Alexei Boronine <alexei@boronine.com>",
   "main": "husl.js",
   "files": ["husl.js"],
   "repository": {
@@ -15,8 +15,7 @@
     "coffee-script": "*",
     "underscore": "*",
     "uglify-js": "*",
-    "mocha": "*",
-    "stylus": "*"
+    "mocha": "*"
   },
   "scripts": {
     "test": "mocha --compilers coffee:coffee-script/register"
