@@ -240,9 +240,7 @@ function husl.rgb_to_xyz(r, g, b)
     return unpack(xyz)
 end
 
-function husl.xyz_to_luv(triple)
-    local X, Y, Z = triple
-
+function husl.xyz_to_luv(X, Y, Z)
     if X == 0 and Y == 0 and Z == 0 then
         return 0, 0, 0
     end
