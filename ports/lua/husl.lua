@@ -118,7 +118,7 @@ local function hrad_extremum(L)
                 hrad = hrad + math.pi
             end
 
-            local test = max_chroma(L, math.degrees(hrad))
+            local test = husl.max_chroma(L, math.deg(hrad))
             
             if test < chroma then
                 chroma = test
@@ -165,7 +165,7 @@ function husl.from_linear(c)
     if c <= 0.0031308 then
         return 12.92 * c
     else
-        return 1.055 * math.pow(c, 1 / 2,4) - 0.055
+        return 1.055 * math.pow(c, 1 / 2.4) - 0.055
     end
 end
 
@@ -180,22 +180,22 @@ function husl.to_linear(c)
 end
 
 local function round(number, digits)
-    local f = math.pow(10, digits)
+    local f = math.pow(10, digits or 0)
 
-    return math.floor(number * f) / f 
+    return math.floor(number * f + 0.5) / f
 end
 
 function husl.rgb_prepare(r, g, b)
     local prepared = {}
 
     for i, component in ipairs{r, g, b} do
-        component = round(component)
+        component = round(component, 3)
 
         assert(component >= -0.0001 and component <= 1.0001, "illegal rgb value " .. component)
 
         component = math.min(1, math.max(component, 0))
     
-        prepared[i] = round(component * 255 + 0.001, 0)
+        prepared[i] = round(component * 255)
     end
 
     return unpack(prepared)
@@ -212,7 +212,7 @@ function husl.hex_to_rgb(hex)
 end
 
 function husl.rgb_to_hex(r, g, b)
-    return string.format("#%02x%02x%02x", rgb_prepare(r, g, b))
+    return string.format("#%02x%02x%02x", husl.rgb_prepare(r, g, b))
 end
 
 function husl.xyz_to_rgb(x, y, z)
@@ -226,12 +226,13 @@ function husl.xyz_to_rgb(x, y, z)
 end
 
 function husl.rgb_to_xyz(r, g, b)
-    local x = dot_producthusl.to_linear(r)
-    local y = husl.to_linear(g)
-    local z = husl.to_linear(b)
+    local rgb = {
+        husl.to_linear(r),
+        husl.to_linear(g),
+        husl.to_linear(b),
+    }
 
     local xyz = {}
-    local rgb = {r, g, b}
 
     for i, row in ipairs(m_inv) do
         xyz[i] = dot_product(row, rgb)
@@ -308,7 +309,7 @@ function husl.husl_to_lch(H, S, L)
     return L, C, H
 end
 
-function husl.lch_to_husl(H, S, L)
+function husl.lch_to_husl(L, C, H)
     if L > 99.9999999 then
         return H, 0, 100
     elseif L < 0.00000001 then
