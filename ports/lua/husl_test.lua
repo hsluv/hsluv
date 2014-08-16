@@ -1,5 +1,5 @@
 local husl = require "husl"
-require "json"
+local json = require "cjson"
 
 do
     local function assert_tuples_close(a, b)
