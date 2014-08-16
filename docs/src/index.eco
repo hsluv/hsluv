@@ -383,9 +383,6 @@ $('#rainbow-hsl div').each(function(index) {
         </div>
       </div>
       <div class="row">
-        <div class="col-xs-6">
-          <p>Husl is not perfect <i class="icon-hand-right"></i></p>
-        </div>
         <div class="col-xs-3">
           <h4 class="center">Lightness: 10%</h4>
           <img src="img/demo/husl-low.png" class="demo"/>
