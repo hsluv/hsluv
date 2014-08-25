@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/boronine/husl.png)](http://travis-ci.org/boronine/husl)
+[![Build Status](https://travis-ci.org/boronine/husl.svg?branch=master)](https://travis-ci.org/boronine/husl)
 
 # What is <abbr class="initialism">HUSL</abbr>?
 
