@@ -1,8 +1,0 @@
-{
-  "devDependencies": {
-    "coffee-script": "*",
-    "underscore": "*",
-    "uglify-js": "*",
-    "mocha": "*"
-  }
-}
