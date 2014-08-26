@@ -86,22 +86,10 @@
           <li>
             <a href="#usage">Usage</a>
           </li>
-        </ul>
-        <ul class="nav navbar-nav navbar-right">
           <li>
-            <a href="https://raw.github.com/boronine/husl/v<%= @version %>/husl.js">
-              husl.js (<%= @version %>)
-            </a>
-          </li>
-          <li>
-            <a href="https://raw.github.com/boronine/husl/v<%= @version %>/husl.min.js">
-              husl.min.js (<%= @version %>)
-            </a>
+            <a href="syntax/">Demo</a>
           </li>
         </ul>
-        <!--
-        <p class="navbar-text navbar-right"><a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-url="http://www.boronine.com/husl" data-via="boronine">Tweet</a></p>
-        -->
       </div>
     </div>
   </div>
@@ -113,54 +101,51 @@
           <p>There have long existed color spaces designed for perceptual uniformity. One of these color spaces is <a href="http://en.wikipedia.org/wiki/CIELUV"><abbr class="initialism">CIELUV</abbr></a> (and its cylindrically shaped brother <abbr class="initialism">CIE LCh<sub>uv</sub></abbr>). Like <abbr class="initialism">HSL</abbr>, it defines hue and lightness, but instead of saturation it defines chroma. The problem with its chroma component is that it doesn't fit into a specific range. This makes it very hard to define colors programmatically. <strong><abbr class="husl initialism">HUSL</abbr> is a modified version of the <abbr class="initialism">CIE LCh<sub>uv</sub></abbr> color space with a new saturation component</strong>.</p>
         </div>
         <div class="col-xs-6">
-          <div class="alert alert-info">
-            <b>NEW</b>: <a href="http://www.boronine.com/husl/syntax">See HUSL in action</a>
-          </div>
-          <table class="table table-bordered">
+          <table class="table">
             <thead>
               <tr>
                 <th></th>
-                <th>HSL</th>
-                <th>CIE&nbsp;LCh<sub>uv</sub></th>
-                <th>HUSL</th>
-                <th>HUSLp</th>
+                <th class="text-center">HSL</th>
+                <th class="text-center">CIE&nbsp;LCh<sub>uv</sub></th>
+                <th class="text-center">HUSL</th>
+                <th class="text-center">HUSLp</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <th>Lightness</th>
-                <td><span class="label label-important">Relative</span></td>
-                <td><span class="label label-success">Absolute</span></td>
-                <td><span class="label label-success">Absolute</span></td>
-                <td><span class="label label-success">Absolute</span></td>
+                <td class="text-center cell-red">Relative</td>
+                <td class="text-center cell-green">Absolute</td>
+                <td class="text-center cell-green">Absolute</td>
+                <td class="text-center cell-green">Absolute</td>
               </tr>
               <tr>
                 <th>Saturation<sup>*</sup></th>
-                <td><span class="label label-important">Relative</span></td>
-                <td><span class="label label-success">Absolute</span></td>
-                <td><span class="label label-important">Relative</span></td>
-                <td><span class="label label-success">Absolute</span></td>
+                <td class="text-center cell-red">Relative</td>
+                <td class="text-center cell-green">Absolute</td>
+                <td class="text-center cell-red">Relative</td>
+                <td class="text-center cell-green">Absolute</td>
               </tr>
               <tr>
                 <th>Hue uniformity</th>
-                <td><span class="label label-important">Poor</span></td>
-                <td><span class="label label-success">Good</span></td>
-                <td><span class="label label-success">Good</span></td>
-                <td><span class="label label-success">Good</span></td>
+                <td class="text-center cell-red">Poor</td>
+                <td class="text-center cell-green">Good</td>
+                <td class="text-center cell-green">Good</td>
+                <td class="text-center cell-green">Good</td>
               </tr>
               <tr>
                 <th>Component ranges</th>
-                <td><span class="label label-success">Defined</span></td>
-                <td><span class="label label-important">Undefined</span></td>
-                <td><span class="label label-success">Defined</span></td>
-                <td><span class="label label-success">Defined</span></td>
+                <td class="text-center cell-green">Defined</td>
+                <td class="text-center cell-red">Undefined</td>
+                <td class="text-center cell-green">Defined</td>
+                <td class="text-center cell-green">Defined</td>
               </tr>
               <tr>
                 <th>Saturated colors</th>
-                <td><span class="label label-success">Yes</span></td>
-                <td><span class="label label-success">Yes</span></td>
-                <td><span class="label label-success">Yes</span></td>
-                <td><span class="label label-important">No</span></td>
+                <td class="text-center cell-green">Yes</td>
+                <td class="text-center cell-green">Yes</td>
+                <td class="text-center cell-green">Yes</td>
+                <td class="text-center cell-red">No</td>
               </tr>
               <tr>
                 <td colspan="5">
