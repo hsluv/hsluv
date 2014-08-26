@@ -15,7 +15,7 @@ task 'docker:run', 'Run Docker container', ->
   args = [
     'run', '-i', '-t'
     '-v', __dirname + ':/husl'
-    'husl-dev-environment'
+    'husl-dev-environment', '/bin/bash'
   ]
   console.log 'RUNNING docker ' + args.join(' ')
   spawn 'docker', args, {stdio: 'inherit'}
@@ -130,9 +130,4 @@ do ->
     console.log "Building js/main.js"
     exec "coffee --compile --output dist/js src/main.coffee", (err, stdout, stderr) ->
       throw err if err
-      console.log "Building css/main.css"
-      try
-        fs.mkdirSync 'dist/css'
-      exec "stylus < src/main.styl > dist/css/main.css", (err, stdout, stderr) ->
-        throw err if err
-        invoke 'build:docs-images'
+      invoke 'build:docs-images'
