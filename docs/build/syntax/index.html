@@ -4,26 +4,38 @@
     <title>HUSL: Random Syntax Highlighting Color Schemes</title>
     <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
     <style type="text/css" media="screen">
-      body { margin: 5% 20%; background-color: black; }
-      .scheme, .author, pre, .block { font-family: "menlo", monospace; }
-  	  .block { display: inline-block; font-size: 13px; font-weight: bold; padding: 10px; margin: 0 5px 10px 0; }
+      body { 
+        margin: 5%;
+        background-color: black;
+      }
+      .scheme, .author, pre, .block {
+        font-family: "menlo", monospace;
+      }
+  	  .block {
+        display: inline-block;
+        font-size: 13px;
+        font-weight: bold;
+        padding: 10px;
+        margin: 0 5px 10px 0;
+      }
   	  pre {
   	    font-size: 14px;
   	    padding: 10px 20px;
   	  }
-      #explanation {
-        margin-left: 10px;
-        color: #222;
+      .light-gray {
+        color: #666;
       }
       #credits {
         margin-left: 10px;
-        color: #666;
       }
       .well {
         padding: 10px;
       }
       .twitter-share-button {
         margin-top: 5px;
+      }
+      #shuffle {
+        color: #ffffff;
       }
     </style>
     <script src="../js/jquery-1.7.2.min.js"></script>
@@ -76,7 +88,8 @@
         $('#vim').attr('href', 'http://base16api.boronine.com/vim?' + params);
         $('#textmate').attr('href', 'http://base16api.boronine.com/textmate?' + params);
         $('body').css('background-color', $.husl.toHex(H[0], backS, 3));
-        $('.well').css('background-color', $.husl.toHex(H[0], backS, 85));
+        $('body').css('background-color', '#000000');
+        $('#shuffle').css('background-color', $.husl.toHex(H[0], backS, 20));
       };
       $(document).ready(function() {
         if (window.location.hash === '') {
@@ -96,14 +109,17 @@
     </script>
   </head>
   <body>
-    <div class="well">
-    <button class="btn btn-inverse" id="shuffle">Shuffle</button>
-    <span id="explanation">Uses <a href="http://boronine.com/husl"><em>HUSL</em></a> to generate well-behaved colors</span>
-    <a href="https://twitter.com/share" class="twitter-share-button pull-right" data-lang="en" data-url="http://boronine.com/husl/syntax" data-via="boronine">Tweet</a>
-    </div>
-    <br/>
-    <div>
-      <pre class="base00-background base05">
+    <div class="container-fluid">
+      <div class="row">
+      <div class="col-md-12">
+
+      <div class="light-gray" style="margin-bottom:10px;">
+      <button class="btn btn-sm" id="shuffle">Shuffle</button>
+      <span style="margin-left:10px">Uses <a href="http://www.boronine.com/husl"><em>HUSL</em></a> to generate well-behaved colors</span>
+      </div>
+
+      <div>
+        <pre class="base00-background base05" style="border: 0px">
 <span class="base0E">require</span> <span class="base0B">"gem"</span>
 
 <span class="base08">string</span> = <span class="base0B">"base16"</span>
@@ -132,10 +148,13 @@
 <span class="base08">person1</span> = <span class="base0A">Person</span>.<span class="base0D">new</span>(<span class="base0B">:name</span> => <span class="base0B">"Chris"</span>)
 <span class="base0D">print</span> <span class="base0A">Person</span>::<span class="base0D">greet</span>, <span class="base0B">" "</span>, <span class="base08">person1</span>.<span class="base0D">name</span>, <span class="base0B">"<span class="base09">\n</span>"</span>
 <span class="base0D">puts</span> <span class="base0B">"another </span><span class="base0F">#{</span><span class="base0A">Person</span>::<span class="base0D">greet</span><span class="base0F">}</span> <span class="base0F">#{</span><span class="base08">person1</span>.<span class="base0D">name</span><span class="base0F">}</span><span class="base0B">"</span>
-      </pre>
-      
+        </pre>
+        
+      </div>
+      </div>
+      </div>
+      <p id="credits" class="light-gray">Download for <a href="#" id="vim">Vim</a> or <a href="#" id="textmate">TextMate</a>. (Courtesy of <a href="http://chriskempson.com/">Chris Kempson</a>'s <a href="https://github.com/chriskempson/base16-builder">Base16 Builder</a>)</p>
     </div>
-    <p id="credits">Download for <a href="#" id="vim">Vim</a> or <a href="#" id="textmate">TextMate</a>. (Courtesy of <a href="http://chriskempson.com/">Chris Kempson</a>'s <a href="https://github.com/chriskempson/base16-builder">Base16 Builder</a>)</p>
     <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-31795350-1']);
