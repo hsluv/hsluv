@@ -1,0 +1,175 @@
+p
+  padding-left 10px
+  padding-right 10px
+
+footer
+	margin-bottom 50px
+	margin-top 100px
+
+demoheight = 550px
+
+no-select()
+	-webkit-user-select none
+	-moz-user-select none
+	-o-user-select none
+	user-select none
+
+.dark
+	height demoheight
+	width 100%
+	background-color #1B1B1B
+	header.top
+		margin 40px
+		margin-bottom 70px
+		h1
+			color #555
+			text-align center
+			font-size 120px
+			line-height 140px
+			margin 0px
+		h2
+			text-align center
+			font-size 30px
+			margin 0px
+
+abbr.initialism
+	/* I can do my own capitalization, thank you :) */
+	text-transform none
+ 
+.cell-green
+  border: 2px solid white;
+  background-color: #99ff99;
+
+.cell-red
+  border: 2px solid white;
+  background-color: #ff9999;
+
+.navbar
+  width 100%
+  top 0px
+
+h2, h1
+	margin 30px
+
+h4
+	margin 10px
+
+.center
+	text-align center
+
+img.demo
+  margin-bottom 20px
+  max-width 100%
+
+div.demo
+	padding 5px
+	color white
+
+#demo1, #demo2
+	margin-bottom 10px
+
+#rainbow-husl div, #rainbow-hsl div
+	height 20px
+
+#picker
+	position relative
+	width 645px
+	height 200px
+	margin 0 auto
+	color #555
+	canvas
+		position absolute
+		cursor crosshair
+	.variants
+		position absolute
+		width 360px
+		top -30px
+		text-align center
+		.choice
+			color #555
+			&.selected
+				color #888
+	.slider
+		position absolute
+		top 30px
+		left 385px
+		height 140px
+	.swatch
+		position absolute
+		top 0px
+		right 0px
+		width 160px
+		height 160px
+		background-color #555
+	.coordinate-names
+		no-select()
+		cursor default
+		position absolute
+		top 15px
+		left 415px
+	.coordinates
+		position absolute
+		top 15px
+		left 435px
+		color #888
+	.chroma
+		position absolute
+		bottom 3px
+		left 415px
+		.C
+			color #888
+		.name
+			cursor default
+			no-select()
+	.icon
+		display block
+		position absolute
+		left 380px
+		&.full
+			top 5px
+		&.empty
+			bottom 5px
+		path, circle
+			fill #666
+	.hex
+		width 70px
+		padding-left 5px
+		padding-right 5px
+		color #888
+		position absolute
+		background transparent
+		border 1px solid #555
+		outline none
+		bottom 1px
+		right 0px
+	.scope
+		cursor crosshair
+		position absolute
+		border 2px solid white
+		border-radius 5px
+		height 6px
+		width 6px
+
+.ui-widget:active
+	outline none
+
+.ui-slider
+	position relative
+	text-align left
+	width 6px
+	border-radius 3px
+	background-color #555
+	.ui-slider-handle
+		margin-left -3px
+		margin-bottom -6px
+		outline none
+		position absolute
+		z-index 2
+		width 12px
+		height 12px
+		border-radius 6px
+		cursor default
+		background-color white
+	.ui-slider-range
+		left 0
+		width 100%
