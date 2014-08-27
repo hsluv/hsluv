@@ -6,15 +6,15 @@ HUSL is a [human-friendly](http://www.boronine.com/2012/03/26/Color-Spaces-for-H
 
 There have long existed color spaces designed for perceptual uniformity. One of these color spaces is [CIELUV](http://en.wikipedia.org/wiki/CIELUV) (and its cylindrically shaped brother CIE LCh<sub>uv</sub>. Like HSL, it defines hue and lightness, but instead of saturation it defines chroma. The problem with its chroma component is that it doesn't fit into a specific range. This makes it very hard to define colors programmatically. **HUSL is a modified version of the CIE LCh<sub>uv</sub> color space with a new saturation component**.
 
-[Demo, documentation, ports etc.](http://www.boronine.com/husl)
+[Demo, documentation, ports etc.](http://www.boronine.com/husl/)
 
 # Versioning
 
 This repo contains the canonical implementation of HUSL, its source code being HUSL's informal specification. Following [semantic versioning](http://semver.org/), the major version must be incremented whenever the color math changes. These changes can be tested for with snapshot files.
 
-# Testing and Building Documentation
+# Testing
 
-Run `npm install` and `npm test`. Try `cake snapshot` to generate a JSON file of the entire gamut to be used for debugging and regression tests. The format of the file is as follows:
+Run `npm install` and `npm test`. Try `coffee test/snapshot.coffee` to generate a JSON file of the entire gamut to be used for debugging and regression tests. The format of the file is as follows:
 
     {
       "#000000": {
@@ -27,12 +27,6 @@ Run `npm install` and `npm test`. Try `cake snapshot` to generate a JSON file of
       },
       ...
     }
-
-The command to build documentation is `cake build:docs`.
-
-Building documentation requires some libraries to be installed. If you are running [Docker](https://www.docker.io/), a wise way to do it would be to run `cake docker:build` followed by `cake docker:run`. You will find yourself inside a Docker container with everything set up to run `cake build:docs`, the output will be written to the host file system.
-
-If you are not using Docker, you can install the dependencies manually, they are listed in the Dockerfile.
 
 # License
 

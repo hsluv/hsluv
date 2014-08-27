@@ -1,8 +1,7 @@
 assert = require 'assert'
 husl = require '../husl.coffee'
 meta = require '../package.json'
-tools = require './tools.coffee'
-{exec} = require 'child_process'
+snapshot = require './snapshot.coffee'
 _ = require 'underscore'
 
 describe 'HUSL consistency', ->
@@ -38,7 +37,7 @@ describe 'HUSL snapshot', ->
 
   it 'should match the stable snapshot', ->
 
-    current = tools.snapshot()
+    current = snapshot.snapshot()
     stable = require './snapshot-4.x.x.json'
 
     for hex, stableSamples of stable

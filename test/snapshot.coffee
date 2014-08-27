@@ -1,4 +1,3 @@
-require 'coffee-script'
 husl = require '../husl'
 
 snapshot = ->
@@ -26,3 +25,6 @@ snapshot = ->
   return samples
 
 module.exports = snapshot: snapshot
+
+if require.main == module
+  console.log JSON.stringify snapshot()
