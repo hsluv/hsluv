@@ -2,12 +2,12 @@
     position: relative;
     font-family: Verdana,Arial,sans-serif;
     font-size: 1.1em;
-    border: 1px solid #aaaaaa;
     z-index: 2;
+    margin-bottom: 20px;
 }
 
 .d3-slider-horizontal {
-    height: .8em;
+    height: 10px;
 }  
 
 .d3-slider-range {
@@ -33,10 +33,9 @@
 
 .d3-slider-handle {
     position: absolute;
-    width: 1.2em;
-    height: 1.2em;
+    width: 10px;
+    height: 10px;
     border: 1px solid #d3d3d3;
-    border-radius: 4px;
     background: #eee;
     background: linear-gradient(to bottom, #eee 0%, #ddd 100%);
     z-index: 3;
@@ -47,8 +46,8 @@
 }
 
 .d3-slider-horizontal .d3-slider-handle {
-    top: -.3em;
-    margin-left: -.6em;
+    top: 10px;
+    margin-left: -5px;
 }
 
 .d3-slider-axis {

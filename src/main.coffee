@@ -161,10 +161,14 @@ hs = (L) ->
   ret.sort()
   return ret
 
-$canvas = $ '#picker canvas'
-$svg = $ '#picker svg'
+$canvas     = $ '#picker canvas'
+$svg        = $ '#picker svg'
 $background = $ "#picker svg g.background"
 $foreground = $ "#picker svg g.foreground"
+
+$controlHue        = $ "#picker .control-hue"
+$controlSaturation = $ "#picker .control-saturation"
+$controlLightness  = $ "#picker .control-lightness"
 
 ctx = $canvas[0].getContext '2d'
 contrasting = null
@@ -312,6 +316,20 @@ redrawForeground = ->
     .attr("stroke", contrasting)
     .attr("stroke-width", 2)
 
+  colors = d3.range(0, 360, 10).map (_) -> $.husl.toHex _, S, L
+  d3.select("#picker div.control-hue").style {
+    'background': 'linear-gradient(to right,' + colors.join(',') + ')'
+  }
+
+  colors = d3.range(0, 100, 10).map (_) -> $.husl.toHex H, _, L
+  d3.select("#picker div.control-saturation").style {
+    'background': 'linear-gradient(to right,' + colors.join(',') + ')'
+  }
+
+  colors = d3.range(0, 100, 10).map (_) -> $.husl.toHex H, S, _
+  d3.select("#picker div.control-lightness").style {
+    'background': 'linear-gradient(to right,' + colors.join(',') + ')'
+  }
 
 adjustPosition = (x, y) ->
   pointer = [x / scale, y / scale]
@@ -341,11 +359,34 @@ dragmove = ->
 
   adjustPosition x, y
 
-
 drag = d3.behavior.drag()
   .on("drag", dragmove)
 
 foreground.call(drag)
+
+sliderHue = d3.slider()
+  .min(0)
+  .max(360)
+  .value(H)
+  .animate(false)
+  .on 'slide', (e, value) ->
+    H = value
+    redrawBackground()
+    clearCanvas()
+    redrawCanvas()
+    redrawForeground()
+
+sliderSaturation = d3.slider()
+  .min(0)
+  .max(100)
+  .value(S)
+  .animate(false)
+  .on 'slide', (e, value) ->
+    S = value
+    redrawBackground()
+    clearCanvas()
+    redrawCanvas()
+    redrawForeground()
 
 sliderLightness = d3.slider()
   .min(1)
@@ -359,9 +400,9 @@ sliderLightness = d3.slider()
     redrawCanvas()
     redrawForeground()
 
-controlLightness = d3.select("#picker div.control-lightness")
-                      .call(sliderLightness)
-
+d3.select("#picker div.control-hue").call(sliderHue)
+d3.select("#picker div.control-saturation").call(sliderSaturation)
+d3.select("#picker div.control-lightness").call(sliderLightness)
 
 redrawBackground()
 clearCanvas()
