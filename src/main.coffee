@@ -155,28 +155,59 @@ hs = (L) ->
   ret.sort()
   return ret
 
-redrawCanvas = (L, scale) ->
-  $canvas = $ '#picker canvas'
-  ctx = $canvas[0].getContext '2d'
+$canvas = $ '#picker canvas'
+ctx = $canvas[0].getContext '2d'
+contrasting = null
 
-  ctx.fillStyle = '#000000'
-  ctx.fillRect 0, 0, width, height
+clearCanvas = ->
+  ctx.clearRect 0, 0, width, height
 
-  dim = 4
+redrawSquare = (x, y, dim) ->
+  vx = (x - 200) / scale
+  vy = (y - 200) / scale
+  polygon = d3.geom.polygon [
+    [vx, vy], [vx, vy + dim], [vx + dim, vy + dim], [vx + dim, vy]
+  ]
+  shape.clip(polygon)
+  if polygon.length > 0
+    [vx, vy] = polygon.centroid()
+    hex = $.husl._conv.rgb.hex $.husl._conv.xyz.rgb $.husl._conv.luv.xyz [L, vx, vy]
+    ctx.fillStyle = hex
+    ctx.fillRect x, y, dim, dim
+
+redrawCanvas = ->
+  ctx.save()
+
+  first = _.first sortedIntersections
+  rest = _.rest sortedIntersections
+
+  ctx.beginPath()
+  ctx.moveTo(200 + first[0] * scale, 200 + first[1] * scale)
+  for r in rest
+    ctx.lineTo(200 + r[0] * scale, 200 + r[1] * scale)
+  ctx.closePath()
+  ctx.clip()
+
+  dim = 10
   xn = width / dim / 2
   yn = height / dim / 2
-  for x in [-xn..xn]
-    for y in [-yn..yn]
-      vx = x * dim / scale
-      vy = y * dim / scale
-      try
-        hex = $.husl._conv.rgb.hex $.husl._conv.xyz.rgb $.husl._conv.luv.xyz [L, vx, vy]
-        ctx.fillStyle = hex
-        ctx.fillRect (x + xn) * dim, (y + yn) * dim, dim, dim
+
+  for x in [0..xn * 2]
+    for y in [0..yn * 2]
+      vx = x * dim
+      vy = y * dim
+      redrawSquare vx, vy, dim
+
+  ctx.restore()
 
 svgContainer = d3.select("#picker svg")
 
-redraw = (L) ->
+L = 50
+scale = null
+sortedIntersections = []
+shape = null
+
+redraw = ->
   svgContainer[0][0].innerHTML = ''
 
   pairs = _.map hs(L), (hrad) ->
@@ -214,23 +245,24 @@ redraw = (L) ->
 
   scale = 190 / longest
 
+  sortedIntersections = _.pluck sortIntersections(intersections), 'point'
+
+  shape = d3.geom.polygon sortedIntersections
+  if shape.area() < 0
+    sortedIntersections.reverse()
+    shape = d3.geom.polygon sortedIntersections
 
   """
-  for xi in [-40..40]
-    for yi in [-40..40]
-      x = xi * 5
-      y = yi * 5
-      try
-        hex = $.husl._conv.rgb.hex $.husl._conv.xyz.rgb $.husl._conv.luv.xyz [L, x, y]
-        svgContainer.append("rect")
-          .attr("x", xi * 5)
-          .attr("y", yi * 5)
-          .attr("height", 5)
-          .attr("width", 5)
-          .attr("transform", "translate(200, 200)")
-          .attr("fill", hex)
+  for point in sortedIntersections
+    svgContainer.append("circle")
+      .attr("cx", scale * point[0])
+      .attr("cy", scale * point[1])
+      .attr("r", 5)
+      .attr("transform", "translate(200, 200)")
+      .attr("fill", "white")
   """
 
+  """
   for name in cleanBounds
     [c, s] = bounds[name]
     lineGraph = svgContainer.append("line")
@@ -241,14 +273,17 @@ redraw = (L) ->
       .attr("transform", "translate(200, 200)")
       .attr("stroke", "white")
       .attr("stroke-width", 1)
+  """
+
+  contrasting = if L > 50 then '#1b1b1b' else '#ffffff'
 
   svgContainer.append("circle")
     .attr("cx", 0)
     .attr("cy", 0)
     .attr("r", scale * minC)
     .attr("transform", "translate(200, 200)")
-    .attr("stroke", "#ffffff")
-    .attr("stroke-width", 1)
+    .attr("stroke", contrasting)
+    .attr("stroke-width", 2)
     .attr("fill", "none")
 
   svgContainer.append("circle")
@@ -257,7 +292,7 @@ redraw = (L) ->
     .attr("r", scale * longest)
     .attr("transform", "translate(200, 200)")
     .attr("stroke", "#ffffff")
-    .attr("stroke-width", 1)
+    .attr("stroke-width", 2)
     .attr("fill", "none")
 
   svgContainer.append("circle")
@@ -265,12 +300,22 @@ redraw = (L) ->
     .attr("cy", 0)
     .attr("r", 2)
     .attr("transform", "translate(200, 200)")
-    .attr("fill", "white")
-
-  redrawCanvas L, scale
+    .attr("fill", contrasting)
 
 
-redraw 50
 
 $('#lightness-slider').on 'input', ->
-  redraw parseInt $('#lightness-slider').val()
+  L = parseInt $('#lightness-slider').val()
+  redraw()
+  clearCanvas()
+  redrawCanvas()
+
+$('#lightness-slider').on 'change', ->
+  L = parseInt $('#lightness-slider').val()
+  redraw()
+  clearCanvas()
+  redrawCanvas()
+
+redraw()
+clearCanvas()
+redrawCanvas()
