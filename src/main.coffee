@@ -155,17 +155,29 @@ hs = (L) ->
   ret.sort()
   return ret
 
+redrawCanvas = (L, scale) ->
+  $canvas = $ '#picker canvas'
+  ctx = $canvas[0].getContext '2d'
+
+  ctx.fillStyle = '#000000'
+  ctx.fillRect 0, 0, width, height
+
+  dim = 4
+  xn = width / dim / 2
+  yn = height / dim / 2
+  for x in [-xn..xn]
+    for y in [-yn..yn]
+      vx = x * dim / scale
+      vy = y * dim / scale
+      try
+        hex = $.husl._conv.rgb.hex $.husl._conv.xyz.rgb $.husl._conv.luv.xyz [L, vx, vy]
+        ctx.fillStyle = hex
+        ctx.fillRect (x + xn) * dim, (y + yn) * dim, dim, dim
 
 svgContainer = d3.select("#picker svg")
-                .attr("width", width)
-                .attr("height", height)
-
-cancelDraw = false
 
 redraw = (L) ->
   svgContainer[0][0].innerHTML = ''
-
-  cancelDraw = false
 
   pairs = _.map hs(L), (hrad) ->
     C = $.husl._maxChroma L, hrad * 180 / Math.PI
@@ -219,9 +231,6 @@ redraw = (L) ->
           .attr("fill", hex)
   """
 
-  if cancelDraw
-    return
-      
   for name in cleanBounds
     [c, s] = bounds[name]
     lineGraph = svgContainer.append("line")
@@ -233,9 +242,6 @@ redraw = (L) ->
       .attr("stroke", "white")
       .attr("stroke-width", 1)
 
-    if cancelDraw
-      return
-
   svgContainer.append("circle")
     .attr("cx", 0)
     .attr("cy", 0)
@@ -244,9 +250,6 @@ redraw = (L) ->
     .attr("stroke", "#ffffff")
     .attr("stroke-width", 1)
     .attr("fill", "none")
-
-  if cancelDraw
-    return
 
   svgContainer.append("circle")
     .attr("cx", 0)
@@ -257,9 +260,6 @@ redraw = (L) ->
     .attr("stroke-width", 1)
     .attr("fill", "none")
 
-  if cancelDraw
-    return
-
   svgContainer.append("circle")
     .attr("cx", 0)
     .attr("cy", 0)
@@ -267,9 +267,10 @@ redraw = (L) ->
     .attr("transform", "translate(200, 200)")
     .attr("fill", "white")
 
+  redrawCanvas L, scale
+
 
 redraw 50
 
 $('#lightness-slider').on 'input', ->
-  cancelDraw = true
   redraw parseInt $('#lightness-slider').val()
