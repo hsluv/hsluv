@@ -123,6 +123,29 @@ getIntersections = (lines) ->
     
   return intersections.concat getIntersections rest
 
+dominoSortMatch = (dominos, match) ->
+  if dominos.length == 1
+    return dominos
+
+  {_first, rest} = _.groupBy dominos, (domino) ->
+    if match in domino then '_first' else 'rest'
+
+  first = _first[0]
+
+  next = if first[0] != match then first[0] else first[1]
+  return [first].concat dominoSortMatch rest, next
+
+dominoSort = (dominos) ->
+  first = _.first dominos
+  rest = _.rest dominos
+  [first].concat dominoSortMatch rest, first[1]
+
+sortIntersections = (intersections) ->
+  dominos = dominoSort _.pluck intersections, 'names'
+  _.map dominos, (domino) ->
+    _.find intersections, (i) ->
+      i.names[0] == domino[0] and i.names[1] == domino[1]
+
 hs = (L) ->
   ret = []
   he1 = $.husl._hradExtremum L
@@ -133,9 +156,9 @@ hs = (L) ->
   return ret
 
 
-svgContainer = d3.select("#picker").append("svg")
-                                   .attr("width", width)
-                                   .attr("height", height)
+svgContainer = d3.select("#picker svg")
+                .attr("width", width)
+                .attr("height", height)
 
 cancelDraw = false
 
@@ -155,7 +178,7 @@ redraw = (L) ->
 
   bounds = getBounds L
 
-  intersections = []
+  window.eee = intersections = []
   for i in getIntersections _.pairs bounds
     good = true
     for [name, bound] in _.pairs bounds
