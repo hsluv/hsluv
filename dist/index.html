@@ -6,6 +6,7 @@
   <meta name="author" content="Alexei Boronine">
   <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/d3.slider.css">
 </head>
 <body data-spy="scroll" data-target=".navbar-static-top">
   <div class="dark">
@@ -18,14 +19,16 @@
           </em>
         </h2>
       </header>
-      <div class="row">
-        <div class="col-md-6" id="picker">
-          <canvas style="position:absolute" height="400" width="400"></canvas>
-          <svg style="position:absolute" height="400" width="400"></svg>
+      <div id="picker">
+        <canvas style="position:absolute;left:0;right:400px;margin:auto" height="400" width="400"></canvas>
+        <svg style="position:absolute;left:0;right:400px;margin:auto" height="400" width="400">
+          <g class="background"></g>
+          <g class="foreground"></g>
+        </svg>
+        <div style="position:absolute;left:400px;right:0;margin:auto;width:400px">
+          <div class="control-lightness"></div>
         </div>
-        <div class="col-md-6">
-          <input type="range" min="1" max="99" id="lightness-slider"/>
-        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -366,10 +369,9 @@ $('#rainbow-hsl div').each(function(index) {
   </div>
   <script src="js/underscore-min.js"></script>
   <script src="js/jquery-1.7.2.min.js"></script>
-  <script src="js/jquery-ui-1.8.23.custom.min.js"></script>
   <script src="js/d3.v3.min.js"></script>
+  <script src="js/d3.slider.js"></script>
   <script src="bootstrap/js/bootstrap.min.js"></script>
-  <script src="js/colorspaces.min.js"></script>
   <script src="js/husl.min.js"></script>
   <script src="js/main.js"></script>
   <!--

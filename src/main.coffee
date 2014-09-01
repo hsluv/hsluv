@@ -21,7 +21,7 @@ hslToRgb = (h, s, l) ->
 
 hslToHex = (h, s, l) ->
   rgb = hslToRgb h, s / 100, l / 100
-  return $.colorspaces.converter('sRGB', 'hex') rgb
+  return $.husl._conv.rgb.hex rgb
 
 randomHue = ->
   Math.floor Math.random() * 360
@@ -100,14 +100,20 @@ intersection = (c1, s1, c2, s2) ->
   y = c1 + x * s1
   return [x, y]
 
+intersection3 = (line1, line2) ->
+  return intersection line1[0], line1[1], line2[0], line2[1]
+
 intersection2 = (line1, point) ->
   line2 = [0, point[1] / point[0]]
-  int = intersection line1[0], line1[1], line2[0], line2[1]
+  int = intersection3 line1, line2
   if int[0] > 0 and int[0] < point[0]
     return int
   if int[0] < 0 and int[0] > point[0]
     return int
   return null
+
+distanceFromPole = (point) ->
+  Math.sqrt(Math.pow(point[0], 2) + Math.pow(point[1], 2))
 
 getIntersections = (lines) ->
   [fname, f] = _.first lines
@@ -117,7 +123,7 @@ getIntersections = (lines) ->
   intersections = _.map rest, (r) ->
     [rname, r] = r
     {
-      point: intersection f[0], f[1], r[0], r[1]
+      point: intersection3 f, r
       names: [fname, rname]
     }
     
@@ -156,8 +162,16 @@ hs = (L) ->
   return ret
 
 $canvas = $ '#picker canvas'
+$svg = $ '#picker svg'
+$background = $ "#picker svg g.background"
+$foreground = $ "#picker svg g.foreground"
+
 ctx = $canvas[0].getContext '2d'
 contrasting = null
+
+background = d3.select("#picker svg g.background")
+foreground = d3.select("#picker svg g.foreground")
+
 
 clearCanvas = ->
   ctx.clearRect 0, 0, width, height
@@ -200,15 +214,17 @@ redrawCanvas = ->
 
   ctx.restore()
 
-svgContainer = d3.select("#picker svg")
-
+H = 0
+S = 100
 L = 50
 scale = null
 sortedIntersections = []
+bounds = []
 shape = null
+pointer = null
 
-redraw = ->
-  svgContainer[0][0].innerHTML = ''
+redrawBackground = ->
+  background[0][0].innerHTML = ''
 
   pairs = _.map hs(L), (hrad) ->
     C = $.husl._maxChroma L, hrad * 180 / Math.PI
@@ -221,7 +237,7 @@ redraw = ->
 
   bounds = getBounds L
 
-  window.eee = intersections = []
+  intersections = []
   for i in getIntersections _.pairs bounds
     good = true
     for [name, bound] in _.pairs bounds
@@ -239,7 +255,7 @@ redraw = ->
 
   longest = 0
   for {point} in intersections
-    length = Math.sqrt(Math.pow(point[0], 2) + Math.pow(point[1], 2))
+    length = distanceFromPole point
     if length > longest
       longest = length
 
@@ -252,32 +268,9 @@ redraw = ->
     sortedIntersections.reverse()
     shape = d3.geom.polygon sortedIntersections
 
-  """
-  for point in sortedIntersections
-    svgContainer.append("circle")
-      .attr("cx", scale * point[0])
-      .attr("cy", scale * point[1])
-      .attr("r", 5)
-      .attr("transform", "translate(200, 200)")
-      .attr("fill", "white")
-  """
-
-  """
-  for name in cleanBounds
-    [c, s] = bounds[name]
-    lineGraph = svgContainer.append("line")
-      .attr("x1", scale * (-200))
-      .attr("y1", scale * (c + (-200) * s))
-      .attr("x2", scale * 200)
-      .attr("y2", scale * (c + 200 * s))
-      .attr("transform", "translate(200, 200)")
-      .attr("stroke", "white")
-      .attr("stroke-width", 1)
-  """
-
   contrasting = if L > 50 then '#1b1b1b' else '#ffffff'
 
-  svgContainer.append("circle")
+  background.append("circle")
     .attr("cx", 0)
     .attr("cy", 0)
     .attr("r", scale * minC)
@@ -286,36 +279,91 @@ redraw = ->
     .attr("stroke-width", 2)
     .attr("fill", "none")
 
-  svgContainer.append("circle")
-    .attr("cx", 0)
-    .attr("cy", 0)
-    .attr("r", scale * longest)
-    .attr("transform", "translate(200, 200)")
-    .attr("stroke", "#ffffff")
-    .attr("stroke-width", 2)
-    .attr("fill", "none")
-
-  svgContainer.append("circle")
+  background.append("circle")
     .attr("cx", 0)
     .attr("cy", 0)
     .attr("r", 2)
     .attr("transform", "translate(200, 200)")
     .attr("fill", contrasting)
 
+redrawForeground = ->
+  foreground[0][0].innerHTML = ''
+
+  maxChroma = $.husl._maxChroma L, H
+  chroma = maxChroma * S / 100
+  hrad = H / 360 * 2 * Math.PI
+
+  foreground.append("circle")
+    .attr("cx", 0)
+    .attr("cy", 0)
+    .attr("r", 190)
+    .attr("transform", "translate(200, 200)")
+    .attr("stroke", "#ffffff")
+    .attr("stroke-width", 2)
+    .attr("fill", "#ffffff")
+    .attr("fill-opacity", "0.0")
+
+  foreground.append("circle")
+    .attr("cx", chroma * Math.cos(hrad) * scale)
+    .attr("cy", chroma * Math.sin(hrad) * scale)
+    .attr("r", 4)
+    .attr("transform", "translate(200, 200)")
+    .attr("fill", "none")
+    .attr("stroke", contrasting)
+    .attr("stroke-width", 2)
 
 
-$('#lightness-slider').on 'input', ->
-  L = parseInt $('#lightness-slider').val()
-  redraw()
-  clearCanvas()
-  redrawCanvas()
+adjustPosition = (x, y) ->
+  pointer = [x / scale, y / scale]
 
-$('#lightness-slider').on 'change', ->
-  L = parseInt $('#lightness-slider').val()
-  redraw()
-  clearCanvas()
-  redrawCanvas()
+  hrad = normalizeRad Math.atan2 pointer[1], pointer[0]
 
-redraw()
+  H = hrad / 2 / Math.PI * 360
+
+  maxChroma = $.husl._maxChroma L, H
+  pointerDistance = distanceFromPole(pointer)
+
+  S = Math.min(pointerDistance / maxChroma * 100, 100)
+
+  redrawForeground()
+
+$foreground.mousedown (e) ->
+  e.preventDefault()
+  offset = $canvas.offset()
+  x = e.pageX - offset.left - 200
+  y = e.pageY - offset.top - 200
+  
+  adjustPosition x, y
+
+dragmove = ->
+  x = d3.event.x - 200
+  y = d3.event.y - 200
+
+  adjustPosition x, y
+
+
+drag = d3.behavior.drag()
+  .on("drag", dragmove)
+
+foreground.call(drag)
+
+sliderLightness = d3.slider()
+  .min(1)
+  .max(99)
+  .value(L)
+  .animate(false)
+  .on 'slide', (e, value) ->
+    L = value
+    redrawBackground()
+    clearCanvas()
+    redrawCanvas()
+    redrawForeground()
+
+controlLightness = d3.select("#picker div.control-lightness")
+                      .call(sliderLightness)
+
+
+redrawBackground()
 clearCanvas()
 redrawCanvas()
+redrawForeground()
