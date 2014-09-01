@@ -6,11 +6,9 @@
   <meta name="author" content="Alexei Boronine">
   <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="http://yandex.st/highlightjs/7.2/styles/default.min.css">
 </head>
 <body data-spy="scroll" data-target=".navbar-static-top">
   <div class="dark">
-    <a href="https://github.com/boronine/husl"><img style="position:absolute;top:0;right:0;border:0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
     <div class="container top">
       <header class="top">
         <h1><em>HUSL</em></h1>
@@ -20,57 +18,16 @@
           </em>
         </h2>
       </header>
-      <div id="picker">
-        <div class="variants">
-          <a class="choice original selected" href="#">original</a> / 
-          <a class="choice pastel" href="#">pastel</a>
+      <div class="row">
+        <div class="col-md-6" id="picker">
         </div>
-        <canvas width="360" height="200"></canvas>
-
-        <svg class="icon full" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 100 100" style="enable-background:new 0 0 99.988 100;" xml:space="preserve">
-          <path d="M56.25,6.25c0,3.455-2.808,6.25-6.25,6.25c-3.467,0-6.25-2.795-6.25-6.25C43.75,2.795,46.533,0,50,0  C53.442,0,56.25,2.795,56.25,6.25z"/>
-          <path d="M43.75,93.75c0-3.467,2.783-6.25,6.25-6.25s6.25,2.783,6.25,6.25c0,3.455-2.783,6.25-6.25,6.25  S43.75,97.205,43.75,93.75z"/>
-          <path d="M6.25,43.744c3.442,0,6.25,2.795,6.25,6.25c0,3.461-2.808,6.25-6.25,6.25  c-3.467,0-6.25-2.789-6.25-6.25C0,46.539,2.783,43.744,6.25,43.744z"/>
-          <path d="M93.738,56.244c-3.431,0-6.238-2.796-6.238-6.244c0-3.467,2.808-6.25,6.274-6.25  c3.431,0,6.25,2.789,6.214,6.244C100.024,53.455,97.205,56.25,93.738,56.244z"/>
-          <path d="M50,25c-13.818,0-25,11.193-25,25s11.182,25,25,25c13.794,0,25-11.193,25-25S63.794,25,50,25L50,25z"/>
-          <path d="M23.169,14.331c2.441,2.441,2.441,6.396,0,8.838c-2.441,2.447-6.396,2.441-8.838,0  s-2.441-6.391,0-8.838C16.772,11.89,20.728,11.89,23.169,14.331z"/>
-          <circle cx="18.75" cy="81.25" r="6.249"/>
-          <path d="M76.855,85.669c-2.441-2.441-2.441-6.396,0-8.838s6.396-2.441,8.838,0  c2.466,2.441,2.466,6.396,0,8.838C83.252,88.11,79.297,88.11,76.855,85.669z"/>
-          <path d="M85.693,23.175c-2.441,2.436-6.396,2.436-8.838,0c-2.441-2.453-2.441-6.396,0-8.844  c2.441-2.436,6.396-2.441,8.838,0.006C88.159,16.778,88.159,20.74,85.693,23.175z"/>
-        </svg>
-
-        <svg class="icon empty" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 100 100" style="enable-background:new 0 0 99.988 100;" xml:space="preserve">
-          <path d="M56.25,6.25c0,3.455-2.795,6.25-6.25,6.25s-6.25-2.795-6.25-6.25C43.75,2.795,46.545,0,50,0  S56.25,2.795,56.25,6.25z"/>
-          <path d="M43.75,93.75c0-3.467,2.795-6.25,6.25-6.25c3.467,0,6.25,2.783,6.25,6.25  c0,3.442-2.783,6.25-6.25,6.25C46.545,100,43.75,97.192,43.75,93.75z"/>
-          <path d="M6.25,43.744c3.455,0,6.25,2.795,6.25,6.25c0,3.461-2.795,6.25-6.25,6.25  c-3.455,0-6.25-2.789-6.25-6.25C0,46.539,2.795,43.744,6.25,43.744z"/>
-          <path d="M93.738,56.244c-3.443,0-6.238-2.796-6.238-6.244c0-3.467,2.783-6.25,6.25-6.25  c3.442,0,6.25,2.789,6.25,6.244C100,53.455,97.192,56.25,93.738,56.244z"/>
-          <path d="M50,37.5c6.885,0,12.5,5.609,12.5,12.5S56.885,62.5,50,62.5S37.5,56.891,37.5,50S43.115,37.5,50,37.5   M50,25c-13.807,0-25,11.193-25,25s11.193,25,25,25s25-11.193,25-25S63.807,25,50,25L50,25z"/>
-          <path d="M23.169,14.331c2.441,2.441,2.441,6.396,0,8.838c-2.441,2.447-6.396,2.441-8.838,0  s-2.441-6.391,0-8.838C16.772,11.89,20.728,11.89,23.169,14.331z"/>
-          <circle cx="18.75" cy="81.25" r="6.249"/>
-          <path d="M76.855,85.669c-2.441-2.441-2.441-6.396,0-8.838c2.453-2.441,6.396-2.441,8.838,0  s2.453,6.396,0,8.838C83.252,88.11,79.297,88.11,76.855,85.669z"/>
-          <path d="M85.693,23.175c-2.441,2.436-6.396,2.436-8.838,0c-2.441-2.453-2.441-6.396,0-8.844  c2.441-2.436,6.396-2.441,8.838,0.006C88.135,16.778,88.135,20.74,85.693,23.175z"/>
-        </svg>
-
-        <div class="slider"></div>
-        <div class="swatch"></div>
-        <div class="coordinate-names">
-          R:<br/>G:</br>B:<br/><br/>H:<br/>S:<br/>L:
+        <div class="col-md-6">
+          <input type="range" min="1" max="99" id="lightness-slider"/>
         </div>
-        <div class="coordinates">
-          <span class="R"></span><br/>
-          <span class="G"></span><br/>
-          <span class="B"></span><br/><br/>
-          <span class="H"></span><br/>
-          <span class="S"></span><br/>
-          <span class="L"></span><br/>
-        </div>
-        <div class="chroma"><span class="name">Chroma: </span><span class="C"></span></div>
-        <div class="scope"></div>
-        <input class="hex"/>
       </div>
     </div>
   </div>
-  <div class="navbar navbar-default navbar-static-top" data-spy="affix" data-offset-top="550">
+  <div class="navbar navbar-default navbar-static-top" data-spy="affix" data-offset-top="700">
     <div class="container">
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
@@ -405,13 +362,15 @@ $('#rainbow-hsl div').each(function(index) {
       </div>
     </div>
   </div>
+  <script src="js/underscore-min.js"></script>
   <script src="js/jquery-1.7.2.min.js"></script>
   <script src="js/jquery-ui-1.8.23.custom.min.js"></script>
+  <script src="js/d3.v3.min.js"></script>
   <script src="bootstrap/js/bootstrap.min.js"></script>
   <script src="js/colorspaces.min.js"></script>
-  <script src="http://yandex.st/highlightjs/7.2/highlight.min.js"></script>
   <script src="js/husl.min.js"></script>
   <script src="js/main.js"></script>
+  <!--
   <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-31795350-1']);
@@ -422,6 +381,6 @@ $('#rainbow-hsl div').each(function(index) {
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
   </script>
-  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  -->
 </body>
 </html>

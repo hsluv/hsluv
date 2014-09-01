@@ -43,98 +43,210 @@ $('#rainbow-hsl div').each (index) ->
   $(this).css 'background-color', hslToHex index * 36, 90, 60
 
 
-do ->
 
-  $canvas = $ '#picker canvas'
-  $scope = $ '#picker .scope'
-  $hex = $ '#picker .hex'
-  ctx = $canvas[0].getContext '2d'
 
-  current_H = 200
-  current_S = 80
-  current_L = 50
-  variant = $.husl
 
-  $hex.click ->
-    $(this).select()
+kappa = 24389 / 27
+epsilon = 216 / 24389
+m =
+  R: [ 3.240454162114103, -1.537138512797715, -0.49853140955601 ]
+  G: [ -0.96926603050518, 1.876010845446694,  0.041556017530349 ]
+  B: [ 0.055643430959114, -0.20402591351675,  1.057225188223179 ]
 
-  redrawSwatch = do ->
+getBounds = (L) ->
+  sub1 = Math.pow(L + 16, 3) / 1560896
+  sub2 = if (sub1 > epsilon) then sub1 else (L / kappa)
+  ret = {}
+  for channel in ['R', 'G', 'B']
+    [m1, m2, m3] = m[channel]
+    for t in [0, 1]
 
-    $swatch = $ '#picker .swatch'
-    $channels = {}
+      top1 = (1441272 * m3 - 4323816 * m1) * sub2
+      top2 = (-12739311 * m3 - 11700000 * m2 - 11120499 * m1) * L * sub2 + 11700000 * t * L
+      bottom = -((9608480 * m3 - 1921696 * m2) * sub2 + 1921696 * t)
 
-    for c in ['R', 'G', 'B', 'H', 'S', 'L', 'C']
-      $channels[c] = $ "#picker .#{c}"
+      V = (top1 + top2) / bottom
 
-    chromaFromHex = ->
-    conv = $.colorspaces.converter 'hex', 'CIELCHuv'
+      s = top1 / bottom
+      c = top2 / bottom
 
-    return ->
-      $channels.H.text Math.round current_H
-      $channels.S.text Math.round current_S
-      $channels.L.text Math.round current_L
-      [R, G, B] = variant.toRGB current_H, current_S, current_L
-      $channels.R.text Math.round R * 255
-      $channels.G.text Math.round G * 255
-      $channels.B.text Math.round B * 255
-      hex = variant.toHex current_H, current_S, current_L
-      $swatch.css 'background-color', hex
-      $hex.attr 'value', hex
-      C = conv(hex)[1]
-      $channels.C.text Math.round C
-      $scope.css 'left', current_H - 5
-      $scope.css 'top', (100 - current_S) * 2 - 5
-      $scope.css 'border-color', if current_L > 50 then '#1b1b1b' else 'white'
+      ret[channel + t] = [c, s]
+  return ret
 
-  redraw = ->
-    redrawSwatch()
-    width = 360
-    height = 200
-    dim = 4
-    xn = width / dim
-    yn = height / dim
-    for x in [0..xn]
-      for y in [0..yn]
-        h = x * dim + dim / 2
-        s = 100 * (1 - y * dim / height)
-        ctx.fillStyle = variant.toHex h, s, current_L
-        ctx.fillRect x * dim, y * dim, dim, dim
 
-  redraw()
-  $('#picker .slider').slider
-    orientation: 'vertical'
-    value: current_L
-    slide: (event, ui) ->
-      current_L = ui.value
-      redraw()
 
-  update = (e) ->
-    e.stopPropagation()
-    e.preventDefault()
-    offset = $canvas.offset()
-    current_H = e.pageX - offset.left
-    current_S = 100 - (e.pageY - offset.top) / 2
-    redrawSwatch()
 
-  $canvas.mousedown (e) ->
-    $canvas.mousemove update
-    $scope.hide()
-    update(e)
 
-  $(document).mouseup ->
-    $scope.show()
-    $canvas.unbind 'mousemove', update
 
-  $('#picker .variants .choice').click (e) ->
-    e.preventDefault()
-    $('#picker .variants .choice').removeClass 'selected'
-    $(this).addClass 'selected'
-    if $(this).hasClass 'pastel'
-      variant = $.husl.p
-    else
-      variant = $.husl
-    redraw()
+size = 400
 
-$(document).ready ->
-  hljs.initHighlightingOnLoad()
-  
+height = size
+width = size
+maxRadius = size / 2
+
+
+
+toCart = (angle, radius) ->
+  return {
+    x: (height / 2) + radius * Math.cos(angle)
+    y: (width / 2) + radius * Math.sin(angle)
+  }
+
+normalizeRad = (hrad) ->
+  return (hrad + 2 * Math.PI) % (2 * Math.PI)
+
+intersection = (c1, s1, c2, s2) ->
+  x = (c1 - c2) / (s2 - s1)
+  y = c1 + x * s1
+  return [x, y]
+
+intersection2 = (line1, point) ->
+  line2 = [0, point[1] / point[0]]
+  int = intersection line1[0], line1[1], line2[0], line2[1]
+  if int[0] > 0 and int[0] < point[0]
+    return int
+  if int[0] < 0 and int[0] > point[0]
+    return int
+  return null
+
+getIntersections = (lines) ->
+  [fname, f] = _.first lines
+  rest = _.rest lines
+  if rest.length == 0
+    return []
+  intersections = _.map rest, (r) ->
+    [rname, r] = r
+    {
+      point: intersection f[0], f[1], r[0], r[1]
+      names: [fname, rname]
+    }
+    
+  return intersections.concat getIntersections rest
+
+hs = (L) ->
+  ret = []
+  he1 = $.husl._hradExtremum L
+  for channel in ['R', 'G', 'B']
+    for limit in [0, 1]
+      ret.push normalizeRad(he1(channel, limit))
+  ret.sort()
+  return ret
+
+
+svgContainer = d3.select("#picker").append("svg")
+                                   .attr("width", width)
+                                   .attr("height", height)
+
+cancelDraw = false
+
+redraw = (L) ->
+  svgContainer[0][0].innerHTML = ''
+
+  cancelDraw = false
+
+  pairs = _.map hs(L), (hrad) ->
+    C = $.husl._maxChroma L, hrad * 180 / Math.PI
+    return [hrad, C]
+
+  Cs = _.map pairs, (pair) -> pair[1]
+
+  maxC = Math.max Cs...
+  minC = Math.min Cs...
+
+  bounds = getBounds L
+
+  intersections = []
+  for i in getIntersections _.pairs bounds
+    good = true
+    for [name, bound] in _.pairs bounds
+      if name in i.names
+        continue
+      int = intersection2 bound, i.point
+      if int != null
+        good = false
+    if good
+      intersections.push(i)
+
+  cleanBounds = []
+  for {point, names} in intersections
+    cleanBounds = _.union cleanBounds, names
+
+  longest = 0
+  for {point} in intersections
+    length = Math.sqrt(Math.pow(point[0], 2) + Math.pow(point[1], 2))
+    if length > longest
+      longest = length
+
+  scale = 190 / longest
+
+
+  """
+  for xi in [-40..40]
+    for yi in [-40..40]
+      x = xi * 5
+      y = yi * 5
+      try
+        hex = $.husl._conv.rgb.hex $.husl._conv.xyz.rgb $.husl._conv.luv.xyz [L, x, y]
+        svgContainer.append("rect")
+          .attr("x", xi * 5)
+          .attr("y", yi * 5)
+          .attr("height", 5)
+          .attr("width", 5)
+          .attr("transform", "translate(200, 200)")
+          .attr("fill", hex)
+  """
+
+  if cancelDraw
+    return
+      
+  for name in cleanBounds
+    [c, s] = bounds[name]
+    lineGraph = svgContainer.append("line")
+      .attr("x1", scale * (-200))
+      .attr("y1", scale * (c + (-200) * s))
+      .attr("x2", scale * 200)
+      .attr("y2", scale * (c + 200 * s))
+      .attr("transform", "translate(200, 200)")
+      .attr("stroke", "white")
+      .attr("stroke-width", 1)
+
+    if cancelDraw
+      return
+
+  svgContainer.append("circle")
+    .attr("cx", 0)
+    .attr("cy", 0)
+    .attr("r", scale * minC)
+    .attr("transform", "translate(200, 200)")
+    .attr("stroke", "#ffffff")
+    .attr("stroke-width", 1)
+    .attr("fill", "none")
+
+  if cancelDraw
+    return
+
+  svgContainer.append("circle")
+    .attr("cx", 0)
+    .attr("cy", 0)
+    .attr("r", scale * longest)
+    .attr("transform", "translate(200, 200)")
+    .attr("stroke", "#ffffff")
+    .attr("stroke-width", 1)
+    .attr("fill", "none")
+
+  if cancelDraw
+    return
+
+  svgContainer.append("circle")
+    .attr("cx", 0)
+    .attr("cy", 0)
+    .attr("r", 2)
+    .attr("transform", "translate(200, 200)")
+    .attr("fill", "white")
+
+
+redraw 50
+
+$('#lightness-slider').on 'input', ->
+  cancelDraw = true
+  redraw parseInt $('#lightness-slider').val()
