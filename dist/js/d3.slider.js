@@ -58,7 +58,7 @@ d3.slider = function module() {
         handle.style('left', newPos);
       });
 
-      div.on("mousedown", onClickHorizontal);
+      div.on("click", onClickHorizontal);
       
       handle.style("left", formatPercent(scale(value)));
       drag.on("drag", onDragHorizontal);
