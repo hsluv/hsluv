@@ -177,9 +177,6 @@ background = d3.select("#picker svg g.background")
 foreground = d3.select("#picker svg g.foreground")
 
 
-clearCanvas = ->
-  ctx.clearRect 0, 0, width, height
-
 redrawSquare = (x, y, dim) ->
   vx = (x - 200) / scale
   vy = (y - 200) / scale
@@ -193,7 +190,8 @@ redrawSquare = (x, y, dim) ->
     ctx.fillStyle = hex
     ctx.fillRect x, y, dim, dim
 
-redrawCanvas = ->
+redrawCanvas = (dim) ->
+  ctx.clearRect 0, 0, width, height
   ctx.save()
 
   first = _.first sortedIntersections
@@ -206,7 +204,6 @@ redrawCanvas = ->
   ctx.closePath()
   ctx.clip()
 
-  dim = 10
   xn = width / dim / 2
   yn = height / dim / 2
 
@@ -302,10 +299,10 @@ redrawForeground = ->
     .attr("cy", 0)
     .attr("r", 190)
     .attr("transform", "translate(200, 200)")
-    .attr("stroke", "#ffffff")
-    .attr("stroke-width", 2)
     .attr("fill", "#ffffff")
     .attr("fill-opacity", "0.0")
+    .attr("stroke", "#ffffff")
+    .attr("stroke-width", 2)
 
   foreground.append("circle")
     .attr("cx", chroma * Math.cos(hrad) * scale)
@@ -331,6 +328,18 @@ redrawForeground = ->
     'background': 'linear-gradient(to right,' + colors.join(',') + ')'
   }
 
+redrawSliderPositions = ->
+
+  sliderHue.value        H
+  sliderSaturation.value S
+  sliderLightness.value  L
+
+  console.log 'redddd'
+  sliderHue.redraw()
+  sliderSaturation.redraw()
+  sliderLightness.redraw()
+
+
 adjustPosition = (x, y) ->
   pointer = [x / scale, y / scale]
 
@@ -344,6 +353,7 @@ adjustPosition = (x, y) ->
   S = Math.min(pointerDistance / maxChroma * 100, 100)
 
   redrawForeground()
+  redrawSliderPositions()
 
 $foreground.mousedown (e) ->
   e.preventDefault()
@@ -367,37 +377,24 @@ foreground.call(drag)
 sliderHue = d3.slider()
   .min(0)
   .max(360)
-  .value(H)
-  .animate(false)
   .on 'slide', (e, value) ->
     H = value
-    redrawBackground()
-    clearCanvas()
-    redrawCanvas()
     redrawForeground()
 
 sliderSaturation = d3.slider()
   .min(0)
   .max(100)
-  .value(S)
-  .animate(false)
   .on 'slide', (e, value) ->
     S = value
-    redrawBackground()
-    clearCanvas()
-    redrawCanvas()
     redrawForeground()
 
 sliderLightness = d3.slider()
   .min(1)
   .max(99)
-  .value(L)
-  .animate(false)
   .on 'slide', (e, value) ->
     L = value
     redrawBackground()
-    clearCanvas()
-    redrawCanvas()
+    redrawCanvas(10)
     redrawForeground()
 
 d3.select("#picker div.control-hue").call(sliderHue)
@@ -405,6 +402,6 @@ d3.select("#picker div.control-saturation").call(sliderSaturation)
 d3.select("#picker div.control-lightness").call(sliderLightness)
 
 redrawBackground()
-clearCanvas()
-redrawCanvas()
+redrawCanvas(10)
 redrawForeground()
+redrawSliderPositions()
