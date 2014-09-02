@@ -189,6 +189,9 @@ redrawCanvas = (dim) ->
   ctx.clearRect 0, 0, width, height
   ctx.globalCompositeOperation = 'source-over'
 
+  if L == 0 or L == 100
+    return
+
   xn = width / dim
   yn = height / dim
 
@@ -246,57 +249,67 @@ makeBackground = ->
     .attr("transform", "translate(200, 200)")
 
   redrawBackground = ->
+    if L != 0 and L != 100
 
-    pairs = _.map hs(L), (hrad) ->
-      C = $.husl._maxChroma L, hrad * 180 / Math.PI
-      return [hrad, C]
+      pairs = _.map hs(L), (hrad) ->
+        C = $.husl._maxChroma L, hrad * 180 / Math.PI
+        return [hrad, C]
 
-    Cs = _.map pairs, (pair) -> pair[1]
+      Cs = _.map pairs, (pair) -> pair[1]
 
-    maxC = Math.max Cs...
-    minC = Math.min Cs...
+      maxC = Math.max Cs...
+      minC = Math.min Cs...
 
-    bounds = getBounds L
+      bounds = getBounds L
 
-    intersections = []
-    for i in getIntersections _.pairs bounds
-      good = true
-      for [name, bound] in _.pairs bounds
-        if name in i.names
-          continue
-        int = intersection2 bound, i.point
-        if int != null
-          good = false
-      if good
-        intersections.push(i)
+      intersections = []
+      for i in getIntersections _.pairs bounds
+        good = true
+        for [name, bound] in _.pairs bounds
+          if name in i.names
+            continue
+          int = intersection2 bound, i.point
+          if int != null
+            good = false
+        if good
+          intersections.push(i)
 
-    cleanBounds = []
-    for {point, names} in intersections
-      cleanBounds = _.union cleanBounds, names
+      cleanBounds = []
+      for {point, names} in intersections
+        cleanBounds = _.union cleanBounds, names
 
-    longest = 0
-    for {point} in intersections
-      length = distanceFromPole point
-      if length > longest
-        longest = length
+      longest = 0
+      for {point} in intersections
+        length = distanceFromPole point
+        if length > longest
+          longest = length
 
-    scale = 190 / longest
+      scale = 190 / longest
 
-    sortedIntersections = _.pluck sortIntersections(intersections), 'point'
+      sortedIntersections = _.pluck sortIntersections(intersections), 'point'
 
-    shape = d3.geom.polygon sortedIntersections
-    if shape.area() < 0
-      sortedIntersections.reverse()
       shape = d3.geom.polygon sortedIntersections
+      if shape.area() < 0
+        sortedIntersections.reverse()
+        shape = d3.geom.polygon sortedIntersections
 
-    contrasting = if L > 70 then '#1b1b1b' else '#ffffff'
+      contrasting = if L > 70 then '#1b1b1b' else '#ffffff'
 
-    pastelBoundary
-      .attr("r", scale * minC)
-      .attr("stroke", contrasting)
+      pastelBoundary
+        .attr("r", scale * minC)
+        .attr("stroke", contrasting)
 
-    center
-      .attr("fill", contrasting)
+      center
+        .attr("fill", contrasting)
+
+    else
+      pastelBoundary
+        .attr("r", 0)
+        .attr("stroke", contrasting)
+
+      center
+        .attr("fill", contrasting)
+
 
   background.redraw = redrawBackground
 
@@ -324,6 +337,7 @@ makeForeground = ->
     .attr("cx", 0)
     .attr("cy", 0)
     .attr("r", 4)
+    .attr("style", "display:none")
     .attr("transform", "translate(200, 200)")
     .attr("fill", "none")
     .attr("stroke-width", 2)
@@ -349,14 +363,23 @@ makeForeground = ->
 
   redrawForeground = ->
 
-    maxChroma = $.husl._maxChroma L, H
-    chroma = maxChroma * S / 100
-    hrad = H / 360 * 2 * Math.PI
+    if L != 0 and L != 100
 
-    pickerScope
-      .attr("cx", chroma * Math.cos(hrad) * scale)
-      .attr("cy", chroma * Math.sin(hrad) * scale)
-      .attr("stroke", contrasting)
+      maxChroma = $.husl._maxChroma L, H
+      chroma = maxChroma * S / 100
+      hrad = H / 360 * 2 * Math.PI
+
+      pickerScope
+        .attr("cx", chroma * Math.cos(hrad) * scale)
+        .attr("cy", chroma * Math.sin(hrad) * scale)
+        .attr("stroke", contrasting)
+        .attr("style", "display:inline")
+
+    else
+
+      pickerScope
+        .attr("style", "display:none")
+
 
     colors = d3.range(0, 360, 10).map (_) -> $.husl.toHex _, S, L
     d3.select("#picker div.control-hue").style {
@@ -436,8 +459,8 @@ sliderSaturation = d3.slider()
     redrawSwatch()
 
 sliderLightness = d3.slider()
-  .min(1)
-  .max(99)
+  .min(0)
+  .max(100)
   .on 'slide', (e, value) ->
     L = value
     background.redraw()
