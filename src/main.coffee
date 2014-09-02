@@ -84,6 +84,22 @@ height = size
 width = size
 maxRadius = size / 2
 
+$canvas     = $ '#picker canvas'
+$svg        = $ '#picker svg'
+
+ctx = $canvas[0].getContext '2d'
+contrasting = null
+
+H = 0
+S = 100
+L = 50
+scale = null
+sortedIntersections = []
+bounds = []
+shape = null
+
+
+
 
 
 toCart = (angle, radius) ->
@@ -161,17 +177,6 @@ hs = (L) ->
   ret.sort()
   return ret
 
-$canvas     = $ '#picker canvas'
-$svg        = $ '#picker svg'
-
-$controlHue        = $ "#picker .control-hue"
-$controlSaturation = $ "#picker .control-saturation"
-$controlLightness  = $ "#picker .control-lightness"
-
-ctx = $canvas[0].getContext '2d'
-contrasting = null
-
-
 redrawSquare = (x, y, dim) ->
   vx = (x - 200) / scale
   vy = (y - 200) / scale
@@ -219,15 +224,6 @@ redrawCanvas = (dim) ->
     ctx.lineTo (200 + point[0] * scale), (200 + point[1] * scale)
   ctx.closePath()
   ctx.fill()
-
-H = 0
-S = 100
-L = 50
-scale = null
-sortedIntersections = []
-bounds = []
-shape = null
-pointer = null
 
 makeBackground = ->
 
