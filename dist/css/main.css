@@ -13,18 +13,18 @@ footer {
 }
 .dark header.top {
   margin: 40px;
-  margin-bottom: 70px;
+  margin-bottom: 40px;
 }
 .dark header.top h1 {
   color: #555;
   text-align: center;
-  font-size: 120px;
-  line-height: 140px;
+  font-size: 100px;
+  line-height: 120px;
   margin: 0px;
 }
 .dark header.top h2 {
   text-align: center;
-  font-size: 30px;
+  font-size: 20px;
   margin: 0px;
 }
 abbr.initialism {
@@ -69,3 +69,53 @@ div.demo {
 #rainbow-hsl div {
   height: 20px;
 }
+
+#picker {
+  position: relative;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 800px;
+  height: 400px;
+}
+
+#picker .swatch {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 200px;
+  height: 200px;
+}
+
+#picker .hex {
+  width: 70px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #888;
+  position: absolute;
+  background: transparent;
+  border: 1px solid #555;
+  outline: none;
+  top: 210px;
+  right: 0px;
+}
+
+table.sliders {
+  width: 100%;
+}
+
+table.sliders tr {
+  height: 30px;
+}
+
+table.sliders td.counter {
+  padding-left: 10px;
+  color: #777777;
+}
+
+table.sliders th {
+  font-weight: normal;
+  color: #eeeeee;
+  width: 30px;
+}
+

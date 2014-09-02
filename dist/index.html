@@ -20,12 +20,34 @@
         </h2>
       </header>
       <div id="picker">
-        <canvas style="position:absolute;left:0;right:400px;margin:auto" height="400" width="400"></canvas>
-        <svg style="position:absolute;left:0;right:400px;margin:auto" height="400" width="400"></svg>
-        <div style="position:absolute;left:400px;right:0;margin:auto;width:400px">
-          <div class="control-hue"></div>
-          <div class="control-saturation"></div>
-          <div class="control-lightness"></div>
+        <canvas style="position:absolute;left:0" height="400" width="400"></canvas>
+        <svg style="position:absolute;left:0" height="400" width="400"></svg>
+        <div class="swatch"></div>
+        <input class="hex"/>
+        <div style="position:absolute;right:0;bottom:0;width:380px;height:120px">
+          <table class="sliders">
+            <tr>
+              <th>H</th>
+              <td style="width:280px">
+                <div style="width:280px" class="control-hue"></div>
+              </td>
+              <td class="counter counter-hue">100.0</td>
+            </tr>
+            <tr>
+              <th>S</th>
+              <td style="width:280px">
+                <div style="width:280px" class="control-saturation"></div>
+              </td>
+              <td class="counter counter-saturation">100.0</td>
+            </tr>
+            <tr>
+              <th>L</th>
+              <td style="width:280px">
+                <div style="width:280px" class="control-lightness"></div>
+              </td>
+              <td class="counter counter-lightness">100.0</td>
+            </tr>
+          </table>
         </div>
       </div>
       </div>

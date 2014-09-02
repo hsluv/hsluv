@@ -236,6 +236,7 @@ makeBackground = ->
     .attr("cy", 0)
     .attr("transform", "translate(200, 200)")
     .attr("stroke-width", 2)
+
     .attr("fill", "none")
 
   center = background.append("circle")
@@ -288,7 +289,7 @@ makeBackground = ->
       sortedIntersections.reverse()
       shape = d3.geom.polygon sortedIntersections
 
-    contrasting = if L > 50 then '#1b1b1b' else '#ffffff'
+    contrasting = if L > 70 then '#1b1b1b' else '#ffffff'
 
     pastelBoundary
       .attr("r", scale * minC)
@@ -376,6 +377,16 @@ makeForeground = ->
 
   return foreground
 
+redrawSwatch = ->
+  hex = $.husl.toHex H, S, L
+  d3.select('#picker .swatch').style {
+    'background-color': hex
+  }
+  d3.select('#picker .hex').attr 'value', hex
+  d3.select('#picker .counter-hue').text        H.toPrecision 3
+  d3.select('#picker .counter-saturation').text S.toPrecision 3
+  d3.select('#picker .counter-lightness').text  L.toPrecision 3
+
 
 foreground = makeForeground()
 background = makeBackground()
@@ -406,6 +417,7 @@ adjustPosition = (x, y) ->
 
   foreground.redraw()
   redrawSliderPositions()
+  redrawSwatch()
 
 sliderHue = d3.slider()
   .min(0)
@@ -413,6 +425,7 @@ sliderHue = d3.slider()
   .on 'slide', (e, value) ->
     H = value
     foreground.redraw()
+    redrawSwatch()
 
 sliderSaturation = d3.slider()
   .min(0)
@@ -420,6 +433,7 @@ sliderSaturation = d3.slider()
   .on 'slide', (e, value) ->
     S = value
     foreground.redraw()
+    redrawSwatch()
 
 sliderLightness = d3.slider()
   .min(1)
@@ -427,14 +441,16 @@ sliderLightness = d3.slider()
   .on 'slide', (e, value) ->
     L = value
     background.redraw()
-    redrawCanvas(10)
+    redrawCanvas(8)
     foreground.redraw()
+    redrawSwatch()
 
 d3.select("#picker div.control-hue").call(sliderHue)
 d3.select("#picker div.control-saturation").call(sliderSaturation)
 d3.select("#picker div.control-lightness").call(sliderLightness)
 
 background.redraw()
-redrawCanvas(10)
+redrawCanvas(8)
 foreground.redraw()
 redrawSliderPositions()
+redrawSwatch()

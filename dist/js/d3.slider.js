@@ -58,7 +58,7 @@ d3.slider = function module() {
         handle.style('left', newPos);
       });
 
-      div.on("click", onClickHorizontal);
+      div.on("mousedown", onClickHorizontal);
       
       handle.style("left", formatPercent(scale(value)));
       drag.on("drag", onDragHorizontal);
@@ -155,18 +155,8 @@ d3.slider = function module() {
         }
       }
 
-      function onClickVertical() {
-        if (!value.length) {
-          moveHandle(sliderLength - d3.event.offsetY || d3.event.layerY);
-        }
-      }
-
       function onDragHorizontal() {
         moveHandle(Math.max(0, Math.min(sliderLength, d3.event.x)));
-      }
-
-      function onDragVertical() {
-        moveHandle(sliderLength - Math.max(0, Math.min(sliderLength, d3.event.y)));
       }
 
       function stopPropagation() {
