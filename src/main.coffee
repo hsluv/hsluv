@@ -187,7 +187,8 @@ redrawSquare = (x, y, dim) ->
 
 redrawCanvas = (dim) ->
   ctx.clearRect 0, 0, width, height
-  ctx.save()
+  ctx.globalCompositeOperation = 'source-over'
+  #ctx.save()
 
   first = _.first sortedIntersections
   rest = _.rest sortedIntersections
@@ -197,7 +198,7 @@ redrawCanvas = (dim) ->
   for r in rest
     ctx.lineTo(200 + r[0] * scale, 200 + r[1] * scale)
   ctx.closePath()
-  ctx.clip()
+  #ctx.clip()
 
   xn = width / dim / 2
   yn = height / dim / 2
@@ -208,7 +209,15 @@ redrawCanvas = (dim) ->
       vy = y * dim
       redrawSquare vx, vy, dim
 
-  ctx.restore()
+  ctx.globalCompositeOperation = 'destination-in'
+  ctx.beginPath()
+  ctx.moveTo (200 + shape[0][0] * scale), (200 + shape[0][1] * scale)
+  for point in _.rest shape
+    ctx.lineTo (200 + point[0] * scale), (200 + point[1] * scale)
+  ctx.closePath()
+  ctx.fill()
+
+  #ctx.restore()
 
 H = 0
 S = 100
