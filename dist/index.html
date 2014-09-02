@@ -22,8 +22,12 @@
       <div id="picker">
         <canvas style="position:absolute;left:0;right:400px;margin:auto" height="400" width="400"></canvas>
         <svg style="position:absolute;left:0;right:400px;margin:auto" height="400" width="400">
-          <g class="background"></g>
-          <g class="foreground"></g>
+          <defs>
+            <mask id="Mask">
+              <circle cx="0" cy="0" r="200" fill="#ffffff"/>
+            </mask>
+          </defs>
+          <rect x="0" y="0" width="400" height="400" mask="url(#Mask)" fill="green"></rect>
         </svg>
         <div style="position:absolute;left:400px;right:0;margin:auto;width:400px">
           <div class="control-hue"></div>

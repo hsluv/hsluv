@@ -163,8 +163,6 @@ hs = (L) ->
 
 $canvas     = $ '#picker canvas'
 $svg        = $ '#picker svg'
-$background = $ "#picker svg g.background"
-$foreground = $ "#picker svg g.foreground"
 
 $controlHue        = $ "#picker .control-hue"
 $controlSaturation = $ "#picker .control-saturation"
@@ -172,9 +170,6 @@ $controlLightness  = $ "#picker .control-lightness"
 
 ctx = $canvas[0].getContext '2d'
 contrasting = null
-
-background = d3.select("#picker svg g.background")
-foreground = d3.select("#picker svg g.foreground")
 
 
 redrawSquare = (x, y, dim) ->
@@ -224,77 +219,89 @@ bounds = []
 shape = null
 pointer = null
 
-redrawBackground = ->
-  background[0][0].innerHTML = ''
+makeBackground = ->
 
-  pairs = _.map hs(L), (hrad) ->
-    C = $.husl._maxChroma L, hrad * 180 / Math.PI
-    return [hrad, C]
+  background = d3.select("#picker svg").append("g")
+    .attr("class", "background")
 
-  Cs = _.map pairs, (pair) -> pair[1]
-
-  maxC = Math.max Cs...
-  minC = Math.min Cs...
-
-  bounds = getBounds L
-
-  intersections = []
-  for i in getIntersections _.pairs bounds
-    good = true
-    for [name, bound] in _.pairs bounds
-      if name in i.names
-        continue
-      int = intersection2 bound, i.point
-      if int != null
-        good = false
-    if good
-      intersections.push(i)
-
-  cleanBounds = []
-  for {point, names} in intersections
-    cleanBounds = _.union cleanBounds, names
-
-  longest = 0
-  for {point} in intersections
-    length = distanceFromPole point
-    if length > longest
-      longest = length
-
-  scale = 190 / longest
-
-  sortedIntersections = _.pluck sortIntersections(intersections), 'point'
-
-  shape = d3.geom.polygon sortedIntersections
-  if shape.area() < 0
-    sortedIntersections.reverse()
-    shape = d3.geom.polygon sortedIntersections
-
-  contrasting = if L > 50 then '#1b1b1b' else '#ffffff'
-
-  background.append("circle")
+  pastelBoundary = background.append("circle")
     .attr("cx", 0)
     .attr("cy", 0)
-    .attr("r", scale * minC)
     .attr("transform", "translate(200, 200)")
-    .attr("stroke", contrasting)
     .attr("stroke-width", 2)
     .attr("fill", "none")
 
-  background.append("circle")
+  center = background.append("circle")
     .attr("cx", 0)
     .attr("cy", 0)
     .attr("r", 2)
     .attr("transform", "translate(200, 200)")
-    .attr("fill", contrasting)
 
-redrawForeground = ->
-  foreground[0][0].innerHTML = ''
+  redrawBackground = ->
 
-  maxChroma = $.husl._maxChroma L, H
-  chroma = maxChroma * S / 100
-  hrad = H / 360 * 2 * Math.PI
+    pairs = _.map hs(L), (hrad) ->
+      C = $.husl._maxChroma L, hrad * 180 / Math.PI
+      return [hrad, C]
+
+    Cs = _.map pairs, (pair) -> pair[1]
+
+    maxC = Math.max Cs...
+    minC = Math.min Cs...
+
+    bounds = getBounds L
+
+    intersections = []
+    for i in getIntersections _.pairs bounds
+      good = true
+      for [name, bound] in _.pairs bounds
+        if name in i.names
+          continue
+        int = intersection2 bound, i.point
+        if int != null
+          good = false
+      if good
+        intersections.push(i)
+
+    cleanBounds = []
+    for {point, names} in intersections
+      cleanBounds = _.union cleanBounds, names
+
+    longest = 0
+    for {point} in intersections
+      length = distanceFromPole point
+      if length > longest
+        longest = length
+
+    scale = 190 / longest
+
+    sortedIntersections = _.pluck sortIntersections(intersections), 'point'
+
+    shape = d3.geom.polygon sortedIntersections
+    if shape.area() < 0
+      sortedIntersections.reverse()
+      shape = d3.geom.polygon sortedIntersections
+
+    contrasting = if L > 50 then '#1b1b1b' else '#ffffff'
+
+    pastelBoundary
+      .attr("r", scale * minC)
+      .attr("stroke", contrasting)
+
+    center
+      .attr("fill", contrasting)
+
+  background.redraw = redrawBackground
+
+  return background
+
+
+makeForeground = ->
+
+  foreground = d3.select("#picker svg").append("g")
+    .attr("class", "foreground")
 
   foreground.append("circle")
+    .attr("class", "picker-container")
     .attr("cx", 0)
     .attr("cy", 0)
     .attr("r", 190)
@@ -304,29 +311,68 @@ redrawForeground = ->
     .attr("stroke", "#ffffff")
     .attr("stroke-width", 2)
 
-  foreground.append("circle")
-    .attr("cx", chroma * Math.cos(hrad) * scale)
-    .attr("cy", chroma * Math.sin(hrad) * scale)
+  pickerScope = foreground.append("circle")
+    .attr("class", "scope")
+    .attr("cx", 0)
+    .attr("cy", 0)
     .attr("r", 4)
     .attr("transform", "translate(200, 200)")
     .attr("fill", "none")
-    .attr("stroke", contrasting)
     .attr("stroke-width", 2)
 
-  colors = d3.range(0, 360, 10).map (_) -> $.husl.toHex _, S, L
-  d3.select("#picker div.control-hue").style {
-    'background': 'linear-gradient(to right,' + colors.join(',') + ')'
-  }
+  $("#picker svg g.foreground").mousedown (e) ->
+    e.preventDefault()
+    offset = $canvas.offset()
+    x = e.pageX - offset.left - 200
+    y = e.pageY - offset.top - 200
+    
+    adjustPosition x, y
 
-  colors = d3.range(0, 100, 10).map (_) -> $.husl.toHex H, _, L
-  d3.select("#picker div.control-saturation").style {
-    'background': 'linear-gradient(to right,' + colors.join(',') + ')'
-  }
+  dragmove = ->
+    x = d3.event.x - 200
+    y = d3.event.y - 200
 
-  colors = d3.range(0, 100, 10).map (_) -> $.husl.toHex H, S, _
-  d3.select("#picker div.control-lightness").style {
-    'background': 'linear-gradient(to right,' + colors.join(',') + ')'
-  }
+    adjustPosition x, y
+
+  drag = d3.behavior.drag()
+    .on("drag", dragmove)
+
+  foreground.call(drag)
+
+  redrawForeground = ->
+
+    maxChroma = $.husl._maxChroma L, H
+    chroma = maxChroma * S / 100
+    hrad = H / 360 * 2 * Math.PI
+
+    pickerScope
+      .attr("cx", chroma * Math.cos(hrad) * scale)
+      .attr("cy", chroma * Math.sin(hrad) * scale)
+      .attr("stroke", contrasting)
+
+    colors = d3.range(0, 360, 10).map (_) -> $.husl.toHex _, S, L
+    d3.select("#picker div.control-hue").style {
+      'background': 'linear-gradient(to right,' + colors.join(',') + ')'
+    }
+
+    colors = d3.range(0, 100, 10).map (_) -> $.husl.toHex H, _, L
+    d3.select("#picker div.control-saturation").style {
+      'background': 'linear-gradient(to right,' + colors.join(',') + ')'
+    }
+
+    colors = d3.range(0, 100, 10).map (_) -> $.husl.toHex H, S, _
+    d3.select("#picker div.control-lightness").style {
+      'background': 'linear-gradient(to right,' + colors.join(',') + ')'
+    }
+
+  foreground.redraw = redrawForeground;
+
+  return foreground
+
+
+foreground = makeForeground()
+background = makeBackground()
+
 
 redrawSliderPositions = ->
 
@@ -334,7 +380,6 @@ redrawSliderPositions = ->
   sliderSaturation.value S
   sliderLightness.value  L
 
-  console.log 'redddd'
   sliderHue.redraw()
   sliderSaturation.redraw()
   sliderLightness.redraw()
@@ -352,56 +397,37 @@ adjustPosition = (x, y) ->
 
   S = Math.min(pointerDistance / maxChroma * 100, 100)
 
-  redrawForeground()
+  foreground.redraw()
   redrawSliderPositions()
-
-$foreground.mousedown (e) ->
-  e.preventDefault()
-  offset = $canvas.offset()
-  x = e.pageX - offset.left - 200
-  y = e.pageY - offset.top - 200
-  
-  adjustPosition x, y
-
-dragmove = ->
-  x = d3.event.x - 200
-  y = d3.event.y - 200
-
-  adjustPosition x, y
-
-drag = d3.behavior.drag()
-  .on("drag", dragmove)
-
-foreground.call(drag)
 
 sliderHue = d3.slider()
   .min(0)
   .max(360)
   .on 'slide', (e, value) ->
     H = value
-    redrawForeground()
+    foreground.redraw()
 
 sliderSaturation = d3.slider()
   .min(0)
   .max(100)
   .on 'slide', (e, value) ->
     S = value
-    redrawForeground()
+    foreground.redraw()
 
 sliderLightness = d3.slider()
   .min(1)
   .max(99)
   .on 'slide', (e, value) ->
     L = value
-    redrawBackground()
+    background.redraw()
     redrawCanvas(10)
-    redrawForeground()
+    foreground.redraw()
 
 d3.select("#picker div.control-hue").call(sliderHue)
 d3.select("#picker div.control-saturation").call(sliderSaturation)
 d3.select("#picker div.control-lightness").call(sliderLightness)
 
-redrawBackground()
+background.redraw()
 redrawCanvas(10)
-redrawForeground()
+foreground.redraw()
 redrawSliderPositions()
