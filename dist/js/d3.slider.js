@@ -12,7 +12,6 @@ d3.slider = function module() {
   var min = 0,
       max = 100,
       step = 0.01,
-      orientation = "horizontal",
       axis = false,
       margin = 50,
       value,
@@ -38,18 +37,16 @@ d3.slider = function module() {
       // Start value
       value = value || scale.domain()[0];
 
-      // DIV container
-      var div = d3.select(this).classed("d3-slider d3-slider-" + orientation, true);
-      
       var drag = d3.behavior.drag();
       drag.on('dragend', function () {
         dispatch.slideend(d3.event, value);
       })
 
-      // Slider handle
-      var handle1;
+      var div = d3.select(this)
+        .classed("d3-slider", true)
+        .call(drag);
 
-      handle1 = div.append("a")
+      var handle = div.append("a")
         .classed("d3-slider-handle", true)
         .attr("xlink:href", "#")
         .attr('id', "handle-one")
@@ -57,32 +54,16 @@ d3.slider = function module() {
         .call(drag);
 
       redraws.push(function() {
-        var position = (orientation === "horizontal") ? "left" : "bottom";
         var newPos = formatPercent(scale(stepValue(value)));
-        handle1.style(position, newPos);
+        handle.style('left', newPos);
       });
 
-      // Horizontal slider
-      if (orientation === "horizontal") {
-
-        div.on("click", onClickHorizontal);
-        
-        handle1.style("left", formatPercent(scale(value)));
-        drag.on("drag", onDragHorizontal);
-        
-        sliderLength = parseInt(div.style("width"), 10);
-
-      } else { // Vertical
-
-        div.on("click", onClickVertical);
-        drag.on("drag", onDragVertical);
-
-        handle1.style("bottom", formatPercent(scale(value)));
-        drag.on("drag", onDragVertical);
-        
-        sliderLength = parseInt(div.style("height"), 10);
-
-      }
+      div.on("click", onClickHorizontal);
+      
+      handle.style("left", formatPercent(scale(value)));
+      drag.on("drag", onDragHorizontal);
+      
+      sliderLength = parseInt(div.style("width"), 10);
       
       if (axis) {
         createAxis(div);
@@ -97,7 +78,7 @@ d3.slider = function module() {
           axis = d3.svg.axis()
               .ticks(Math.round(sliderLength / 100))
               .tickFormat(tickFormat)
-              .orient((orientation === "horizontal") ? "bottom" :  "right");
+              .orient('bottom');
 
         }
 
@@ -112,39 +93,18 @@ d3.slider = function module() {
 
         var g = svg.append("g");
 
-        // Horizontal axis
-        if (orientation === "horizontal") {
+        svg.style("margin-left", -margin + "px");
 
-          svg.style("margin-left", -margin + "px");
+        svg.attr({
+          width: sliderLength + margin * 2,
+          height: margin
+        });
 
-          svg.attr({
-            width: sliderLength + margin * 2,
-            height: margin
-          });
-
-          if (axis.orient() === "top") {
-            svg.style("top", -margin + "px");
-            g.attr("transform", "translate(" + margin + "," + margin + ")");
-          } else { // bottom
-            g.attr("transform", "translate(" + margin + ",0)");
-          }
-
-        } else { // Vertical
-
+        if (axis.orient() === "top") {
           svg.style("top", -margin + "px");
-
-          svg.attr({
-            width: margin,
-            height: sliderLength + margin * 2
-          });
-
-          if (axis.orient() === "left") {
-            svg.style("left", -margin + "px");
-            g.attr("transform", "translate(" + margin + "," + margin + ")");
-          } else { // right          
-            g.attr("transform", "translate(" + 0 + "," + margin + ")");
-          }
-
+          g.attr("transform", "translate(" + margin + "," + margin + ")");
+        } else { // bottom
+          g.attr("transform", "translate(" + margin + ",0)");
         }
 
         g.call(axis);
@@ -160,12 +120,11 @@ d3.slider = function module() {
 
         if (currentValue !== newValue) {
           var oldPos = formatPercent(scale(stepValue(currentValue))),
-              newPos = formatPercent(scale(stepValue(newValue))),
-              position = (orientation === "horizontal") ? "left" : "bottom";
+              newPos = formatPercent(scale(stepValue(newValue)));
 
           dispatch.slide(d3.event.sourceEvent || d3.event, value = newValue);
 
-          handle1.style(position, newPos);
+          handle.style("left", newPos);
         }
 
       }
@@ -234,12 +193,6 @@ d3.slider = function module() {
   slider.step = function(_) {
     if (!arguments.length) return step;
     step = _;
-    return slider;
-  };
-
-  slider.orientation = function(_) {
-    if (!arguments.length) return orientation;
-    orientation = _;
     return slider;
   };
 
