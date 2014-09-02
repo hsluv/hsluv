@@ -81,8 +81,8 @@ div.demo {
 
 #picker .swatch {
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 80px;
+  top: 30px;
   width: 200px;
   height: 200px;
 }
@@ -96,8 +96,8 @@ div.demo {
   background: transparent;
   border: 1px solid #555;
   outline: none;
-  top: 210px;
-  right: 0px;
+  top: 240px;
+  right: 80px;
 }
 
 table.sliders {
