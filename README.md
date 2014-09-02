@@ -1,12 +1,32 @@
 [![Build Status](https://travis-ci.org/boronine/husl.svg?branch=master)](https://travis-ci.org/boronine/husl)
 
-# What is <abbr class="initialism">HUSL</abbr>?
+[Explanation, demo, ports etc.](http://www.boronine.com/husl/)
 
-HUSL is a [human-friendly](http://www.boronine.com/2012/03/26/Color-Spaces-for-Human-Beings/) alternative to the HSL color space. HSL was designed back in the 70s to be computationally cheap. It is a clever geometric transformation of the RGB color space and it does not take into account the complexities of human color vision.
+# Usage
 
-There have long existed color spaces designed for perceptual uniformity. One of these color spaces is [CIELUV](http://en.wikipedia.org/wiki/CIELUV) (and its cylindrically shaped brother CIE LCh<sub>uv</sub>. Like HSL, it defines hue and lightness, but instead of saturation it defines chroma. The problem with its chroma component is that it doesn't fit into a specific range. This makes it very hard to define colors programmatically. **HUSL is a modified version of the CIE LCh<sub>uv</sub> color space with a new saturation component**.
+Client-side: include [husl.js](https://raw.githubusercontent.com/boronine/husl/master/husl.js) or [husl.min.js](https://raw.githubusercontent.com/boronine/husl/master/husl.min.js) in your webpage, access it as a global ``HUSL`` object or as a jQuery plugin with ``$.husl``.
 
-[Demo, documentation, ports etc.](http://www.boronine.com/husl/)
+Server-side: ``npm install husl``.
+
+**husl.toHex(hue, saturation, lightness)**
+
+*hue* is a number between 0 and 360, *saturation* and *lightness* are numbers between 0 and 100. This function returns the resulting color as a hex string.
+
+**husl.toRGB(hue, saturation, lightness)**
+
+Like above, but returns an array of 3 numbers between 0 and 1, for each RGB channel.
+
+**husl.fromHex(hex)**
+
+Takes a hex string and returns the HUSL color as defined above.
+
+**husl.fromRGB(red, green, blue)**
+
+Like above, but *red*, *green* and *blue* are passed as numbers between 0 and 1.
+
+Use **husl.p.toHex**, **husl.p.toRGB**, **husl.p.fromHex** and **husl.p.fromRGB** for the pastel variant (HUSLp).
+
+HUSL can also be used as a [Stylus](http://learnboost.github.com/stylus/) plugin. See [here](https://github.com/boronine/husl-stylus).
 
 # Versioning
 
