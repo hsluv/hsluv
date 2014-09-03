@@ -88,10 +88,20 @@
   </div>
   <div class="container">
       <div class="row">
-        <div class="col-md-6 col-xs-12" id="comparison">
-          <h2>What is <abbr class="initialism">HUSL</abbr>?</h2>
-          <p><abbr class="initialism">HUSL</abbr> is a <a href="http://www.boronine.com/2012/03/26/Color-Spaces-for-Human-Beings/">human-friendly</a> alternative to the <abbr class="initialism">HSL</abbr> color space. <abbr class="initialism">HSL</abbr> was designed back in the 70s to be computationally cheap, it is a clever geometric transformation of the <abbr class="initialism">RGB</abbr> color space and it does not take into account the complexities of human color vision.</p>
-          <p>There have long existed color spaces designed for perceptual uniformity. One of these color spaces is <a href="http://en.wikipedia.org/wiki/CIELUV"><abbr class="initialism">CIELUV</abbr></a> (and its polar-coordinate brother <abbr class="initialism">CIE LCh<sub>uv</sub></abbr>). Like <abbr class="initialism">HSL</abbr>, it defines hue and lightness, but instead of saturation it defines chroma. The problem with its chroma component is that it doesn't fit into a specific range, which makes it very hard to define colors programmatically. <strong><abbr class="husl initialism">HUSL</abbr> is a modified version of the <abbr class="initialism">CIE LCh<sub>uv</sub></abbr> color space with a new saturation component</strong>.</p>
+        <div class="col-md-6 col-xs-12">
+          <h2>How does <abbr class="initialism">HUSL</abbr> work?</h2>
+          <p><abbr class="initialism">HUSL</abbr> is defined as a conversion to and from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>. For both <abbr class="initialism">HUSL</abbr> and <abbr class="initialism">HUSLp</abbr>, the first step is to find the chroma bounds for a given lightness. These are lines, crossing which will push the color out of the <abbr class="initialism">RGB</abbr> gamut. We define a function, <em>getBounds(L)</em> which returns 6 straight lines in slope-intercept format. Each of them represents one of three <abbr class="initialism">RGB</abbr> channels being pushed either below 0 or above 1.</p>
+          <p><strong>HUSL:</strong></p>
+          <ol>
+            <li>Given a hue (angle), build a ray starting from <em>(0, 0)</em> and find the point where it first intersects with one of the bounding lines.</li>
+            <li>The distance from <em>(0, 0)</em> to this point is the maximum chroma for given <em>L</em> and <em>H</em>. Scale saturation to be a percentage of this distance.</li>
+          </ol>
+          <p><strong>HUSLp:</strong></p>
+          <ol>
+            <li>Use perpendiculars to find the shortest distance from <em>(0, 0)</em> to one of the bounding lines.</li>
+            <li>This distance is the lowest common chroma. For the given <em>L</em> and any <em>H</em> let saturation span this distance.</li>
+          </ol>
+          <p>I used <a href="http://maxima.sourceforge.net/">Maxima</a> to build and solve these equations, and <a href="https://github.com/boronine/husl/blob/master/math/bounds.wxm">a wxMaxima file</a> is bundled with the code explaining how to get the bounding lines. The rest is simple geometry you can see in the reference implementation.</p>
         </div>
         <div class="col-md-6 col-xs-12">
           <table class="table">
@@ -148,7 +158,7 @@
             </table>
           </div>
         </div>
-      <div class="row" style="padding-top:100px">
+      <div class="row" style="padding-top:100px" id="comparison">
         <div class="col-demo col-md-3 col-xs-6">
           <h2 class="center">HSL</h2>
           <img src="img/demo/hsl.png" class="demo"/>
@@ -340,23 +350,6 @@ $('#rainbow-hsl div').each(function(index) {
                 <td></td>
               </tr>
             </table>
-        </div>
-      </div>
-      <h2>How does <abbr class="initialism">HUSL</abbr> work?</h2>
-      <div class="row">
-        <div class="col-xs-12">
-          <p><abbr class="initialism">HUSL</abbr> is defined as a conversion to and from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>. For both <abbr class="initialism">HUSL</abbr> and <abbr class="initialism">HUSLp</abbr>, the first step is to find the chroma bounds for a given lightness. These are lines, crossing which will push the color out of the <abbr class="initialism">RGB</abbr> gamut. We define a function, <em>getBounds(L)</em> which returns 6 straight lines in slope-intercept format. Each of them represents one of three <abbr class="initialism">RGB</abbr> channels being pushed either below 0 or above 1.</p>
-          <p><strong>HUSL:</strong></p>
-          <ol>
-            <li>Given a hue (angle), build a ray starting from <em>(0, 0)</em> and find the point where it first intersects with one of the bounding lines.</li>
-            <li>The distance from <em>(0, 0)</em> to this point is the maximum chroma for given <em>L</em> and <em>H</em>. Scale saturation to be a percentage of this distance.</li>
-          </ol>
-          <p><strong>HUSLp:</strong></p>
-          <ol>
-            <li>Use perpendiculars to find the shortest distance from <em>(0, 0)</em> to one of the bounding lines.</li>
-            <li>This distance is the lowest common chroma. For the given <em>L</em> and any <em>H</em> let saturation span this distance.</li>
-          </ol>
-          <p>I used <a href="http://maxima.sourceforge.net/">Maxima</a> to build and solve these equations, and <a href="https://github.com/boronine/husl/blob/master/math/bounds.wxm">a wxMaxima file</a> is bundled with the code explaining how to get the bounding lines. The rest is simple geometry you can see in the reference implementation.</p>
         </div>
       </div>
       <div class="row">
