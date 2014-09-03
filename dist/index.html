@@ -39,39 +39,48 @@
     </div>
   </nav>
   <div class="dark">
-    <div class="container visible-md visible-lg">
-      <div class="row">
-        <div class="col-xs-12">
-          <div id="picker">
-            <canvas style="position:absolute;left:0" height="400" width="400"></canvas>
-            <svg style="position:absolute;left:0" height="400" width="400"></svg>
-            <div class="swatch"></div>
-            <input class="hex"/>
-            <div style="position:absolute;right:0;bottom:0;width:380px;height:120px">
-              <table class="sliders">
-                <tr>
-                  <th>H</th>
-                  <td style="width:280px">
-                    <div style="width:280px" class="control-hue"></div>
-                  </td>
-                  <td class="counter counter-hue">100.0</td>
-                </tr>
-                <tr>
-                  <th>S</th>
-                  <td style="width:280px">
-                    <div style="width:280px" class="control-saturation"></div>
-                  </td>
-                  <td class="counter counter-saturation">100.0</td>
-                </tr>
-                <tr>
-                  <th>L</th>
-                  <td style="width:280px">
-                    <div style="width:280px" class="control-lightness"></div>
-                  </td>
-                  <td class="counter counter-lightness">100.0</td>
-                </tr>
-              </table>
+    <div id="picker">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5 col-xs-12">
+            <div id="display">
+              <canvas style="position:absolute;left:0" height="400" width="400"></canvas>
+              <svg style="position:absolute;left:0" height="400" width="400"></svg>
             </div>
+          </div>
+          <div class="col-md-6 col-xs-12">
+            <div class="header-text">
+              <p><abbr class="initialism">HUSL</abbr> is a <a href="http://www.boronine.com/2012/03/26/Color-Spaces-for-Human-Beings/">human-friendly</a> alternative to <abbr class="initialism">HSL</abbr>.</p>
+              <p>To the right you can see <a href="http://en.wikipedia.org/wiki/CIELUV"><abbr class="initialism">CIELUV</abbr></a>, a color space designed for perceptual uniformity based on human experiments. When accessed by polar coordinates, it becomes functionally similar to <abbr class="initialism">HSL</abbr> with a single problem: its chroma component doesn't fit into a specific range.<p>
+              <p><abbr class="initialism">HUSL</abbr> extends <abbr class="initialism">CIELUV</abbr> with a new saturation component that allows you to span all the available chroma as a neat percentage.</p>
+            </div>
+            <table class="sliders">
+              <tr>
+                <th>H</th>
+                <td>
+                  <div class="slider-control control-hue"></div>
+                </td>
+                <td class="counter counter-hue">100.0</td>
+                <td rowspan="3" style="width:100px">
+                  <div class="swatch"></div>
+                  <input class="hex"/>
+                </td>
+              </tr>
+              <tr>
+                <th>S</th>
+                <td>
+                  <div class="slider-control control-saturation"></div>
+                </td>
+                <td class="counter counter-saturation">100.0</td>
+              </tr>
+              <tr>
+                <th>L</th>
+                <td>
+                  <div class="slider-control control-lightness"></div>
+                </td>
+                <td class="counter counter-lightness">100.0</td>
+              </tr>
+            </table>
           </div>
         </div>
       </div>

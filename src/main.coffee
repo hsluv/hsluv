@@ -401,13 +401,13 @@ makeForeground = ->
 
 redrawSwatch = ->
   hex = $.husl.toHex H, S, L
-  d3.select('#picker .swatch').style {
+  d3.select('table.sliders .swatch').style {
     'background-color': hex
   }
   d3.select('#picker .hex').attr 'value', hex
-  d3.select('#picker .counter-hue').text        H.toPrecision 3
-  d3.select('#picker .counter-saturation').text S.toPrecision 3
-  d3.select('#picker .counter-lightness').text  L.toPrecision 3
+  d3.select('#picker .counter-hue').text        H.toFixed 2
+  d3.select('#picker .counter-saturation').text S.toFixed 2
+  d3.select('#picker .counter-lightness').text  L.toFixed 2
 
 
 foreground = makeForeground()

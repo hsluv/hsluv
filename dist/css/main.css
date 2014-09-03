@@ -10,6 +10,8 @@ footer {
   background-color: #1b1b1b;
   margin-bottom: 50px;
   box-shadow: inset 0px -3px 5px black;
+  padding-bottom: 50px;
+  padding-top: 50px;
 }
 abbr.initialism {
 /* I can do my own capitalization, thank you :) */
@@ -61,35 +63,36 @@ div.demo {
 }
 
 #picker {
-  position: relative;
-  width: 800px;
-  height: 400px;
-  margin-bottom: 70px;
-  margin-top: 100px;
 }
 
-#picker .swatch {
-  position: absolute;
-  right: 80px;
-  top: 30px;
-  width: 200px;
-  height: 200px;
+#picker #display {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  margin: auto;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 #picker .hex {
-  width: 70px;
+  width: 100px;
   padding-left: 5px;
   padding-right: 5px;
   color: #888;
-  position: absolute;
   background: transparent;
   border: 1px solid #555;
   outline: none;
-  top: 240px;
-  right: 80px;
+}
+
+
+.header-text {
+  color: #666;
+  margin-bottom: 60px;
+  margin-top: 50px;
 }
 
 table.sliders {
+  position: relative;
   width: 100%;
 }
 
@@ -98,8 +101,20 @@ table.sliders tr {
 }
 
 table.sliders td.counter {
-  padding-left: 10px;
+  padding-left: 15px;
+  width: 85px;
   color: #777777;
+}
+
+table.sliders .swatch {
+  width: 100px;
+  height: 60px;
+  margin-bottom: 3px;
+}
+
+
+.slider-control {
+  width: auto;
 }
 
 table.sliders th {
