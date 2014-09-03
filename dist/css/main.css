@@ -7,25 +7,9 @@ footer {
   margin-top: 100px;
 }
 .dark {
-  height: 700px;
-  width: 100%;
   background-color: #1b1b1b;
-}
-.dark header.top {
-  margin: 40px;
-  margin-bottom: 40px;
-}
-.dark header.top h1 {
-  color: #555;
-  text-align: center;
-  font-size: 100px;
-  line-height: 120px;
-  margin: 0px;
-}
-.dark header.top h2 {
-  text-align: center;
-  font-size: 20px;
-  margin: 0px;
+  margin-bottom: 50px;
+  box-shadow: inset 0px -3px 5px black;
 }
 abbr.initialism {
 /* I can do my own capitalization, thank you :) */
@@ -38,10 +22,6 @@ abbr.initialism {
 .cell-red {
   border: 2px solid #fff;
   background-color: #f99;
-}
-.navbar {
-  width: 100%;
-  top: 0px;
 }
 h2,
 h1 {
@@ -70,13 +50,22 @@ div.demo {
   height: 20px;
 }
 
+.navbar-static-top {
+  margin-bottom: 0px;
+}
+.navbar-inverse .navbar-nav > li > a {
+  color: #999999;
+}
+.navbar .navbar-brand {
+  color: white;
+}
+
 #picker {
   position: relative;
-  left: 0;
-  right: 0;
-  margin: auto;
   width: 800px;
   height: 400px;
+  margin-bottom: 70px;
+  margin-top: 100px;
 }
 
 #picker .swatch {

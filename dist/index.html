@@ -8,54 +8,19 @@
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/d3.slider.css">
 </head>
-<body data-spy="scroll" data-target=".navbar-static-top">
-  <div class="dark">
-    <div class="container top">
-      <header class="top">
-        <h1><em>HUSL</em></h1>
-        <h2 class="tagline">
-          <em>
-            Human-friendly HSL
-          </em>
-        </h2>
-      </header>
-      <div id="picker">
-        <canvas style="position:absolute;left:0" height="400" width="400"></canvas>
-        <svg style="position:absolute;left:0" height="400" width="400"></svg>
-        <div class="swatch"></div>
-        <input class="hex"/>
-        <div style="position:absolute;right:0;bottom:0;width:380px;height:120px">
-          <table class="sliders">
-            <tr>
-              <th>H</th>
-              <td style="width:280px">
-                <div style="width:280px" class="control-hue"></div>
-              </td>
-              <td class="counter counter-hue">100.0</td>
-            </tr>
-            <tr>
-              <th>S</th>
-              <td style="width:280px">
-                <div style="width:280px" class="control-saturation"></div>
-              </td>
-              <td class="counter counter-saturation">100.0</td>
-            </tr>
-            <tr>
-              <th>L</th>
-              <td style="width:280px">
-                <div style="width:280px" class="control-lightness"></div>
-              </td>
-              <td class="counter counter-lightness">100.0</td>
-            </tr>
-          </table>
-        </div>
-      </div>
-      </div>
-    </div>
-  </div>
-  <div class="navbar navbar-default navbar-static-top" data-spy="affix" data-offset-top="700">
+<body>
+  <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
     <div class="container">
-      <div class="collapse navbar-collapse">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#husl-navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">HUSL</a>
+      </div>
+      <div class="collapse navbar-collapse" id="husl-navbar-collapse">
         <ul class="nav navbar-nav">
           <li>
             <a href="#overview">Overview</a>
@@ -72,8 +37,47 @@
         </ul>
       </div>
     </div>
+  </nav>
+  <div class="dark">
+    <div class="container visible-md visible-lg">
+      <div class="row">
+        <div class="col-xs-12">
+          <div id="picker">
+            <canvas style="position:absolute;left:0" height="400" width="400"></canvas>
+            <svg style="position:absolute;left:0" height="400" width="400"></svg>
+            <div class="swatch"></div>
+            <input class="hex"/>
+            <div style="position:absolute;right:0;bottom:0;width:380px;height:120px">
+              <table class="sliders">
+                <tr>
+                  <th>H</th>
+                  <td style="width:280px">
+                    <div style="width:280px" class="control-hue"></div>
+                  </td>
+                  <td class="counter counter-hue">100.0</td>
+                </tr>
+                <tr>
+                  <th>S</th>
+                  <td style="width:280px">
+                    <div style="width:280px" class="control-saturation"></div>
+                  </td>
+                  <td class="counter counter-saturation">100.0</td>
+                </tr>
+                <tr>
+                  <th>L</th>
+                  <td style="width:280px">
+                    <div style="width:280px" class="control-lightness"></div>
+                  </td>
+                  <td class="counter counter-lightness">100.0</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-    <div class="container">
+  <div class="container">
       <div class="row">
         <div class="col-md-6 col-xs-12">
           <h2 id="overview">What is <abbr class="initialism">HUSL</abbr>?</h2>
@@ -334,7 +338,7 @@ $('#rainbow-hsl div').each(function(index) {
       </div>
       <h2>How does <abbr class="initialism">HUSL</abbr> currently work?</h2>
       <div class="row">
-        <div class="col-md-6 col-xs-12">
+        <div class="col-xs-12">
           <p><abbr class="initialism">HUSL</abbr> is defined as a conversion to and from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>. This conversion is a two step process.</p>
           <p><strong>HUSL:</strong></p>
           <ol>
@@ -349,9 +353,6 @@ $('#rainbow-hsl div').each(function(index) {
           </ol>
           <p>To find the extrema we differentiate the curves.</p>
           <p>I used <a href="http://maxima.sourceforge.net/">Maxima</a> to build and solve these equations, and <a href="https://github.com/boronine/husl/blob/master/math.wxm">a wxMaxima file</a> is bundled with the code.</p>
-        </div>
-        <div class="col-md-6 col-xs-12">
-          <img src="img/plot.png"/>
         </div>
       </div>
       <div class="row">
