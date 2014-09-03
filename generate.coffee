@@ -63,6 +63,14 @@ makeDemo 'husl-chroma', (x, y) ->
   rgb = husl.toRGB x * 360, 100 - y * 100, 50
   return chromaDemo colorspaces.make_color 'sRGB', rgb
 
+makeDemo 'cielchuv-chroma', (x, y) ->
+  color = colorspaces.make_color 'CIELCHuv', [50, 200 - y * 200, x * 360]
+  if !color.is_displayable()
+    rgb = [0, 0, 0]
+  else
+    rgb = color.as 'sRGB'
+  return chromaDemo colorspaces.make_color 'sRGB', rgb
+
 makeDemo 'cielchuv', (x, y) ->
   color = colorspaces.make_color 'CIELCHuv', [50, 200 - y * 200, x * 360]
   if !color.is_displayable()
@@ -79,6 +87,19 @@ makeDemo 'hsl-lightness', (x, y) ->
   color = colorspaces.make_color 'sRGB', rgb
   l = color.as('CIELUV')[0] / 100
   return [l, l, l]
+
+makeDemo 'cielchuv-lightness', (x, y) ->
+  color = colorspaces.make_color 'CIELCHuv', [50, 200 - y * 200, x * 360]
+  if !color.is_displayable()
+    return [0, 0, 0]
+  else
+    return [0.5, 0.5, 0.5]
+
+makeDemo 'husl-lightness', (x, y) ->
+  return [0.5, 0.5, 0.5]
+
+makeDemo 'huslp-lightness', (x, y) ->
+  return [0.5, 0.5, 0.5]
 
 makeDemo 'hsl-chroma', (x, y) ->
   rgb = hslToRgb x, 1 - y, 0.5

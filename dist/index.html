@@ -23,9 +23,6 @@
       <div class="collapse navbar-collapse" id="husl-navbar-collapse">
         <ul class="nav navbar-nav">
           <li>
-            <a href="#overview">Overview</a>
-          </li>
-          <li>
             <a href="#comparison">Comparison</a>
           </li>
           <li>
@@ -88,8 +85,8 @@
   </div>
   <div class="container">
       <div class="row">
-        <div class="col-md-6 col-xs-12">
-          <h2 id="overview">What is <abbr class="initialism">HUSL</abbr>?</h2>
+        <div class="col-md-6 col-xs-12" id="comparison">
+          <h2>What is <abbr class="initialism">HUSL</abbr>?</h2>
           <p><abbr class="initialism">HUSL</abbr> is a <a href="http://www.boronine.com/2012/03/26/Color-Spaces-for-Human-Beings/">human-friendly</a> alternative to the <abbr class="initialism">HSL</abbr> color space. <abbr class="initialism">HSL</abbr> was designed back in the 70s to be computationally cheap, it is a clever geometric transformation of the <abbr class="initialism">RGB</abbr> color space and it does not take into account the complexities of human color vision.</p>
           <p>There have long existed color spaces designed for perceptual uniformity. One of these color spaces is <a href="http://en.wikipedia.org/wiki/CIELUV"><abbr class="initialism">CIELUV</abbr></a> (and its polar-coordinate brother <abbr class="initialism">CIE LCh<sub>uv</sub></abbr>). Like <abbr class="initialism">HSL</abbr>, it defines hue and lightness, but instead of saturation it defines chroma. The problem with its chroma component is that it doesn't fit into a specific range, which makes it very hard to define colors programmatically. <strong><abbr class="husl initialism">HUSL</abbr> is a modified version of the <abbr class="initialism">CIE LCh<sub>uv</sub></abbr> color space with a new saturation component</strong>.</p>
         </div>
@@ -148,30 +145,22 @@
             </table>
           </div>
         </div>
-      <div class="row" id="comparison" style="padding-top:200px">
-        <div class="col-xs-4 col-xs-offset-4">
-          <h2 class="center">CIE&nbsp;LCh<sub>uv</sub></h2>
-        </div>
-      </div>
-      <div class="row" id="comparison">
-        <div class="col-xs-4 col-xs-offset-4">
-          <img src="img/demo/cielchuv.png" class="demo"/>
-        </div>
-        <div class="col-xs-4">
-          <p>The chroma component of <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> is absolute. Unlike <abbr class="initialist">HSL</abbr>'s saturation you can effectively use it to compare two different colors. The dips in the graph represent impossible colors (such as dark saturated yellow). <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> doesn't warn you about them, making it unsuitable for generating colors.</p> 
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-4">
+      <div class="row" style="padding-top:100px">
+        <div class="col-demo col-md-3 col-xs-6">
           <h2 class="center">HSL</h2>
           <img src="img/demo/hsl.png" class="demo"/>
         </div>
-        <div class="col-xs-4">
+        <div class="col-demo col-md-3 col-xs-6">
+          <h2 class="center">CIE&nbsp;LCh<sub>uv</sub></h2>
+          <img src="img/demo/cielchuv.png" class="demo"/>
+          <p>The dips in the graph represent impossible colors (such as dark saturated yellow). <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> doesn't warn you about them, making it unsuitable for generating colors.</p> 
+        </div>
+        <div class="col-demo col-md-3 col-xs-6">
           <h2 class="center">HUSL</h2>
           <img src="img/demo/husl.png" class="demo"/>
-          <p><abbr class="initialism">HUSL</abbr> preserves the lightness and hue components of <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> and stretches its chroma vertically so that every color has the same range, defined as a percentage.</p>
+          <p><abbr class="initialism">HUSL</abbr> preserves the lightness and hue components of <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> and stretches its chroma so that every color has the same range, defined as a percentage.</p>
         </div>
-        <div class="col-xs-4">
+        <div class="col-demo col-md-3 col-xs-6">
           <h2 class="center">HUSLp</h2>
           <img src="img/demo/huslp.png" class="demo"/>
           <p><abbr class="initialism">HUSLp</abbr> takes as many colors as it can from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> without distorting the chroma. As you can see, the resulting color space is smooth, but only pastel colors can be included.</p>
@@ -179,36 +168,45 @@
       </div>
       <h2>Chroma</h2>
       <div class="row">
-        <div class="col-xs-4">
+        <div class="col-demo col-md-3 col-xs-6">
           <img src="img/demo/hsl-chroma.png" class="demo"/>
         </div>
-        <div class="col-xs-4">
-          <img src="img/demo/husl-chroma.png" class="demo"/>
-          <p>Both <abbr class="initialism">HSL</abbr> and <abbr class="initialism">HUSL</abbr> have a distorted chroma map, this is a trade-off of their convenient shape. <abbr class="initialism">HUSL</abbr>'s chroma has more sudden shifts, perhaps it can be improved with a better scaling function. <a href="https://github.com/boronine/husl">Fork my code!</a></p>
+        <div class="col-demo col-md-3 col-xs-6">
+          <img src="img/demo/cielchuv-chroma.png" class="demo"/>
+          <p>The chroma component of <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> is absolute. Unlike <abbr class="initialist">HSL</abbr>'s saturation you can effectively use it to compare two different colors.</p> 
         </div>
-        <div class="col-xs-4">
+        <div class="col-demo col-md-3 col-xs-6">
+          <img src="img/demo/husl-chroma.png" class="demo"/>
+          <p>Both <abbr class="initialism">HSL</abbr> and <abbr class="initialism">HUSL</abbr> have a distorted chroma map, this is a trade-off of their convenient shape. Admittedly, <abbr class="initialism">HUSL</abbr>'s chroma has more sudden shifts.</p>
+        </div>
+        <div class="col-demo col-md-3 col-xs-6">
           <img src="img/demo/huslp-chroma.png" class="demo"/>
         </div>
       </div>
       <h2>Lightness</h2>
       <div class="row">
-        <div class="col-xs-4">
+        <div class="col-demo col-md-3 col-xs-6">
           <img src="img/demo/hsl-lightness.png" class="demo"/>
+          <p>This is why <abbr class="initialism">HSL</abbr> is useless for working out contrast. The actual lightness varies drastically between hues.</p>
         </div>
-        <div class="col-md-6 col-xs-8">
-          <p>Have you ever tried to use HSL to work out contrast? Define background and text colors? I know I have, with horrible results.</p>
-          <p><i class="icon-hand-left"></i> This is why. Two different colors with the same lightness as defined by <abbr class="initialism">HSL</abbr> can actually have very different lightness. For this demo I am using <abbr class="initialism">CIE</abbr>'s definition of lightness. Both <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> and <abbr class="initialism">HUSL</abbr> use this component, so their picture would be an even grey. This definition of lightness is based on experimental results, you will find that it works very well.</p>
+        <div class="col-demo col-md-3 col-xs-6">
+          <img src="img/demo/cielchuv-lightness.png" class="demo"/>
+        </div>
+        <div class="col-demo col-md-3 col-xs-6">
+          <img src="img/demo/husl-lightness.png" class="demo"/>
+          <p>For this demo I am using <abbr class="initialism">CIE</abbr>'s definition of lightness. Both <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> and <abbr class="initialism">HUSL</abbr> use this component, so their picture is an even gray.</p>
+        </div>
+        <div class="col-demo col-md-3 col-xs-6">
+          <img src="img/demo/huslp-lightness.png" class="demo"/>
         </div>
       </div>
-      <div class="row">
+      <div class="row" style="height:300px">
         <div class="col-md-8 col-xs-12">
           <p style="margin-top:20px">Let's try to generate some random background colors:</p>
           <pre><code class="javascript">function randomHue() {
   return Math.floor(Math.random() * 360);
 }
-// HUSL demo
 $(...).css('background-color', $.husl.husl(randomHue(), 90, 60));
-// HSL demo
 $(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
         </div>
         <div class="col-md-2 col-xs-6">
@@ -230,21 +228,18 @@ $(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
           <div class="demo">Lightness: 60%</div>
         </div>
       </div>
-      <h2>Hue</h2>
       <div class="row">
         <div class="col-md-8 col-xs-12">
           <p><abbr class="initialism">HUSL</abbr>'s uniform hue means random colors will be truly random. Iterating over colors will also produce better results.</p>
-          <pre><code class="javascript">// HUSL demo
-$('#rainbow-husl div').each(function(index) {
+          <pre><code class="javascript">$('#rainbow-husl div').each(function(index) {
   $(this).css('background-color', $.husl.husl(index * 36, 90, 60));
 });
-// HSL demo
+
 $('#rainbow-hsl div').each(function(index) {
   $(this).css('background-color', hslToHex(index * 36, 90, 60));
 });</code></pre>
         </div>
         <div class="col-md-2 col-xs-6" id="rainbow-husl">
-          <h3 class="center"><abbr class="initialism">HUSL</abbr></h3>
           <div></div>
           <div></div>
           <div></div>
@@ -257,7 +252,6 @@ $('#rainbow-hsl div').each(function(index) {
           <div></div>
         </div>
         <div class="col-md-2 col-xs-6" id="rainbow-hsl">
-          <h3 class="center"><abbr class="initialism">HSL</abbr></h3>
           <div></div>
           <div></div>
           <div></div>

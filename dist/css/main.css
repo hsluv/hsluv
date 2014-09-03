@@ -123,3 +123,7 @@ table.sliders th {
   width: 30px;
 }
 
+.col-demo {
+  min-height: 300px;
+}
+
