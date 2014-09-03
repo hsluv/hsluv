@@ -4,67 +4,48 @@
 /* [wxMaxima: input   start ] */
 /* Authors: Alexei Boronine, Bastien Dejean */
 
-/* References: */
-/* https://gist.github.com/baskerville/8297428 */
-/* http://www.brucelindbloom.com/ */
-/* https://github.com/jrus/chromatist */
-/* https://github.com/boronine/husl */
+/* References:
+https://gist.github.com/baskerville/8297428
+http://www.brucelindbloom.com/ */
  
-/* D65 white point */
-refX: 0.95047;
-refY: 1.0;
-refZ: 1.08883;
- 
+/* The following values are taken directly from generate_matrix.wxm */
+
+refX: 95047/100000;
+refY: 1;
+refZ: 108883/100000;
+
+M_RGB_XYZ: matrix(
+    [506752/1228815, 87881/245763,  12673/70218],
+    [87098/409605, 175762/245763,  12673/175545],
+    [7918/409605, 87881/737289, 1001167/1053270]);
+M_XYZ_RGB: invert(M_RGB_XYZ);
+
 lab_e: (6 / 29) ^ 3;
 lab_k: (29 / 3) ^ 3;
 refU: (4 * refX) / (refX + (15 * refY) + (3 * refZ));
 refV: (9 * refY) / (refX + (15 * refY) + (3 * refZ));
 
-/* Source: */
-/* http://www.brucelindbloom.com/index.html?WorkingSpaceInfo.html */
- 
-x_r: 0.64;
-y_r: 0.33;
-x_g: 0.30;
-y_g: 0.60;
-x_b: 0.15;
-y_b: 0.06;
- 
-X_r: x_r / y_r;
-Y_r: 1;
-Z_r: (1 - x_r - y_r) / y_r;
- 
-X_g: x_g / y_g;
-Y_g: 1;
-Z_g: (1 - x_g - y_g) / y_g;
- 
-X_b: x_b / y_b;
-Y_b: 1;
-Z_b: (1 - x_b - y_b) / y_b;
- 
-M_P: matrix([X_r, X_g, X_b],
-[Y_r, Y_g, Y_b],
-[Z_r, Z_g, Z_b]);
- 
-M_S: invert(M_P) . [refX, refY, refZ];
- 
-/* sRGB D65 matrices */
-M_RGB_XYZ: M_P * transpose(addcol(M_S, M_S, M_S));
-M_XYZ_RGB: invert(M_RGB_XYZ);
-
-from_linear(c):=(if(c<=0.0031308) then 12.92 * c else 1.055 * c ^ (1 / 2.4) - 0.055);
-/* This should be wrapped in from_linear, but since we are only
- looking at 0 and 1, it is unnecessary (plug in 0 and 1 above) */
-RGBval(x, y, z, m1, m2, m3):=(x * m1 + y * m2 + z * m3);
+/* Not used, see linearRGBChannelFromLUV */
+fromLinear(c):= if (c<=0.0031308)
+    then 12.92 * c
+    else 1.055 * c ^ (1 / 2.4) - 0.055;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-f_inv(t):=(if (t^3>lab_e) then (t^3) else (116 * t - 16) / lab_k);
+f_inv(t) := if (t^3 > lab_e) 
+    then t^3
+    else (116 * t - 16) / lab_k;
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-/* CORRECT */
-channelFromLUV(L, U, V, m1, m2, m3) := block(
+/* Returns the value of a linear sRGB channel specified by its matrix 
+values. Note that this is not the final sRGB value since gamma correction 
+is not applied, however, the value happens to be correct in two cases: 
+0 and 1. (Solve fromLinear above to see for yourself). As it happens, the 
+only use for this function is to solve it for 0 and 1, which means 
+fromLinear won't be necessary.
+*/
+linearRGBChannelFromLUV(L, U, V, m1, m2, m3) := block(
     [varY, varU, varV, Y, X, Z],
     varY : f_inv((L + 16) / 116),
     varU : U / (13 * L) + refU,
@@ -72,19 +53,26 @@ channelFromLUV(L, U, V, m1, m2, m3) := block(
     Y    : varY * refY,
     X    : 0 - (9 * Y * varU) / ((varU - 4) * varV - varU * varV),
     Z    : (9 * Y - (15 * varV * Y) - (varV * X)) / (3 * varV),
-    RGBval(X, Y, Z, m1, m2, m3)
+    [X, Y, Z] . [m1, m2, m3]
 );
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-solve(channelFromLUV(L, U, V, m1, m2, m3) = t, V);
+/* Given L, U, RGB channel and limit t (0 or 1), return the V value
+that will push the CIE LUV color outside the sRGB gamut for the given
+channel and the given limit. */
+
+solve(linearRGBChannelFromLUV(L, U, V, m1, m2, m3) = t, V)[1];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
+/* Bounding function generator */
 bound(L, m1, m2, m3, t) := solve(channelFromLUV(L, x, y, m1, m2, m3) = t, y)[1];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
+/* Generate bounding function that draws a line on CIE LUV space, stepping
+outside of which will push the red RGB value below 0 */
 bound(50, M_XYZ_RGB[1][1], M_XYZ_RGB[1][2], M_XYZ_RGB[1][3], 0);
 /* [wxMaxima: input   end   ] */
 
@@ -99,7 +87,7 @@ plot2d([
     rhs(bound(L, M_XYZ_RGB[2][1], M_XYZ_RGB[2][2], M_XYZ_RGB[2][3], 1)),
     rhs(bound(L, M_XYZ_RGB[3][1], M_XYZ_RGB[3][2], M_XYZ_RGB[3][3], 0)),
     rhs(bound(L, M_XYZ_RGB[3][1], M_XYZ_RGB[3][2], M_XYZ_RGB[3][3], 1))
-], [x,-200,200], [y,-200,200], [
+], [x,-400,400], [y,-400,400], [
     legend,
     "red = 0",
     "red = 1",
