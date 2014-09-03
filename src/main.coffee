@@ -45,34 +45,17 @@ $('#rainbow-hsl div').each (index) ->
 
 
 
-
-kappa = 24389 / 27
-epsilon = 216 / 24389
-m =
-  R: [ 3.240454162114103, -1.537138512797715, -0.49853140955601 ]
-  G: [ -0.96926603050518, 1.876010845446694,  0.041556017530349 ]
-  B: [ 0.055643430959114, -0.20402591351675,  1.057225188223179 ]
-
 getBounds = (L) ->
-  sub1 = Math.pow(L + 16, 3) / 1560896
-  sub2 = if (sub1 > epsilon) then sub1 else (L / kappa)
-  ret = {}
-  for channel in ['R', 'G', 'B']
-    [m1, m2, m3] = m[channel]
-    for t in [0, 1]
-
-      top1 = (1441272 * m3 - 4323816 * m1) * sub2
-      top2 = (-12739311 * m3 - 11700000 * m2 - 11120499 * m1) * L * sub2 + 11700000 * t * L
-      bottom = -((9608480 * m3 - 1921696 * m2) * sub2 + 1921696 * t)
-
-      V = (top1 + top2) / bottom
-
-      s = top1 / bottom
-      c = top2 / bottom
-
-      ret[channel + t] = [c, s]
-  return ret
-
+  b = $.husl._getBounds L
+  rev = (p) -> [p[1], p[0]]
+  return {
+    'R0': rev b[0]
+    'R1': rev b[1]
+    'G0': rev b[2]
+    'G1': rev b[3]
+    'B0': rev b[4]
+    'B1': rev b[5]
+  }
 
 
 
@@ -168,15 +151,6 @@ sortIntersections = (intersections) ->
     _.find intersections, (i) ->
       i.names[0] == domino[0] and i.names[1] == domino[1]
 
-hs = (L) ->
-  ret = []
-  he1 = $.husl._hradExtremum L
-  for channel in ['R', 'G', 'B']
-    for limit in [0, 1]
-      ret.push normalizeRad(he1(channel, limit))
-  ret.sort()
-  return ret
-
 redrawSquare = (x, y, dim) ->
   vx = (x - 200) / scale
   vy = (y - 200) / scale
@@ -247,14 +221,7 @@ makeBackground = ->
   redrawBackground = ->
     if L != 0 and L != 100
 
-      pairs = _.map hs(L), (hrad) ->
-        C = $.husl._maxChroma L, hrad * 180 / Math.PI
-        return [hrad, C]
-
-      Cs = _.map pairs, (pair) -> pair[1]
-
-      maxC = Math.max Cs...
-      minC = Math.min Cs...
+      minC = $.husl._maxSafeChromaForL L
 
       bounds = getBounds L
 
@@ -361,7 +328,7 @@ makeForeground = ->
 
     if L != 0 and L != 100
 
-      maxChroma = $.husl._maxChroma L, H
+      maxChroma = $.husl._maxChromaForLH L, H
       chroma = maxChroma * S / 100
       hrad = H / 360 * 2 * Math.PI
 
@@ -432,7 +399,7 @@ adjustPosition = (x, y) ->
 
   H = hrad / 2 / Math.PI * 360
 
-  maxChroma = $.husl._maxChroma L, H
+  maxChroma = $.husl._maxChromaForLH L, H
   pointerDistance = distanceFromPole(pointer)
 
   S = Math.min(pointerDistance / maxChroma * 100, 100)
