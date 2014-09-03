@@ -200,16 +200,16 @@
           <img src="img/demo/huslp-lightness.png" class="demo"/>
         </div>
       </div>
-      <div class="row" style="height:300px">
+      <div class="row" style="height:300px;margin-top:100px">
         <div class="col-md-8 col-xs-12">
           <p style="margin-top:20px">Let's try to generate some random background colors:</p>
           <pre><code class="javascript">function randomHue() {
   return Math.floor(Math.random() * 360);
 }
-$(...).css('background-color', $.husl.husl(randomHue(), 90, 60));
+$(...).css('background-color', $.husl.toHex(randomHue(), 90, 60));
 $(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
         </div>
-        <div class="col-md-2 col-xs-6">
+        <div class="col-md-2 col-xs-6" style="padding-bottom:30px">
           <button class="btn btn-large btn-block" id="demo1">Test HUSL</button>
           <div class="demo">Lightness: 60%</div>
           <div class="demo">Lightness: 60%</div>
@@ -218,7 +218,7 @@ $(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
           <div class="demo">Lightness: 60%</div>
           <div class="demo">Lightness: 60%</div>
         </div>
-        <div class="col-md-2 col-xs-6">
+        <div class="col-md-2 col-xs-6" style="padding-bottom:30px">
           <button class="btn btn-large btn-block" id="demo2">Test HSL</button>
           <div class="demo">Lightness: 60%</div>
           <div class="demo">Lightness: 60%</div>
@@ -232,7 +232,7 @@ $(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
         <div class="col-md-8 col-xs-12">
           <p><abbr class="initialism">HUSL</abbr>'s uniform hue means random colors will be truly random. Iterating over colors will also produce better results.</p>
           <pre><code class="javascript">$('#rainbow-husl div').each(function(index) {
-  $(this).css('background-color', $.husl.husl(index * 36, 90, 60));
+  $(this).css('background-color', $.husl.toHex(index * 36, 90, 60));
 });
 
 $('#rainbow-hsl div').each(function(index) {
@@ -339,23 +339,21 @@ $('#rainbow-hsl div').each(function(index) {
             </table>
         </div>
       </div>
-      <h2>How does <abbr class="initialism">HUSL</abbr> currently work?</h2>
+      <h2>How does <abbr class="initialism">HUSL</abbr> work?</h2>
       <div class="row">
         <div class="col-xs-12">
-          <p><abbr class="initialism">HUSL</abbr> is defined as a conversion to and from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>. This conversion is a two step process.</p>
+          <p><abbr class="initialism">HUSL</abbr> is defined as a conversion to and from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>. For both <abbr class="initialism">HUSL</abbr> and <abbr class="initialism">HUSLp</abbr>, the first step is to find the chroma bounds for a given lightness. These are lines, crossing which will push the color out of the <abbr class="initialism">RGB</abbr> gamut. We define a function, <em>getBounds(L)</em> which returns 6 straight lines in slope-intercept format. Each of them represents one of three <abbr class="initialism">RGB</abbr> channels being pushed either below 0 or above 1.</p>
           <p><strong>HUSL:</strong></p>
           <ol>
-            <li>Find the maximum chroma for a given lightness and hue</li>
-            <li>Scale the saturation to fit inside that chroma range (currently linear)</li>
+            <li>Given a hue (angle), build a ray starting from <em>(0, 0)</em> and find the point where it first intersects with one of the bounding lines.</li>
+            <li>The distance from <em>(0, 0)</em> to this point is the maximum chroma for given <em>L</em> and <em>H</em>. Scale saturation to be a percentage of this distance.</li>
           </ol>
-          <p>Finding the maximum chroma involves building three functions that take <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>'s components as input and return <abbr class="initialism">RGB</abbr> channel values, one for each channel. We equate each to 1 and 0, and solve the 6 resulting equations for C. When we plot the 6 solutions with a fixed lightness and hue for x, we get the picture on the right. As expected, it looks like <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>.</p>
           <p><strong>HUSLp:</strong></p>
           <ol>
-            <li>Find the hue with the lowest maximum chroma for a given lightness</li>
-            <li>Use that lowest maximum chroma point as a cut-off point; scale the resulting rectangle linearly</li>
+            <li>Use perpendiculars to find the shortest distance from <em>(0, 0)</em> to one of the bounding lines.</li>
+            <li>This distance is the lowest common chroma. For the given <em>L</em> and any <em>H</em> let saturation span this distance.</li>
           </ol>
-          <p>To find the extrema we differentiate the curves.</p>
-          <p>I used <a href="http://maxima.sourceforge.net/">Maxima</a> to build and solve these equations, and <a href="https://github.com/boronine/husl/blob/master/math.wxm">a wxMaxima file</a> is bundled with the code.</p>
+          <p>I used <a href="http://maxima.sourceforge.net/">Maxima</a> to build and solve these equations, and <a href="https://github.com/boronine/husl/blob/master/math/bounds.wxm">a wxMaxima file</a> is bundled with the code explaining how to get the bounding lines. The rest is simple geometry you can see in the reference implementation.</p>
         </div>
       </div>
       <div class="row">
