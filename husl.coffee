@@ -29,71 +29,78 @@ m_inv =
 kappa = 24389 / 27
 epsilon = 216 / 24389
 
-# For a given Lightness, Hue, RGB channel, and limit (1 or 0),
-# return Chroma, such that passing this chroma value will cause the
-# given channel to pass the given limit.
-_maxChroma = (L, H) ->
-  hrad = H / 360 * 2 * Math.PI
-  sinH = Math.sin hrad
-  cosH = Math.cos hrad
+
+# For a given lightness, return a list of 6 lines in slope-intercept
+# form that represent the bounds in CIELUV, stepping over which will
+# push a value out of the RGB gamut
+getBounds = (L) ->
   sub1 = Math.pow(L + 16, 3) / 1560896
   sub2 = if (sub1 > epsilon) then sub1 else (L / kappa)
-  (channel) ->
-    [m1, m2, m3] = m[channel]
-    top = (12739311 * m3 + 11700000 * m2 + 11120499 * m1) * sub2
-    rbottom = 9608480 * m3 - 1921696 * m2
-    lbottom = 1441272 * m3 - 4323816 * m1
-    bottom = (rbottom * sinH + lbottom * cosH) * sub2
-    (limit) ->
-      # This is the C value that you can put together with the given L and H
-      # to produce a color that with <RGB channel> = 1 or 2. This means that if C
-      # goes any higher, the color will step outside of the RGB gamut.
-      L * (top - 11700000 * limit) / (bottom + 1921696 * sinH * limit)
-
-# Given Lightness, channel and limit, returns the Hue (in radians) at the point
-# where the maximum chroma (the chroma that will make the given channel pass
-# the given limit) is smallest. This is the dip in the curve.
-_hradExtremum = (L) ->
-  lhs = (Math.pow(L, 3) + 48 * Math.pow(L, 2) + 768 * L + 4096) / 1560896
-  rhs = epsilon
-  sub = if lhs > rhs then lhs else L / kappa
-  (channel, limit) ->
-    [m1, m2, m3] = m[channel]
-    top = (20 * m3 - 4 * m2) * sub + 4 * limit
-    bottom = (3 * m3 - 9 * m1) * sub
-    hrad = Math.atan2(top, bottom)
-    # This is a math hack to deal with tan quadrants, I'm too lazy to figure
-    # out how to do this properly
-    if limit == 1
-      hrad += Math.PI
-    return hrad
-
-# For a given lightness and hue, return the maximum chroma that fits in 
-# the RGB gamut.
-maxChroma = (L, H) ->
-  result = Infinity
-  mc1 = _maxChroma L, H
-  # For each channel (red, green and blue)
+  ret = []
   for channel in ['R', 'G', 'B']
-    mc2 = mc1 channel
-    # For each limit (0 and 1)
-    for limit in [0, 1]
-      C = mc2 limit
-      result = C if 0 < C < result
-  return result
+    [m1, m2, m3] = m[channel]
+    for t in [0, 1]
+
+      top1 = (4323816 * m1 - 1441272 * m3) * sub2
+      top2 = (12739311 * m3 + 11700000 * m2 + 11120499 * m1) * L * sub2 - 11700000 * t * L
+      bottom = (9608480 * m3 - 1921696 * m2) * sub2 + 1921696 * t
+
+      ret.push [top1 / bottom, top2 / bottom]
+  return ret
+
+
+intersectLineLine = (line1, line2) ->
+  (line1[1] - line2[1]) / (line2[0] - line1[0])
+
+distanceFromPole = (point) ->
+  Math.sqrt(Math.pow(point[0], 2) + Math.pow(point[1], 2))
+
+
+lengthOfRayUntilIntersect = (theta, line) ->
+  # theta  -- angle of ray starting at (0, 0)
+  # m, b   -- slope and intercept of line
+  # x1, y1 -- coordinates of intersection
+  # len    -- length of ray until it intersects with line
+  # 
+  # b + m * x1        = y1
+  # len              >= 0
+  # len * cos(theta)  = x1
+  # len * sin(theta)  = y1
+  # 
+  #
+  # b + m * (len * cos(theta)) = len * sin(theta)
+  # b = len * sin(hrad) - m * len * cos(theta)
+  # b = len * (sin(hrad) - m * cos(hrad))
+  # len = b / (sin(hrad) - m * cos(hrad))
+  #
+  [m1, b1] = line
+  len = b1 / (Math.sin(theta) - m1 * Math.cos(theta))
+  if len < 0
+    return null
+  return len
+
 
 # For given lightness, returns the maximum chroma. Keeping the chroma value
 # below this number will ensure that for any hue, the color is within the RGB
 # gamut.
-maxChromaD = (L) ->
-  minima_C = []
-  he1 = _hradExtremum L
-  for channel in ['R', 'G', 'B']
-    for limit in [0, 1]
-      hrad = he1 channel, limit
-      C = maxChroma L, hrad * 180 / Math.PI
-      minima_C.push C
-  Math.min minima_C...
+maxSafeChromaForL = (L) ->
+  lengths = []
+  for [m1, b1] in getBounds L
+    # x where line intersects with perpendicular running though (0, 0)
+    x = intersectLineLine [m1, b1], [-1 / m1, 0]
+    lengths.push distanceFromPole [x, b1 + x * m1]
+  return Math.min lengths...
+
+# For a given lightness and hue, return the maximum chroma that fits in 
+# the RGB gamut.
+maxChromaForLH = (L, H) ->
+  hrad = H / 360 * Math.PI * 2
+  lengths = []
+  for line in getBounds L
+    l = lengthOfRayUntilIntersect hrad, line
+    if l != null
+      lengths.push l
+  return Math.min lengths...
 
 dotProduct = (a, b) ->
   ret = 0
@@ -211,7 +218,7 @@ conv.husl.lch = (tuple) ->
   # Bad things happen when you reach a limit
   return [100, 0, H] if L > 99.9999999
   return [0, 0, H] if L < 0.00000001
-  max = maxChroma L, H
+  max = maxChromaForLH L, H
   C = max / 100 * S
   # I already tried this scaling function to improve the chroma
   # uniformity. It did not work very well.
@@ -222,7 +229,7 @@ conv.lch.husl = (tuple) ->
   [L, C, H] = tuple
   return [H, 0, 100] if L > 99.9999999
   return [H, 0, 0] if L < 0.00000001
-  max = maxChroma L, H
+  max = maxChromaForLH L, H
   S = C / max * 100
   return [H, S, L]
 
@@ -232,7 +239,7 @@ conv.huslp.lch = (tuple) ->
   [H, S, L] = tuple
   return [100, 0, H] if L > 99.9999999
   return [0, 0, H] if L < 0.00000001
-  max = maxChromaD L
+  max = maxSafeChromaForL L
   C = max / 100 * S
   return [L, C, H]
 
@@ -240,7 +247,7 @@ conv.lch.huslp = (tuple) ->
   [L, C, H] = tuple
   return [H, 0, 100] if L > 99.9999999
   return [H, 0, 0] if L < 0.00000001
-  max = maxChromaD L
+  max = maxSafeChromaForL L
   S = C / max * 100
   return [H, S, L]
 
@@ -298,10 +305,10 @@ root.p.fromHex = (hex) ->
 
 root._conv = conv
 root._round = round
-root._maxChroma = maxChroma
-root._maxChromaD = maxChromaD
-root._hradExtremum = _hradExtremum
 root._rgbPrepare = rgbPrepare
+root._getBounds = getBounds
+root._maxChromaForLH = maxChromaForLH
+root._maxSafeChromaForL = maxSafeChromaForL
 
 # If no framework is available, just export to the global object (window.HUSL
 # in the browser)
