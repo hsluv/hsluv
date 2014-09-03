@@ -63,14 +63,6 @@ makeDemo 'husl-chroma', (x, y) ->
   rgb = husl.toRGB x * 360, 100 - y * 100, 50
   return chromaDemo colorspaces.make_color 'sRGB', rgb
 
-makeDemo 'husl-low', ((x, y) ->
-  rgb = husl.toRGB x * 360, 100 - y * 100, 10
-  return rgb), 270, 150
-
-makeDemo 'husl-high', ((x, y) ->
-  rgb = husl.toRGB x * 360, 100 - y * 100, 95
-  return rgb), 270, 150
-
 makeDemo 'cielchuv', (x, y) ->
   color = colorspaces.make_color 'CIELCHuv', [50, 200 - y * 200, x * 360]
   if !color.is_displayable()

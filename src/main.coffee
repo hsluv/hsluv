@@ -365,6 +365,9 @@ makeForeground = ->
       chroma = maxChroma * S / 100
       hrad = H / 360 * 2 * Math.PI
 
+      window.xxx = chroma * Math.cos(hrad)
+      window.yyy = chroma * Math.sin(hrad)
+
       pickerScope
         .attr("cx", chroma * Math.cos(hrad) * scale)
         .attr("cy", chroma * Math.sin(hrad) * scale)

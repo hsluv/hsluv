@@ -6,6 +6,7 @@
     margin-top: 10px;
     margin-bottom: 10px;
     height: 10px;
+    cursor: default;
 }
 
 .d3-slider-handle {
