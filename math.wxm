@@ -77,31 +77,15 @@ channelFromLUV(L, U, V, m1, m2, m3) := block(
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-channelFromLCH(L, C, H, m1, m2, m3) := block(
-    [hrad, U, V],
-    hrad: H / 360 * 2 * %pi,
-    U: cos(hrad) * C,
-    V: sin(hrad) * C,
-    channelFromLUV(L, U, V, m1, m2, m3)
-);
+solve(channelFromLUV(L, U, V, m1, m2, m3) = t, V);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-maxChroma(L, H, m1, m2, m3, t) := rhs(
-    solve(channelFromLCH(L, C, H, m1, m2, m3) = t, C)[1]
-);
+bound(L, m1, m2, m3, t) := solve(channelFromLUV(L, x, y, m1, m2, m3) = t, y)[1];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-solve(channelFromLCH(L, C, H, m1, m2, m3) = t, C);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-trigsimp(solve(diff(maxChroma(L, H, m1, m2, m3, limit), H) = 0, H)[1]);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-fpprec : 6;
+bound(50, M_XYZ_RGB[1][1], M_XYZ_RGB[1][2], M_XYZ_RGB[1][3], 0);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -109,13 +93,13 @@ block(
 [L],
 L: 50,
 plot2d([
-    maxChroma(L, x, M_XYZ_RGB[1][1], M_XYZ_RGB[1][2], M_XYZ_RGB[1][3], 0),
-    maxChroma(L, x, M_XYZ_RGB[1][1], M_XYZ_RGB[1][2], M_XYZ_RGB[1][3], 1),
-    maxChroma(L, x, M_XYZ_RGB[2][1], M_XYZ_RGB[2][2], M_XYZ_RGB[2][3], 0),
-    maxChroma(L, x, M_XYZ_RGB[2][1], M_XYZ_RGB[2][2], M_XYZ_RGB[2][3], 1),
-    maxChroma(L, x, M_XYZ_RGB[3][1], M_XYZ_RGB[3][2], M_XYZ_RGB[3][3], 0),
-    maxChroma(L, x, M_XYZ_RGB[3][1], M_XYZ_RGB[3][2], M_XYZ_RGB[3][3], 1)
-], [x,0,360], [y,0,200], [
+    rhs(bound(L, M_XYZ_RGB[1][1], M_XYZ_RGB[1][2], M_XYZ_RGB[1][3], 0)),
+    rhs(bound(L, M_XYZ_RGB[1][1], M_XYZ_RGB[1][2], M_XYZ_RGB[1][3], 1)),
+    rhs(bound(L, M_XYZ_RGB[2][1], M_XYZ_RGB[2][2], M_XYZ_RGB[2][3], 0)),
+    rhs(bound(L, M_XYZ_RGB[2][1], M_XYZ_RGB[2][2], M_XYZ_RGB[2][3], 1)),
+    rhs(bound(L, M_XYZ_RGB[3][1], M_XYZ_RGB[3][2], M_XYZ_RGB[3][3], 0)),
+    rhs(bound(L, M_XYZ_RGB[3][1], M_XYZ_RGB[3][2], M_XYZ_RGB[3][3], 1))
+], [x,-200,200], [y,-200,200], [
     legend,
     "red = 0",
     "red = 1",
@@ -131,10 +115,6 @@ plot2d([
     "chroma"
 ])
 );
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-solve(diff(maxChroma(L, H, m1, m2, m3, t), H) = 0, H);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
