@@ -1,33 +1,44 @@
-# These functions are the mathematical result from Maxima
-# DO NOT EXPECT TO UNDERSTAND THE MATH HERE, I used Maxima so
-# that neither of us has to!
+# The math for most of this module was taken from:
+#
+#  * http://www.easyrgb.com
+#  * http://www.brucelindbloom.com
+#  * Wikipedia
+#
 
-# All non-husl color math on this page comes from http://www.easyrgb.com
-# Thanks guys!
+# All numbers taken from math/bounds.wxm wxMaxima file:
+#
+#    fpprintprec: 16;
+#    float(M_XYZ_RGB);
+#    float(M_RGB_XYZ);
+#    float(refX);
+#    float(refY);
+#    float(refZ);
+#    float(refU);
+#    float(refV);
+#    float(lab_k);
+#    float(lab_e);
+#
+
+m =
+  R: [ 3.240969941904521, -1.537383177570093, -0.498610760293    ]
+  G: [ -0.96924363628087,  1.87596750150772,   0.041555057407175 ]
+  B: [ 0.055630079696993, -0.20397695888897,   1.056971514242878 ]
+m_inv =
+  X: [ 0.41239079926595,  0.35758433938387, 0.18048078840183  ]
+  Y: [ 0.21263900587151,  0.71516867876775, 0.072192315360733 ]
+  Z: [ 0.019330818715591, 0.11919477979462, 0.95053215224966  ]
 
 # Hard-coded D65 standard illuminant
-refX = 0.95047
-refY = 1.00000
-refZ = 1.08883
-refU = (4 * refX) / (refX + (15 * refY) + (3 * refZ))
-refV = (9 * refY) / (refX + (15 * refY) + (3 * refZ))
+refX = 0.95045592705167
+refY = 1.0
+refZ = 1.089057750759878
 
-# Used for rgb <-> xyz conversions
-# Numbers taken from Maxima file
-m =
-  R: [ 3.240454162114103, -1.537138512797715, -0.49853140955601 ]
-  G: [ -0.96926603050518, 1.876010845446694,  0.041556017530349 ]
-  B: [ 0.055643430959114, -0.20402591351675,  1.057225188223179 ]
-m_inv =
-  X: [ 0.41245643908969,  0.3575760776439,  0.18043748326639  ]
-  Y: [ 0.21267285140562,  0.71515215528781, 0.072174993306559 ]
-  Z: [ 0.019333895582329, 0.1191920258813,  0.95030407853636  ]
-
+refU = 0.19783000664283
+refV = 0.46831999493879
 
 # CIE LUV constants
-# http://www.brucelindbloom.com/index.html?LContinuity.html
-kappa = 24389 / 27
-epsilon = 216 / 24389
+kappa = 903.2962962
+epsilon = 0.0088564516
 
 
 # For a given lightness, return a list of 6 lines in slope-intercept
@@ -41,9 +52,9 @@ getBounds = (L) ->
     [m1, m2, m3] = m[channel]
     for t in [0, 1]
 
-      top1 = (4323816 * m1 - 1441272 * m3) * sub2
-      top2 = (12739311 * m3 + 11700000 * m2 + 11120499 * m1) * L * sub2 - 11700000 * t * L
-      bottom = (9608480 * m3 - 1921696 * m2) * sub2 + 1921696 * t
+      top1 = (284517 * m1 - 94839 * m3) * sub2
+      top2 = (838422 * m3 + 769860 * m2 + 731718 * m1) * L * sub2 - 769860 * t * L
+      bottom = (632260 * m3 - 126452 * m2) * sub2 + 126452 * t
 
       ret.push [top1 / bottom, top2 / bottom]
   return ret
@@ -119,6 +130,7 @@ fromLinear = (c) ->
     12.92 * c
   else
     1.055 * Math.pow(c, 1 / 2.4) - 0.055
+
 toLinear = (c) ->
   a = 0.055
   if c > 0.04045

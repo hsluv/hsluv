@@ -8,11 +8,11 @@
 https://gist.github.com/baskerville/8297428
 http://www.brucelindbloom.com/ */
  
-/* The following values are taken directly from generate_matrix.wxm */
+/* The following values are taken directly from matrix.wxm */
 
-refX: 95047/100000;
+refX: 3127/3290;
 refY: 1;
-refZ: 108883/100000;
+refZ: 3583/3290;
 
 M_RGB_XYZ: matrix(
     [506752/1228815, 87881/245763,  12673/70218],
@@ -20,6 +20,9 @@ M_RGB_XYZ: matrix(
     [7918/409605, 87881/737289, 1001167/1053270]);
 M_XYZ_RGB: invert(M_RGB_XYZ);
 
+/* Note that the standard defines these constants as decimals
+and is incorrect. We are using the correct non-standard values.
+See: http://www.brucelindbloom.com/index.html?LContinuity.html */
 lab_e: (6 / 29) ^ 3;
 lab_k: (29 / 3) ^ 3;
 refU: (4 * refX) / (refX + (15 * refY) + (3 * refZ));

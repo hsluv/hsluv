@@ -38,9 +38,9 @@ M_S: invert(M_P) . [X_w, Y_w, Z_w];
 M_RGB_XYZ: M_P * transpose(addcol(M_S, M_S, M_S));
 M_XYZ_RGB: invert(M_RGB_XYZ);
 
-fpprintprec: 10;
-bfloat(M_RGB_XYZ);
-bfloat(M_XYZ_RGB);
+fpprintprec: 16;
+float(M_RGB_XYZ);
+float(M_XYZ_RGB);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
