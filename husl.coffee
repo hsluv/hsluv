@@ -90,11 +90,12 @@ lengthOfRayUntilIntersect = (theta, line) ->
     return null
   return len
 
-
 # For given lightness, returns the maximum chroma. Keeping the chroma value
 # below this number will ensure that for any hue, the color is within the RGB
 # gamut.
 maxSafeChromaForL = (L) ->
+  if L == 0 or L == 100
+    return 0
   lengths = []
   for [m1, b1] in getBounds L
     # x where line intersects with perpendicular running though (0, 0)
@@ -105,6 +106,8 @@ maxSafeChromaForL = (L) ->
 # For a given lightness and hue, return the maximum chroma that fits in 
 # the RGB gamut.
 maxChromaForLH = (L, H) ->
+  if L == 0 or L == 100
+    return 0
   hrad = H / 360 * Math.PI * 2
   lengths = []
   for line in getBounds L
@@ -138,17 +141,10 @@ toLinear = (c) ->
   else
     c / 12.92
 
-# Represents rgb [0-1] values as [0-255] values. Errors out if value
-# out of the range
+# Represents rgb [0-1] values as [0-255] values.
 rgbPrepare = (tuple) ->
-  tuple = (round(n, 3) for n in tuple)
-  for ch in tuple
-    # Error tolerance
-    if ch < -0.0001 or ch > 1.0001
-      throw new Error "Illegal rgb value: #{ch}"
-    ch = 0 if ch < 0
-    ch = 1 if ch > 1
   (Math.round(ch * 255) for ch in tuple)
+
 
 # This map will contain our conversion functions
 conv =
@@ -191,9 +187,6 @@ conv.xyz.luv = (tuple) ->
   varU = (4 * X) / (X + (15 * Y) + (3 * Z))
   varV = (9 * Y) / (X + (15 * Y) + (3 * Z))
   L = Y_to_L(Y)
-  # Black will create a divide-by-zero error
-  if L is 0
-    return [0, 0, 0]
   U = 13 * L * (varU - refU)
   V = 13 * L * (varV - refV)
   [L, U, V]
@@ -227,20 +220,12 @@ conv.lch.luv = (tuple) ->
 
 conv.husl.lch = (tuple) ->
   [H, S, L] = tuple
-  # Bad things happen when you reach a limit
-  return [100, 0, H] if L > 99.9999999
-  return [0, 0, H] if L < 0.00000001
   max = maxChromaForLH L, H
   C = max / 100 * S
-  # I already tried this scaling function to improve the chroma
-  # uniformity. It did not work very well.
-  # C = Math.pow(S / 100,  1 / t) * max
   return [L, C, H]
 
 conv.lch.husl = (tuple) ->
   [L, C, H] = tuple
-  return [H, 0, 100] if L > 99.9999999
-  return [H, 0, 0] if L < 0.00000001
   max = maxChromaForLH L, H
   S = C / max * 100
   return [H, S, L]
@@ -249,16 +234,12 @@ conv.lch.husl = (tuple) ->
 
 conv.huslp.lch = (tuple) ->
   [H, S, L] = tuple
-  return [100, 0, H] if L > 99.9999999
-  return [0, 0, H] if L < 0.00000001
   max = maxSafeChromaForL L
   C = max / 100 * S
   return [L, C, H]
 
 conv.lch.huslp = (tuple) ->
   [L, C, H] = tuple
-  return [H, 0, 100] if L > 99.9999999
-  return [H, 0, 0] if L < 0.00000001
   max = maxSafeChromaForL L
   S = C / max * 100
   return [H, S, L]

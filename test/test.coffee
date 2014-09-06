@@ -22,6 +22,18 @@ describe 'HUSL consistency', ->
 rgbRangeTolerance = 0.00000000001
 snapshotTolerance = 0.00000000001
 
+
+describe "Float limits", ->
+
+  almostZero = 0.2 - 0.11 - 0.09
+  assert almostZero > 0
+  almostHundred = 100.02 - 0.01 - 0.01
+  assert almostHundred < 100
+
+  it 'Should not break', ->
+    assert '#000000' == husl.toHex 180, 50, almostZero
+    assert '#ffffff' == husl.toHex 180, 50, almostHundred
+
 describe 'Fits within RGB ranges', ->
   it 'should fit', ->
     for H in (n for n in [0..360] by 5)
