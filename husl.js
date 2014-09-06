@@ -69,9 +69,6 @@
 
   maxSafeChromaForL = function(L) {
     var b1, lengths, m1, x, _i, _len, _ref, _ref1;
-    if (L === 0 || L === 100) {
-      return 0;
-    }
     lengths = [];
     _ref = getBounds(L);
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -84,9 +81,6 @@
 
   maxChromaForLH = function(L, H) {
     var hrad, l, lengths, line, _i, _len, _ref;
-    if (L === 0 || L === 100) {
-      return 0;
-    }
     hrad = H / 360 * Math.PI * 2;
     lengths = [];
     _ref = getBounds(L);
@@ -134,10 +128,31 @@
   };
 
   rgbPrepare = function(tuple) {
-    var ch, _i, _len, _results;
-    _results = [];
+    var ch, n, _i, _j, _len, _len1, _results;
+    tuple = (function() {
+      var _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = tuple.length; _i < _len; _i++) {
+        n = tuple[_i];
+        _results.push(round(n, 3));
+      }
+      return _results;
+    })();
     for (_i = 0, _len = tuple.length; _i < _len; _i++) {
       ch = tuple[_i];
+      if (ch < -0.0001 || ch > 1.0001) {
+        throw new Error("Illegal rgb value: " + ch);
+      }
+      if (ch < 0) {
+        ch = 0;
+      }
+      if (ch > 1) {
+        ch = 1;
+      }
+    }
+    _results = [];
+    for (_j = 0, _len1 = tuple.length; _j < _len1; _j++) {
+      ch = tuple[_j];
       _results.push(Math.round(ch * 255));
     }
     return _results;
@@ -193,6 +208,9 @@
     varU = (4 * X) / (X + (15 * Y) + (3 * Z));
     varV = (9 * Y) / (X + (15 * Y) + (3 * Z));
     L = Y_to_L(Y);
+    if (L === 0) {
+      return [0, 0, 0];
+    }
     U = 13 * L * (varU - refU);
     V = 13 * L * (varV - refV);
     return [L, U, V];
@@ -236,6 +254,12 @@
   conv.husl.lch = function(tuple) {
     var C, H, L, S, max;
     H = tuple[0], S = tuple[1], L = tuple[2];
+    if (L > 99.9999999) {
+      return [100, 0, H];
+    }
+    if (L < 0.00000001) {
+      return [0, 0, H];
+    }
     max = maxChromaForLH(L, H);
     C = max / 100 * S;
     return [L, C, H];
@@ -244,6 +268,12 @@
   conv.lch.husl = function(tuple) {
     var C, H, L, S, max;
     L = tuple[0], C = tuple[1], H = tuple[2];
+    if (L > 99.9999999) {
+      return [H, 0, 100];
+    }
+    if (L < 0.00000001) {
+      return [H, 0, 0];
+    }
     max = maxChromaForLH(L, H);
     S = C / max * 100;
     return [H, S, L];
@@ -252,6 +282,12 @@
   conv.huslp.lch = function(tuple) {
     var C, H, L, S, max;
     H = tuple[0], S = tuple[1], L = tuple[2];
+    if (L > 99.9999999) {
+      return [100, 0, H];
+    }
+    if (L < 0.00000001) {
+      return [0, 0, H];
+    }
     max = maxSafeChromaForL(L);
     C = max / 100 * S;
     return [L, C, H];
@@ -260,6 +296,12 @@
   conv.lch.huslp = function(tuple) {
     var C, H, L, S, max;
     L = tuple[0], C = tuple[1], H = tuple[2];
+    if (L > 99.9999999) {
+      return [H, 0, 100];
+    }
+    if (L < 0.00000001) {
+      return [H, 0, 0];
+    }
     max = maxSafeChromaForL(L);
     S = C / max * 100;
     return [H, S, L];

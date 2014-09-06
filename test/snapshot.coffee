@@ -1,4 +1,4 @@
-husl = require '../husl'
+husl = require '../husl.coffee'
 
 snapshot = ->
   samples = {}
