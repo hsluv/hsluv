@@ -4,9 +4,9 @@
 
 # Building
 
-The command to build documentation is `make dist`.
+The command to build the site is `make dist`.
 
-Building documentation requires some libraries to be installed. If you are running [Docker](https://www.docker.io/), a wise way to do it would be to run `make docker_build` followed by `make docker_run`. You will find yourself inside a Docker container with everything set up to run `make dist`, the output will be written to the host file system.
+Building requires some libraries to be installed. If you are running [Docker](https://www.docker.io/), a wise way to do it would be to run `make docker_build` followed by `make docker_run`. You will find yourself inside a Docker container with everything set up to run `make dist`, the output will be written to the host file system.
 
 If you are not using Docker, you can install the dependencies manually, they are listed in the Dockerfile.
 
