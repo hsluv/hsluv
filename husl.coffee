@@ -72,12 +72,12 @@ lengthOfRayUntilIntersect = (theta, line) ->
   # m, b   -- slope and intercept of line
   # x1, y1 -- coordinates of intersection
   # len    -- length of ray until it intersects with line
-  # 
+  #
   # b + m * x1        = y1
   # len              >= 0
   # len * cos(theta)  = x1
   # len * sin(theta)  = y1
-  # 
+  #
   #
   # b + m * (len * cos(theta)) = len * sin(theta)
   # b = len * sin(hrad) - m * len * cos(theta)
@@ -102,7 +102,7 @@ maxSafeChromaForL = (L) ->
     lengths.push distanceFromPole [x, b1 + x * m1]
   return Math.min lengths...
 
-# For a given lightness and hue, return the maximum chroma that fits in 
+# For a given lightness and hue, return the maximum chroma that fits in
 # the RGB gamut.
 maxChromaForLH = (L, H) ->
   hrad = H / 360 * Math.PI * 2
@@ -278,8 +278,7 @@ conv.hex.rgb = (hex) ->
   r = hex.substring 0, 2
   g = hex.substring 2, 4
   b = hex.substring 4, 6
-  [r, g, b].map (n) ->
-    parseInt(n, 16) / 255
+  parseInt(n, 16) / 255 for n in [r, g, b]
 
 conv.lch.rgb = (tuple) ->
   conv.xyz.rgb conv.luv.xyz conv.lch.luv tuple
