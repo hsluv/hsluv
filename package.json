@@ -10,7 +10,7 @@
     "type" : "git",
     "url" : "http://github.com/boronine/husl.git"
   },
-  "homepage": "http://www.boronine.com/husl/",
+  "homepage": "http://husl.boronine.com/",
   "devDependencies": {
     "coffee-script": "*",
     "underscore": "*",

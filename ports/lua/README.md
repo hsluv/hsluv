@@ -1,4 +1,4 @@
-Lua port of [HUSL](http://www.boronine.com/husl/) (revision 2), courtesy of [Mark Wonnacott](https://github.com/Ragzouken).
+Lua port of [HUSL](http://husl.boronine.com/) (revision 2), courtesy of [Mark Wonnacott](https://github.com/Ragzouken).
 
     > husl = require 'husl'
     > = husl.hex_to_husl('#123456')

@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/boronine/husl.svg?branch=master)](https://travis-ci.org/boronine/husl)
 
-[Explanation, demo, ports etc.](http://www.boronine.com/husl/)
+[Explanation, demo, ports etc.](http://husl.boronine.com/)
 
 # Usage
 
