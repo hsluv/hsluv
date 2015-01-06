@@ -1,6 +1,6 @@
 # What is <abbr class="initialism">HUSL</abbr>?
 
-[Demo, documentation, ports etc.](http://www.boronine.com/husl)
+[Demo, documentation, ports etc.](http://husl.boronine.com)
 
 # Building
 

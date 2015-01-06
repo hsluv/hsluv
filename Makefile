@@ -1,4 +1,4 @@
-.PHONY: docker_build, docker_run, dist
+.PHONY: docker_build, docker_run, dist, deploy
 
 docker_build:
 	docker build -t husl-dev-environment .
@@ -11,3 +11,6 @@ dist/js/main.js: src/main.coffee
 
 dist: dist/js/main.js
 	coffee generate.coffee
+
+deploy:
+	aws s3 sync dist s3://husl.boronine.com
