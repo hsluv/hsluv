@@ -3,3 +3,6 @@
 /docs/build/img/demo
 /docs/build/css/main.css
 /docs/build/js/main.js
+
+/.idea
+*.iml
