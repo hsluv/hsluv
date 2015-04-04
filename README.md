@@ -1,10 +1,10 @@
-[![Build Status](https://travis-ci.org/boronine/husl.svg?branch=master)](https://travis-ci.org/boronine/husl)
+[![Build Status](https://travis-ci.org/husl-colors/husl.svg?branch=master)](https://travis-ci.org/husl-colors/husl)
 
-[Explanation, demo, ports etc.](http://husl.boronine.com/)
+[Explanation, demo, ports etc.](http://www.husl-colors.org)
 
 # Usage
 
-Client-side: include [husl.js](https://raw.githubusercontent.com/boronine/husl/master/husl.js) or [husl.min.js](https://raw.githubusercontent.com/boronine/husl/master/husl.min.js) in your webpage, access it as a global ``HUSL`` object or as a jQuery plugin with ``$.husl``.
+Client-side: include [husl.js](https://raw.githubusercontent.com/husl-colors/husl/master/husl.js) or [husl.min.js](https://raw.githubusercontent.com/husl-colors/husl/master/husl.min.js) in your webpage, access it as a global ``HUSL`` object or as a jQuery plugin with ``$.husl``.
 
 Server-side: ``npm install husl``.
 
@@ -26,7 +26,7 @@ Like above, but *red*, *green* and *blue* are passed as numbers between 0 and 1.
 
 Use **husl.p.toHex**, **husl.p.toRGB**, **husl.p.fromHex** and **husl.p.fromRGB** for the pastel variant (HUSLp).
 
-HUSL can also be used as a [Stylus](http://learnboost.github.com/stylus/) plugin. See [here](https://github.com/boronine/husl-stylus).
+HUSL can also be used as a [Stylus](http://learnboost.github.com/stylus/) plugin. See [here](https://github.com/husl-colors/husl-stylus).
 
 # Versioning
 
