@@ -4,15 +4,11 @@
 
 # Building
 
-The command to build the site is `make dist`.
-
-Building requires some libraries to be installed. If you are running [Docker](https://www.docker.io/), a wise way to do it would be to run `make docker_build` followed by `make docker_run`. You will find yourself inside a Docker container with everything set up to run `make dist`, the output will be written to the host file system.
-
-If you are not using Docker, you can install the dependencies manually, they are listed in the Dockerfile.
+The command to build the site is `make dist`. See `Dockerfile` for requirements, or run `docker build .` to build.
 
 # License
 
-Copyright (C) 2014 Alexei Boronine
+Copyright (C) 2015 Alexei Boronine
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
