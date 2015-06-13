@@ -1,10 +1,10 @@
 fs  = require 'fs'
 Buffer = require('buffer').Buffer
+PNG = require('pngjs').PNG
 
 colorspaces = require 'colorspaces'
 onecolor = require 'onecolor'
 husl = require 'husl'
-{Png} = require 'png'
   
 hslToRgb = (h, s, l) ->
   h *= 360
@@ -14,17 +14,20 @@ hslToRgb = (h, s, l) ->
   [c.red(), c.green(), c.blue()]
 
 makeImage = (file, func, width, height) ->
-  rgb = new Buffer width * height * 3
+  png = new PNG {
+    width: width
+    height: height
+  }
   for y in [0..height - 1]
     for x in [0..width - 1]
-      pos = (y * width + x) * 3
+      pos = (y * width + x) * 4
       rgbVal = func x / (width - 1), y / (height - 1)
-      rgb[pos + 0] = rgbVal[0]
-      rgb[pos + 1] = rgbVal[1]
-      rgb[pos + 2] = rgbVal[2]
-  png = new Png rgb, width, height, 'rgb'
-  png_image = png.encodeSync()
-  fs.writeFileSync file, png_image.toString('binary'), 'binary'
+      png.data[pos + 0] = rgbVal[0]
+      png.data[pos + 1] = rgbVal[1]
+      png.data[pos + 2] = rgbVal[2]
+      png.data[pos + 3] = 255
+
+  png.pack().pipe(fs.createWriteStream(file))
 
 chromaDemo = (color) ->
   C = color.as('CIELCHuv')[1] * 0.8
@@ -49,6 +52,7 @@ makeDemo = (name, func, width = 360, height = 200) ->
 console.log "Generating demo images:"
 
 try
+  fs.mkdirSync 'dist/img'
   fs.mkdirSync 'dist/img/demo'
 
 makeDemo 'husl', (x, y) ->
