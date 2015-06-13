@@ -4,7 +4,7 @@
 
 # Building
 
-The command to build the site is `make dist`. See `Dockerfile` for requirements, or run `docker build .` to build.
+Run `npm install` to fetch requirements. The command to build the site is `make dist`.
 
 # License
 

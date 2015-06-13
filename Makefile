@@ -1,10 +1,4 @@
-.PHONY: docker_build, docker_run, dist, deploy
-
-docker_build:
-	docker build -t husl-dev-environment .
-
-docker_run:
-	docker run -i -t -v $(shell pwd):/husl husl-dev-environment /bin/bash
+.PHONY: dist, deploy
 
 dist/js/main.js: src/main.coffee
 	coffee --compile --bare --output dist/js src/main.coffee
