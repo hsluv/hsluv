@@ -41,7 +41,7 @@ describe 'HUSL snapshot', ->
   it 'should match the stable snapshot', ->
 
     current = snapshot.snapshot()
-    stable = require './snapshot-rev3.json'
+    stable = require './snapshot-rev4.json'
 
     for hex, stableSamples of stable
       currentSamples = current[hex]

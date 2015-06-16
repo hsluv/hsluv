@@ -227,40 +227,56 @@ conv.lch.luv = (tuple) ->
 
 conv.husl.lch = (tuple) ->
   [H, S, L] = tuple
-  # Bad things happen when you reach a limit
-  return [100, 0, H] if L > 99.9999999
-  return [0, 0, H] if L < 0.00000001
-  max = maxChromaForLH L, H
-  C = max / 100 * S
-  # I already tried this scaling function to improve the chroma
-  # uniformity. It did not work very well.
-  # C = Math.pow(S / 100,  1 / t) * max
+  # White and black: disambiguate chroma
+  if L > 99.9999999 or L < 0.00000001
+    C = 0
+  else
+    max = maxChromaForLH L, H
+    C = max / 100 * S
+  # Greys: disambiguate hue
+  if S < 0.00000001
+    H = 0
   return [L, C, H]
 
 conv.lch.husl = (tuple) ->
   [L, C, H] = tuple
-  return [H, 0, 100] if L > 99.9999999
-  return [H, 0, 0] if L < 0.00000001
-  max = maxChromaForLH L, H
-  S = C / max * 100
+  # White and black: disambiguate saturation
+  if L > 99.9999999 or L < 0.00000001
+    S = 0
+  else
+    max = maxChromaForLH L, H
+    S = C / max * 100
+  # Greys: disambiguate hue
+  if C < 0.00000001
+    H = 0
   return [H, S, L]
 
 ## PASTEL HUSL
 
 conv.huslp.lch = (tuple) ->
   [H, S, L] = tuple
-  return [100, 0, H] if L > 99.9999999
-  return [0, 0, H] if L < 0.00000001
-  max = maxSafeChromaForL L
-  C = max / 100 * S
+  # White and black: disambiguate chroma
+  if L > 99.9999999 or L < 0.00000001
+    C = 0
+  else
+    max = maxSafeChromaForL L
+    C = max / 100 * S
+  # Greys: disambiguate hue
+  if S < 0.00000001
+    H = 0
   return [L, C, H]
 
 conv.lch.huslp = (tuple) ->
   [L, C, H] = tuple
-  return [H, 0, 100] if L > 99.9999999
-  return [H, 0, 0] if L < 0.00000001
-  max = maxSafeChromaForL L
-  S = C / max * 100
+  # White and black: disambiguate saturation
+  if L > 99.9999999 or L < 0.00000001
+    S = 0
+  else
+    max = maxSafeChromaForL L
+    S = C / max * 100
+  # Greys: disambiguate hue
+  if C < 0.00000001
+    H = 0
   return [H, S, L]
 
 conv.rgb.hex = (tuple) ->
