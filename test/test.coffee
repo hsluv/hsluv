@@ -39,6 +39,7 @@ describe 'Fits within RGB ranges', ->
 describe 'HUSL snapshot', ->
 
   it 'should match the stable snapshot', ->
+    @timeout 10000
 
     current = snapshot.snapshot()
     stable = require './snapshot-rev4.json'

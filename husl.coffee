@@ -213,9 +213,13 @@ conv.luv.xyz = (tuple) ->
 conv.luv.lch = (tuple) ->
   [L, U, V] = tuple
   C = Math.pow Math.pow(U, 2) + Math.pow(V, 2), 1 / 2
-  Hrad = Math.atan2 V, U
-  H = Hrad * 360 / 2 / Math.PI
-  H = 360 + H if H < 0
+  # Greys: disambiguate hue
+  if C < 0.00000001
+    H = 0
+  else  
+    Hrad = Math.atan2 V, U
+    H = Hrad * 360 / 2 / Math.PI
+    H = 360 + H if H < 0
   [L, C, H]
 
 conv.lch.luv = (tuple) ->
@@ -233,9 +237,6 @@ conv.husl.lch = (tuple) ->
   else
     max = maxChromaForLH L, H
     C = max / 100 * S
-  # Greys: disambiguate hue
-  if S < 0.00000001
-    H = 0
   return [L, C, H]
 
 conv.lch.husl = (tuple) ->
@@ -246,9 +247,6 @@ conv.lch.husl = (tuple) ->
   else
     max = maxChromaForLH L, H
     S = C / max * 100
-  # Greys: disambiguate hue
-  if C < 0.00000001
-    H = 0
   return [H, S, L]
 
 ## PASTEL HUSL
@@ -261,9 +259,6 @@ conv.huslp.lch = (tuple) ->
   else
     max = maxSafeChromaForL L
     C = max / 100 * S
-  # Greys: disambiguate hue
-  if S < 0.00000001
-    H = 0
   return [L, C, H]
 
 conv.lch.huslp = (tuple) ->
@@ -274,9 +269,6 @@ conv.lch.huslp = (tuple) ->
   else
     max = maxSafeChromaForL L
     S = C / max * 100
-  # Greys: disambiguate hue
-  if C < 0.00000001
-    H = 0
   return [H, S, L]
 
 conv.rgb.hex = (tuple) ->

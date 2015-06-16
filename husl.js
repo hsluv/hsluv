@@ -234,10 +234,14 @@
     var C, H, Hrad, L, U, V;
     L = tuple[0], U = tuple[1], V = tuple[2];
     C = Math.pow(Math.pow(U, 2) + Math.pow(V, 2), 1 / 2);
-    Hrad = Math.atan2(V, U);
-    H = Hrad * 360 / 2 / Math.PI;
-    if (H < 0) {
-      H = 360 + H;
+    if (C < 0.00000001) {
+      H = 0;
+    } else {
+      Hrad = Math.atan2(V, U);
+      H = Hrad * 360 / 2 / Math.PI;
+      if (H < 0) {
+        H = 360 + H;
+      }
     }
     return [L, C, H];
   };
@@ -260,9 +264,6 @@
       max = maxChromaForLH(L, H);
       C = max / 100 * S;
     }
-    if (S < 0.00000001) {
-      H = 0;
-    }
     return [L, C, H];
   };
 
@@ -274,9 +275,6 @@
     } else {
       max = maxChromaForLH(L, H);
       S = C / max * 100;
-    }
-    if (C < 0.00000001) {
-      H = 0;
     }
     return [H, S, L];
   };
@@ -290,9 +288,6 @@
       max = maxSafeChromaForL(L);
       C = max / 100 * S;
     }
-    if (S < 0.00000001) {
-      H = 0;
-    }
     return [L, C, H];
   };
 
@@ -304,9 +299,6 @@
     } else {
       max = maxSafeChromaForL(L);
       S = C / max * 100;
-    }
-    if (C < 0.00000001) {
-      H = 0;
     }
     return [H, S, L];
   };
