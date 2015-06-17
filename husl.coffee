@@ -23,11 +23,6 @@ m_inv =
   Y: [ 0.21263900587151036,  0.71516867876775593, 0.072192315360733715 ]
   Z: [ 0.019330818715591851, 0.11919477979462599, 0.95053215224966058  ]
 
-# Hard-coded D65 standard illuminant
-refX = 0.95045592705167173
-refY = 1.0
-refZ = 1.0890577507598784
-
 refU = 0.19783000664283681
 refV = 0.468319994938791
 
@@ -152,16 +147,19 @@ conv.rgb.xyz = (tuple) ->
   [X, Y, Z]
 
 # http://en.wikipedia.org/wiki/CIELUV
+# In these formulas, Yn refers to the reference white point. We are using
+# illuminant D65, so Yn (see refY in Maxima file) equals 1. The formula is
+# simplified accordingly.
 Y_to_L = (Y) ->
   if Y <= epsilon
-    (Y / refY) * kappa
+    Y * kappa
   else
-    116 * Math.pow((Y / refY), 1/3) - 16
+    116 * Math.pow(Y, 1/3) - 16
 L_to_Y = (L) ->
   if L <= 8
-    refY * L / kappa
+    L / kappa
   else
-    refY * Math.pow((L + 16) / 116, 3)
+    Math.pow((L + 16) / 116, 3)
 
 conv.xyz.luv = (tuple) ->
   [X, Y, Z] = tuple

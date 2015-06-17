@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 13.04.2 ] */
+/* [ Created with wxMaxima version 15.04.0 ] */
 
 /* [wxMaxima: input   start ] */
 /* Authors: Alexei Boronine, Bastien Dejean */
@@ -38,9 +38,15 @@ M_S: invert(M_P) . [X_w, Y_w, Z_w];
 M_RGB_XYZ: M_P * transpose(addcol(M_S, M_S, M_S));
 M_XYZ_RGB: invert(M_RGB_XYZ);
 
-fpprintprec: 16;
-float(M_RGB_XYZ);
-float(M_XYZ_RGB);
+fpprec: 16;
+bfloat(M_RGB_XYZ);
+bfloat(M_XYZ_RGB);
+
+/* XYZ tristimulus values for D65, used as reference white point here:
+http://www.brucelindbloom.com/index.html?Eqn_xyY_to_XYZ.html */
+
+xyY_to_XYZ(rat(0.3127), rat(0.3290), 1);
+
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
