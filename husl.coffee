@@ -4,42 +4,36 @@
 #  * http://www.brucelindbloom.com
 #  * Wikipedia
 #
-
-# All numbers taken from math/bounds.wxm wxMaxima file:
+# All numbers below taken from math/bounds.wxm wxMaxima file. We use 17
+# digits of decimal precision to export the numbers, effectively exporting
+# them as double precision IEEE 754 floats.
 #
-#    fpprintprec: 16;
-#    float(M_XYZ_RGB);
-#    float(M_RGB_XYZ);
-#    float(refX);
-#    float(refY);
-#    float(refZ);
-#    float(refU);
-#    float(refV);
-#    float(lab_k);
-#    float(lab_e);
+# "If an IEEE 754 double precision is converted to a decimal string with at
+# least 17 significant digits and then converted back to double, then the 
+# final number must match the original"
 #
+# Source: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 
 m =
-  R: [ 3.240969941904521, -1.537383177570093, -0.498610760293    ]
-  G: [ -0.96924363628087,  1.87596750150772,   0.041555057407175 ]
-  B: [ 0.055630079696993, -0.20397695888897,   1.056971514242878 ]
+  R: [  3.2409699419045214,   -1.5373831775700935, -0.49861076029300328  ]
+  G: [ -0.96924363628087983,   1.8759675015077207,  0.041555057407175613 ]
+  B: [  0.055630079696993609, -0.20397695888897657, 1.0569715142428786   ]
 m_inv =
-  X: [ 0.41239079926595,  0.35758433938387, 0.18048078840183  ]
-  Y: [ 0.21263900587151,  0.71516867876775, 0.072192315360733 ]
-  Z: [ 0.019330818715591, 0.11919477979462, 0.95053215224966  ]
+  X: [ 0.41239079926595948,  0.35758433938387796, 0.18048078840183429  ]
+  Y: [ 0.21263900587151036,  0.71516867876775593, 0.072192315360733715 ]
+  Z: [ 0.019330818715591851, 0.11919477979462599, 0.95053215224966058  ]
 
 # Hard-coded D65 standard illuminant
-refX = 0.95045592705167
+refX = 0.95045592705167173
 refY = 1.0
-refZ = 1.089057750759878
+refZ = 1.0890577507598784
 
-refU = 0.19783000664283
-refV = 0.46831999493879
+refU = 0.19783000664283681
+refV = 0.468319994938791
 
 # CIE LUV constants
-kappa = 903.2962962
-epsilon = 0.0088564516
-
+kappa = 903.2962962962963
+epsilon = 0.0088564516790356308
 
 # For a given lightness, return a list of 6 lines in slope-intercept
 # form that represent the bounds in CIELUV, stepping over which will
@@ -119,11 +113,6 @@ dotProduct = (a, b) ->
     ret += a[i] * b[i]
   return ret
 
-# Rounds number to a given number of decimal places
-round = (num, places) ->
-  n = Math.pow 10, places
-  return Math.round(num * n) / n
-
 # Used for rgb conversions
 fromLinear = (c) ->
   if c <= 0.0031308
@@ -137,18 +126,6 @@ toLinear = (c) ->
     Math.pow (c + a) / (1 + a), 2.4
   else
     c / 12.92
-
-# Represents rgb [0-1] values as [0-255] values. Errors out if value
-# out of the range
-rgbPrepare = (tuple) ->
-  tuple = (round(n, 3) for n in tuple)
-  for ch in tuple
-    # Error tolerance
-    if ch < -0.0001 or ch > 1.0001
-      throw new Error "Illegal rgb value: #{ch}"
-    ch = 0 if ch < 0
-    ch = 1 if ch > 1
-  (Math.round(ch * 255) for ch in tuple)
 
 # This map will contain our conversion functions
 conv =
@@ -212,7 +189,7 @@ conv.luv.xyz = (tuple) ->
 
 conv.luv.lch = (tuple) ->
   [L, U, V] = tuple
-  C = Math.pow Math.pow(U, 2) + Math.pow(V, 2), 1 / 2
+  C = Math.sqrt(Math.pow(U, 2) + Math.pow(V, 2))
   # Greys: disambiguate hue
   if C < 0.00000001
     H = 0
@@ -273,9 +250,12 @@ conv.lch.huslp = (tuple) ->
 
 conv.rgb.hex = (tuple) ->
   hex = "#"
-  tuple = rgbPrepare tuple
   for ch in tuple
-    ch = ch.toString(16)
+    # Round to 6 decimal places
+    ch = Math.round(ch * 1e6) / 1e6
+    if ch < 0 or ch > 1
+      throw new Error "Illegal rgb value: #{ch}"
+    ch = Math.round(ch * 255).toString(16)
     ch = "0" + ch if ch.length is 1
     hex += ch
   hex
@@ -323,8 +303,6 @@ root.p.fromHex = (hex) ->
   conv.lch.huslp conv.luv.lch conv.xyz.luv conv.rgb.xyz conv.hex.rgb hex
 
 root._conv = conv
-root._round = round
-root._rgbPrepare = rgbPrepare
 root._getBounds = getBounds
 root._maxChromaForLH = maxChromaForLH
 root._maxSafeChromaForL = maxSafeChromaForL

@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 13.04.2 ] */
+/* [ Created with wxMaxima version 15.04.0 ] */
 
 /* [wxMaxima: input   start ] */
 /* Authors: Alexei Boronine, Bastien Dejean */
@@ -109,6 +109,19 @@ block(
         "chroma"
     ])
 );
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+fpprec: 17;
+bfloat(M_XYZ_RGB);
+bfloat(M_RGB_XYZ);
+bfloat(refX);
+bfloat(refY);
+bfloat(refZ);
+bfloat(refU);
+bfloat(refV);
+bfloat(kappa);
+bfloat(epsilon);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
