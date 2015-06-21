@@ -62,6 +62,7 @@ getBounds = (L) ->
 
 
 size = 400
+sameColorSquareSize = 8
 
 height = size
 width = size
@@ -371,10 +372,16 @@ redrawSwatch = ->
   d3.select('table.sliders .swatch').style {
     'background-color': hex
   }
-  d3.select('#picker .hex').attr 'value', hex
+  updateSliderCounters()
+
+updateSliderCounters = ->
   d3.select('#picker .counter-hue').text        H.toFixed 2
   d3.select('#picker .counter-saturation').text S.toFixed 2
   d3.select('#picker .counter-lightness').text  L.toFixed 2
+
+updateHexText = ->
+  hex = $.husl.toHex H, S, L
+  d3.select('#picker .hex').property 'value', hex
 
 
 foreground = makeForeground()
@@ -407,6 +414,7 @@ adjustPosition = (x, y) ->
   foreground.redraw()
   redrawSliderPositions()
   redrawSwatch()
+  updateHexText()
 
 sliderHue = d3.slider()
   .min(0)
@@ -415,6 +423,7 @@ sliderHue = d3.slider()
     H = value
     foreground.redraw()
     redrawSwatch()
+    updateHexText()
 
 sliderSaturation = d3.slider()
   .min(0)
@@ -423,6 +432,7 @@ sliderSaturation = d3.slider()
     S = value
     foreground.redraw()
     redrawSwatch()
+    updateHexText()
 
 sliderLightness = d3.slider()
   .min(0)
@@ -430,16 +440,30 @@ sliderLightness = d3.slider()
   .on 'slide', (e, value) ->
     L = value
     background.redraw()
-    redrawCanvas(8)
+    redrawCanvas(sameColorSquareSize)
     foreground.redraw()
     redrawSwatch()
+    updateHexText()
 
 d3.select("#picker div.control-hue").call(sliderHue)
 d3.select("#picker div.control-saturation").call(sliderSaturation)
 d3.select("#picker div.control-lightness").call(sliderLightness)
 
+stringIsValidHex = (string) ->
+  string.match(/#?[0-9a-f]{6}/)
+  
+d3.select("#picker .hex").on 'input', ->
+  if stringIsValidHex(@value)
+    [H, S, L] = $.husl.fromHex @value
+    background.redraw()
+    redrawCanvas(sameColorSquareSize)
+    foreground.redraw()
+    redrawSliderPositions()
+    redrawSwatch()
+
 background.redraw()
-redrawCanvas(8)
+redrawCanvas(sameColorSquareSize)
 foreground.redraw()
 redrawSliderPositions()
 redrawSwatch()
+updateHexText()
