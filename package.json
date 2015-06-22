@@ -7,5 +7,8 @@
 		"node-pngjs": "0.0.3",
 		"husl": "*"
 	},
-	"repository": "husl-colors/husl-site"
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/husl-colors/husl-site.git"
+	}
 }
