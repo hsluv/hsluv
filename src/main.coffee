@@ -371,6 +371,28 @@ foreground = makeForeground()
 background = makeBackground()
 
 
+redrawSliderHuePosition = ->
+  sliderHue.value H
+  sliderHue.redraw()
+
+redrawSliderSaturationPosition = ->
+  sliderSaturation.value S
+  sliderSaturation.redraw()
+
+redrawSliderLightnessPosition = ->
+  sliderLightness.value L
+  sliderLightness.redraw()
+
+updateSliderHueCounter = ->
+  d3.select('#picker .counter-hue').property 'value', H.toFixed 2
+
+updateSliderSaturationCounter = ->
+  d3.select('#picker .counter-saturation').property 'value', S.toFixed 2
+
+updateSliderLightnessCounter = ->
+  d3.select('#picker .counter-lightness').property 'value', L.toFixed 2
+
+
 redrawSwatch = ->
   hex = $.husl.toHex H, S, L
   d3.select('table.sliders .swatch').style {
@@ -380,20 +402,6 @@ redrawSwatch = ->
 updateHexText = ->
   hex = $.husl.toHex H, S, L
   d3.select('#picker .hex').property 'value', hex
-
-redrawSliderPositions = ->
-  sliderHue.value        H
-  sliderSaturation.value S
-  sliderLightness.value  L
-
-  sliderHue.redraw()
-  sliderSaturation.redraw()
-  sliderLightness.redraw()
-
-updateSliderCounters = ->
-  d3.select('#picker .counter-hue').text        H.toFixed 2
-  d3.select('#picker .counter-saturation').text S.toFixed 2
-  d3.select('#picker .counter-lightness').text  L.toFixed 2
 
 
 redrawFunctionsInSafeOrderWithDependencyData = [
@@ -413,14 +421,34 @@ redrawFunctionsInSafeOrderWithDependencyData = [
     ignoreIfTriggeredByAnyOf: []
   }
   {
-    func: redrawSliderPositions
-    executeIfAnyOfTheseVariablesChange: ["H","S","L"]
-    ignoreIfTriggeredByAnyOf: ["sliderHue", "sliderSaturation", "sliderLightness"]
+    func: redrawSliderHuePosition
+    executeIfAnyOfTheseVariablesChange: ["H"]
+    ignoreIfTriggeredByAnyOf: ["sliderHue"]
   }
   {
-    func: updateSliderCounters
-    executeIfAnyOfTheseVariablesChange: ["H","S","L"]
-    ignoreIfTriggeredByAnyOf: []
+    func: redrawSliderSaturationPosition
+    executeIfAnyOfTheseVariablesChange: ["S"]
+    ignoreIfTriggeredByAnyOf: ["sliderSaturation"]
+  }
+  {
+    func: redrawSliderLightnessPosition
+    executeIfAnyOfTheseVariablesChange: ["L"]
+    ignoreIfTriggeredByAnyOf: ["sliderLightness"]
+  }
+  {
+    func: updateSliderHueCounter
+    executeIfAnyOfTheseVariablesChange: ["H"]
+    ignoreIfTriggeredByAnyOf: ["sliderHueCounterText"]
+  }
+  {
+    func: updateSliderSaturationCounter
+    executeIfAnyOfTheseVariablesChange: ["S"]
+    ignoreIfTriggeredByAnyOf: ["sliderSaturationCounterText"]
+  }
+  {
+    func: updateSliderLightnessCounter
+    executeIfAnyOfTheseVariablesChange: ["L"]
+    ignoreIfTriggeredByAnyOf: ["sliderLightnessCounterText"]
   }
   {
     func: redrawSwatch
@@ -466,39 +494,61 @@ adjustPosition = (x, y) ->
   pointerDistance = distanceFromPole(pointer)
   S = Math.min(pointerDistance / maxChroma * 100, 100)
 
-  redrawAfterUpdatingVariables(["H","S"], "adjustPosition")
+  redrawAfterUpdatingVariables ["H","S"], "adjustPosition"
+
 
 sliderHue = d3.slider()
   .min(0)
   .max(360)
   .on 'slide', (e, value) ->
     H = value
-    redrawAfterUpdatingVariables(["H"], "sliderHue")
+    redrawAfterUpdatingVariables ["H"], "sliderHue"
 
 sliderSaturation = d3.slider()
   .min(0)
   .max(100)
   .on 'slide', (e, value) ->
     S = value
-    redrawAfterUpdatingVariables(["S"], "sliderSaturation")
+    redrawAfterUpdatingVariables ["S"], "sliderSaturation"
 
 sliderLightness = d3.slider()
   .min(0)
   .max(100)
   .on 'slide', (e, value) ->
     L = value
-    redrawAfterUpdatingVariables(["L"], "sliderLightness")
+    redrawAfterUpdatingVariables ["L"], "sliderLightness"
 
 d3.select("#picker div.control-hue").call(sliderHue)
 d3.select("#picker div.control-saturation").call(sliderSaturation)
 d3.select("#picker div.control-lightness").call(sliderLightness)
 
+
 stringIsValidHex = (string) ->
   string.match(/#?[0-9a-f]{6}/)
-  
+
 d3.select("#picker .hex").on 'input', ->
   if stringIsValidHex(@value)
     [H, S, L] = $.husl.fromHex @value
-    redrawAfterUpdatingVariables(["H","S","L"], "hexText")
+    redrawAfterUpdatingVariables ["H","S","L"], "hexText"
 
-redrawAfterUpdatingVariables(["H","S","L"], "pageLoad")
+
+stringIsNumberWithinRange = (string, min, max) ->
+  $.isNumeric(string) && min <= parseFloat(string) <= max
+
+d3.select('#picker .counter-hue').on 'input', ->
+  if stringIsNumberWithinRange(@value, 0, 360)
+    H = parseFloat @value
+    redrawAfterUpdatingVariables ["H"], "sliderHueCounterText"
+
+d3.select('#picker .counter-saturation').on 'input', ->
+  if stringIsNumberWithinRange(@value, 0, 100)
+    S = parseFloat @value
+    redrawAfterUpdatingVariables ["S"], "sliderSaturationCounterText"
+
+d3.select('#picker .counter-lightness').on 'input', ->
+  if stringIsNumberWithinRange(@value, 0, 100)
+    L = parseFloat @value
+    redrawAfterUpdatingVariables ["L"], "sliderLightnessCounterText"
+
+
+redrawAfterUpdatingVariables ["H","S","L"], "pageLoad"

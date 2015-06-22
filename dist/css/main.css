@@ -74,14 +74,36 @@ div.demo {
   margin-top: 20px;
 }
 
-#picker .hex {
-  width: 100px;
+
+#picker .hex, #picker .counter {
   padding-left: 5px;
   padding-right: 5px;
   color: #888;
   background: transparent;
-  border: 1px solid #555;
+  border-width: 1px;
+  border-style: solid;
   outline: none;
+}
+
+#picker .hex {
+  width: 100px;
+  border-color: #555;
+  margin-bottom: 2px; /* to align with the Lightness field to the left */
+}
+
+#picker .counter {
+  width: 61px;
+  border-color: #333;
+}
+
+/* hide spinners on <input type="number"> */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance:textfield;
 }
 
 
@@ -100,10 +122,9 @@ table.sliders tr {
   height: 30px;
 }
 
-table.sliders td.counter {
-  padding-left: 15px;
+table.sliders td.counter-cell {
+  padding-left: 9px;
   width: 85px;
-  color: #777777;
 }
 
 table.sliders .swatch {
