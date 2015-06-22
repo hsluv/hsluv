@@ -367,29 +367,21 @@ makeForeground = ->
 
   return foreground
 
+foreground = makeForeground()
+background = makeBackground()
+
+
 redrawSwatch = ->
   hex = $.husl.toHex H, S, L
   d3.select('table.sliders .swatch').style {
     'background-color': hex
   }
-  updateSliderCounters()
-
-updateSliderCounters = ->
-  d3.select('#picker .counter-hue').text        H.toFixed 2
-  d3.select('#picker .counter-saturation').text S.toFixed 2
-  d3.select('#picker .counter-lightness').text  L.toFixed 2
 
 updateHexText = ->
   hex = $.husl.toHex H, S, L
   d3.select('#picker .hex').property 'value', hex
 
-
-foreground = makeForeground()
-background = makeBackground()
-
-
 redrawSliderPositions = ->
-
   sliderHue.value        H
   sliderSaturation.value S
   sliderLightness.value  L
@@ -398,52 +390,104 @@ redrawSliderPositions = ->
   sliderSaturation.redraw()
   sliderLightness.redraw()
 
+updateSliderCounters = ->
+  d3.select('#picker .counter-hue').text        H.toFixed 2
+  d3.select('#picker .counter-saturation').text S.toFixed 2
+  d3.select('#picker .counter-lightness').text  L.toFixed 2
+
+
+redrawFunctionsInSafeOrderWithDependencyData = [
+  {
+    func: background.redraw
+    executeIfAnyOfTheseVariablesChange: ["L"]
+    ignoreIfTriggeredByAnyOf: []
+  }
+  {
+    func: redrawCanvas.bind(null, sameColorSquareSize)
+    executeIfAnyOfTheseVariablesChange: ["L"]
+    ignoreIfTriggeredByAnyOf: []
+  }
+  {
+    func: foreground.redraw
+    executeIfAnyOfTheseVariablesChange: ["H","S","L"]
+    ignoreIfTriggeredByAnyOf: []
+  }
+  {
+    func: redrawSliderPositions
+    executeIfAnyOfTheseVariablesChange: ["H","S","L"]
+    ignoreIfTriggeredByAnyOf: ["sliderHue", "sliderSaturation", "sliderLightness"]
+  }
+  {
+    func: updateSliderCounters
+    executeIfAnyOfTheseVariablesChange: ["H","S","L"]
+    ignoreIfTriggeredByAnyOf: []
+  }
+  {
+    func: redrawSwatch
+    executeIfAnyOfTheseVariablesChange: ["H","S","L"]
+    ignoreIfTriggeredByAnyOf: []
+  }
+  {
+    func: updateHexText
+    executeIfAnyOfTheseVariablesChange: ["H","S","L"]
+    ignoreIfTriggeredByAnyOf: ["hexText"]
+  }
+]
+
+doArraysContainAnyEqualElement = (arr1, arr2) ->
+  arr1.some (element) ->
+    arr2.indexOf(element) != -1
+
+redrawAfterUpdatingVariables = (changedVariables, triggeredBy) ->
+  # out of the redraw functions…
+  necessaryRedrawers = redrawFunctionsInSafeOrderWithDependencyData
+  
+  # find the ones that rely on any of the changed variables
+  necessaryRedrawers = necessaryRedrawers.filter (redrawerData) ->
+    reliedOnVariables = redrawerData["executeIfAnyOfTheseVariablesChange"]
+    doArraysContainAnyEqualElement(changedVariables, reliedOnVariables)
+  
+  # filter out redrawers that shouldn’t be run after this trigger
+  necessaryRedrawers = necessaryRedrawers.filter (redrawerData) ->
+    redrawerData["ignoreIfTriggeredByAnyOf"].indexOf(triggeredBy) == -1
+  
+  # run all remaining redrawers in their proper order
+  for redrawerData in necessaryRedrawers
+    redrawerData["func"]()
+
 
 adjustPosition = (x, y) ->
   pointer = [x / scale, y / scale]
 
   hrad = normalizeRad Math.atan2 pointer[1], pointer[0]
-
   H = hrad / 2 / Math.PI * 360
 
   maxChroma = $.husl._maxChromaForLH L, H
   pointerDistance = distanceFromPole(pointer)
-
   S = Math.min(pointerDistance / maxChroma * 100, 100)
 
-  foreground.redraw()
-  redrawSliderPositions()
-  redrawSwatch()
-  updateHexText()
+  redrawAfterUpdatingVariables(["H","S"], "adjustPosition")
 
 sliderHue = d3.slider()
   .min(0)
   .max(360)
   .on 'slide', (e, value) ->
     H = value
-    foreground.redraw()
-    redrawSwatch()
-    updateHexText()
+    redrawAfterUpdatingVariables(["H"], "sliderHue")
 
 sliderSaturation = d3.slider()
   .min(0)
   .max(100)
   .on 'slide', (e, value) ->
     S = value
-    foreground.redraw()
-    redrawSwatch()
-    updateHexText()
+    redrawAfterUpdatingVariables(["S"], "sliderSaturation")
 
 sliderLightness = d3.slider()
   .min(0)
   .max(100)
   .on 'slide', (e, value) ->
     L = value
-    background.redraw()
-    redrawCanvas(sameColorSquareSize)
-    foreground.redraw()
-    redrawSwatch()
-    updateHexText()
+    redrawAfterUpdatingVariables(["L"], "sliderLightness")
 
 d3.select("#picker div.control-hue").call(sliderHue)
 d3.select("#picker div.control-saturation").call(sliderSaturation)
@@ -455,15 +499,6 @@ stringIsValidHex = (string) ->
 d3.select("#picker .hex").on 'input', ->
   if stringIsValidHex(@value)
     [H, S, L] = $.husl.fromHex @value
-    background.redraw()
-    redrawCanvas(sameColorSquareSize)
-    foreground.redraw()
-    redrawSliderPositions()
-    redrawSwatch()
+    redrawAfterUpdatingVariables(["H","S","L"], "hexText")
 
-background.redraw()
-redrawCanvas(sameColorSquareSize)
-foreground.redraw()
-redrawSliderPositions()
-redrawSwatch()
-updateHexText()
+redrawAfterUpdatingVariables(["H","S","L"], "pageLoad")
