@@ -6,5 +6,9 @@
 		"onecolor": "2.4.0",
 		"node-pngjs": "0.0.3",
 		"husl": "*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/husl-colors/husl-site.git"
 	}
 }
