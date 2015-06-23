@@ -450,11 +450,12 @@ d3.select("#picker div.control-saturation").call(sliderSaturation)
 d3.select("#picker div.control-lightness").call(sliderLightness)
 
 stringIsValidHex = (string) ->
-  string.match(/#?[0-9a-f]{6}/)
-  
+  string.match /^#?[0-9a-f]{6}$/
+
 d3.select("#picker .hex").on 'input', ->
-  if stringIsValidHex(@value)
-    [H, S, L] = $.husl.fromHex @value
+  trimmedValue = @value.trim()
+  if stringIsValidHex(trimmedValue)
+    [H, S, L] = $.husl.fromHex trimmedValue
     background.redraw()
     redrawCanvas(sameColorSquareSize)
     foreground.redraw()
