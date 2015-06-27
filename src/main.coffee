@@ -384,13 +384,13 @@ redrawSliderLightnessPosition = ->
   sliderLightness.redraw()
 
 updateSliderHueCounter = ->
-  d3.select('#picker .counter-hue').property 'value', H.toFixed 2
+  d3.select('#picker .counter-hue').property 'value', H.toFixed 1
 
 updateSliderSaturationCounter = ->
-  d3.select('#picker .counter-saturation').property 'value', S.toFixed 2
+  d3.select('#picker .counter-saturation').property 'value', S.toFixed 1
 
 updateSliderLightnessCounter = ->
-  d3.select('#picker .counter-lightness').property 'value', L.toFixed 2
+  d3.select('#picker .counter-lightness').property 'value', L.toFixed 1
 
 
 redrawSwatch = ->
