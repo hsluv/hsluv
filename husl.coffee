@@ -163,12 +163,13 @@ L_to_Y = (L) ->
 
 conv.xyz.luv = (tuple) ->
   [X, Y, Z] = tuple
+  # Black will create a divide-by-zero error in
+  # the following two lines
+  if Y is 0
+    return [0, 0, 0]
+  L = Y_to_L(Y)
   varU = (4 * X) / (X + (15 * Y) + (3 * Z))
   varV = (9 * Y) / (X + (15 * Y) + (3 * Z))
-  L = Y_to_L(Y)
-  # Black will create a divide-by-zero error
-  if L is 0
-    return [0, 0, 0]
   U = 13 * L * (varU - refU)
   V = 13 * L * (varV - refV)
   [L, U, V]
