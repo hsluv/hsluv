@@ -68,8 +68,8 @@ height = size
 width = size
 maxRadius = size / 2
 
-$canvas     = $ '#picker canvas'
-$svg        = $ '#picker svg'
+$canvas = $ '#picker canvas'
+$svg    = $ '#picker svg'
 
 ctx = $canvas[0].getContext '2d'
 contrasting = null
