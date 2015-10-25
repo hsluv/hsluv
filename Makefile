@@ -8,4 +8,4 @@ dist: dist/js/main.js
 	coffee generate.coffee
 
 deploy:
-	aws s3 sync dist s3://www.husl-colors.org
+	node_modules/.bin/surge --project ./dist --domain husl.surge.sh

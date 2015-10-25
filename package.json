@@ -1,11 +1,11 @@
 {
 	"dependencies": {
-		"colorspaces": "0.1.3",
 		"coffee-script": "1.7.1",
 		"colorspaces": "0.1.3",
 		"onecolor": "2.4.0",
 		"node-pngjs": "0.0.3",
-		"husl": "*"
+		"husl": "*",
+		"surge": "*"
 	},
 	"repository": {
 		"type": "git",

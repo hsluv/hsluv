@@ -1,0 +1,8 @@
+sudo: false
+language: node_js
+node_js:
+- "4.1"
+script:
+- make dist
+- make deploy
+secure: "fB0WzzGui7aWvLxUOOihxQF2ml70ILJhErZa8GFWc84IV9yB6xkSxUqCYJV3/YNs9HzwUxJajGyltfCB2ZG5Sdf5l61BhPK69oAnKa1E4ZcWbqUG2WKxcUd4q/cG94jeOHe6EO7t4ZmDh+JplfFzDcH9Au3HrKX4+3vFdA7tK18="
