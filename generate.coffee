@@ -34,12 +34,24 @@ chromaDemo = (color) ->
   red = colorspaces.make_color 'CIELCHuv', [50, C, 10]
   return red.as 'sRGB'
 
+# Rounds number to a given number of decimal places
+round = (num, places) ->
+  n = Math.pow 10, places
+  return Math.round(num * n) / n
+
+rgbPrepare = (tuple) ->
+  tuple = (round(n, 3) for n in tuple)
+  for ch in tuple
+    if ch < 0 or ch > 1
+      throw new Error "Illegal rgb value"
+  (Math.round(ch * 255) for ch in tuple)
+
 makeDemo = (name, func, width = 360, height = 200) ->
   console.log " - #{name}"
   file = "dist/img/demo/#{name}.png"
   func2 = (x, y) ->
     try
-      husl._rgbPrepare func x, y
+      rgbPrepare func x, y
     catch e
       console.log x, y
       console.log x * 360, 100 - y * 100

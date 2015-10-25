@@ -1,14 +1,14 @@
 {
-	"dependencies": {
-		"coffee-script": "1.7.1",
-		"colorspaces": "0.1.3",
-		"onecolor": "2.4.0",
-		"node-pngjs": "0.0.3",
-		"husl": "*",
-		"surge": "*"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git://github.com/husl-colors/husl-site.git"
-	}
+  "dependencies": {
+    "coffee-script": "1.7.1",
+    "colorspaces": "0.1.3",
+    "husl": "^6.0.0",
+    "onecolor": "2.4.0",
+    "pngjs": "^2.0.0",
+    "surge": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/husl-colors/husl-site.git"
+  }
 }
