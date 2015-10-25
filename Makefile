@@ -12,4 +12,4 @@ dist: dist/js/main.js dist/img/demo
 	touch dist
 
 deploy:
-	node_modules/.bin/surge --project ./dist --domain husl.surge.sh
+	node_modules/.bin/surge --project ./dist --domain www.husl-colors.org
