@@ -5,4 +5,3 @@ node_js:
 script:
 - make dist
 - make deploy
-secure: "camv+Ej0H8fN2SZGcoKP6Ke3sXpGtBt2lkH3x7GJqQeNlgRoVKF4JWcX3+DaagblymFnyZc4FtotLim2MyaSMzwwDMIvghYdhT3Yd9Z0VRmzx6In44vMqqcFPyZnuzdeoDGXrndPZsb3WNxC8lJGlhsOkrpv61FiujWi7yd65R4="
