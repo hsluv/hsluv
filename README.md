@@ -15,11 +15,12 @@ Server-side: ``npm install husl``.
 
 **husl.toRGB(hue, saturation, lightness)**
 
-Like above, but returns an array of 3 numbers between 0 and 1, for each RGB channel.
+Like above, but returns an array of 3 numbers between 0 and 1, for the r, g, and b channel.
 
 **husl.fromHex(hex)**
 
-Takes a hex string and returns the HUSL color as defined above.
+Takes a hex string and returns the HUSL color as array that contains the hue (0-360), saturation(0-100) and lightness(0-100) channel.
+_Note_: The result can have rounding errors. For example saturation can be 100.00000000000007
 
 **husl.fromRGB(red, green, blue)**
 
