@@ -26,7 +26,7 @@ _Note_: The result can have rounding errors. For example saturation can be 100.0
 
 Like above, but *red*, *green* and *blue* are passed as numbers between 0 and 1.
 
-Use **husl.p.toHex**, **husl.p.toRGB**, **husl.p.fromHex** and **husl.p.fromRGB** for the pastel variant (HUSLp).
+Use **husl.p.toHex**, **husl.p.toRGB**, **husl.p.fromHex** and **husl.p.fromRGB** for the pastel variant (HUSLp). Note that HUSLp does not contain all the colors of RGB, so converting arbitrary RGB to it may generate invalid HUSLp colors.
 
 HUSL can also be used as a [Stylus](http://learnboost.github.com/stylus/) plugin. See [here](https://github.com/husl-colors/husl-stylus).
 
