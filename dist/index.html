@@ -1,377 +1,423 @@
 <!doctype html>
 <head>
-  <meta charset="utf-8">
-  <title>HUSL - Human-friendly HSL</title>
-  <meta name="description" content="">
-  <meta name="author" content="Alexei Boronine">
-  <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/d3.slider.css">
+    <meta charset="utf-8">
+    <title>HUSL - Human-friendly HSL</title>
+    <meta name="description" content="">
+    <meta name="author" content="Alexei Boronine">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/d3.slider.css">
 </head>
 <body>
-  <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
     <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#husl-navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">HUSL</a>
-      </div>
-      <div class="collapse navbar-collapse" id="husl-navbar-collapse">
-        <ul class="nav navbar-nav">
-          <li>
-            <a href="#implementations">Implementations</a>
-          </li>
-          <li>
-            <a href="#comparison">Comparison</a>
-          </li>
-          <li>
-            <a href="#math">Math</a>
-          </li>
-          <li>
-            <a href="syntax/">Demo</a>
-          </li>
-        </ul>
-        <p class="navbar-text navbar-right">
-          <iframe src="http://ghbtns.com/github-btn.html?user=husl-colors&amp;repo=husl&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
-        </p>
-      </div>
-    </div>
-  </nav>
-  <div class="dark">
-    <div id="picker">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 col-md-push-5 col-sm-12">
-            <div class="col-sm-12 header-text">
-              <p><abbr class="initialism">HUSL</abbr> is a <a href="http://www.boronine.com/2012/03/26/Color-Spaces-for-Human-Beings/">human-friendly</a> alternative to <abbr class="initialism">HSL</abbr>.</p>
-              <p><span class="hidden-sm hidden-xs">To the left</span><span class="hidden-md hidden-lg">Above</span> you can see <a href="http://en.wikipedia.org/wiki/CIELUV"><abbr class="initialism">CIELUV</abbr></a>, a color space designed for perceptual uniformity based on human experiments. When accessed by polar coordinates, it becomes functionally similar to <abbr class="initialism">HSL</abbr> with a single problem: its chroma component doesn't fit into a specific range.<p>
-              <p><abbr class="initialism">HUSL</abbr> extends <abbr class="initialism">CIELUV</abbr> with a new saturation component that allows you to span all the available chroma as a neat percentage.</p>
-            </div>
-            <table class="col-sm-12 sliders">
-              <tr>
-                <th>H</th>
-                <td>
-                  <div class="slider-control control-hue"></div>
-                </td>
-                <td class="counter-cell">
-                  <input type="number" step="any" class="counter counter-hue" tabindex="1"/>
-                </td>
-                <td rowspan="3" style="width:100px">
-                  <div class="swatch"></div>
-                  <input class="hex" pattern="#?[0-9a-fA-F]{6}" tabindex="4"/>
-                </td>
-              </tr>
-              <tr>
-                <th>S</th>
-                <td>
-                  <div class="slider-control control-saturation"></div>
-                </td>
-                <td class="counter-cell">
-                  <input type="number" step="any" class="counter counter-saturation" tabindex="2"/>
-                </td>
-              </tr>
-              <tr>
-                <th>L</th>
-                <td>
-                  <div class="slider-control control-lightness"></div>
-                </td>
-                <td class="counter-cell">
-                  <input type="number" step="any" class="counter counter-lightness" tabindex="3"/>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div class="col-md-5 col-md-pull-6 col-sm-12">
-            <div id="display">
-              <canvas style="position:absolute;left:0" height="400" width="400"></canvas>
-              <svg style="position:absolute;left:0" height="400" width="400"></svg>
-            </div>
-          </div>
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#husl-navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">HUSL</a>
         </div>
-      </div>
+        <div class="collapse navbar-collapse" id="husl-navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#implementations">Implementations</a>
+                </li>
+                <li>
+                    <a href="#comparison">Comparison</a>
+                </li>
+                <li>
+                    <a href="#math">Math</a>
+                </li>
+                <li>
+                    <a href="syntax/">Demo</a>
+                </li>
+            </ul>
+            <p class="navbar-text navbar-right">
+                <iframe src="http://ghbtns.com/github-btn.html?user=husl-colors&amp;repo=husl&amp;type=watch&amp;count=true"
+                        allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+            </p>
+        </div>
     </div>
-  </div>
-  <div class="container">
-      <div class="row">
+</nav>
+<div class="dark">
+    <div id="picker">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-push-5 col-sm-12">
+                    <div class="col-sm-12 header-text">
+                        <p><abbr class="initialism">HUSL</abbr> is a <a
+                                href="http://www.boronine.com/2012/03/26/Color-Spaces-for-Human-Beings/">human-friendly</a>
+                            alternative to <abbr class="initialism">HSL</abbr>.</p>
+                        <p><span class="hidden-sm hidden-xs">To the left</span><span
+                                class="hidden-md hidden-lg">Above</span> you can see <a
+                                href="http://en.wikipedia.org/wiki/CIELUV"><abbr class="initialism">CIELUV</abbr></a>, a
+                            color space designed for perceptual uniformity based on human experiments. When accessed by
+                            polar coordinates, it becomes functionally similar to <abbr class="initialism">HSL</abbr>
+                            with a single problem: its chroma component doesn't fit into a specific range.
+                        <p>
+                        <p><abbr class="initialism">HUSL</abbr> extends <abbr class="initialism">CIELUV</abbr> with a
+                            new saturation component that allows you to span all the available chroma as a neat
+                            percentage.</p>
+                    </div>
+                    <table class="col-sm-12 sliders">
+                        <tr>
+                            <th>H</th>
+                            <td>
+                                <div class="slider-control control-hue"></div>
+                            </td>
+                            <td class="counter-cell">
+                                <input type="number" step="any" class="counter counter-hue" tabindex="1"/>
+                            </td>
+                            <td rowspan="3" style="width:100px">
+                                <div class="swatch"></div>
+                                <input class="hex" pattern="#?[0-9a-fA-F]{6}" tabindex="4"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>S</th>
+                            <td>
+                                <div class="slider-control control-saturation"></div>
+                            </td>
+                            <td class="counter-cell">
+                                <input type="number" step="any" class="counter counter-saturation" tabindex="2"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>L</th>
+                            <td>
+                                <div class="slider-control control-lightness"></div>
+                            </td>
+                            <td class="counter-cell">
+                                <input type="number" step="any" class="counter counter-lightness" tabindex="3"/>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-5 col-md-pull-6 col-sm-12">
+                    <div id="display">
+                        <canvas style="position:absolute;left:0" height="400" width="400"></canvas>
+                        <svg style="position:absolute;left:0" height="400" width="400"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
         <div class="col-md-7 col-xs-12">
-          <h1 id="implementations">Implementations</h1>
-          <p><abbr class="initialism">HUSL</abbr> is implemented as a set of functions to convert colors between RGB, HUSL and HUSLp. Check the individual ports for documentation and licensing. Most of the code is released under the MIT license. The math is available under the public domain.</p>
+            <h1 id="implementations">Implementations</h1>
+            <p><abbr class="initialism">HUSL</abbr> is implemented as a set of functions to convert colors between RGB,
+                HUSL and HUSLp. Check the individual ports for documentation and licensing. Most of the code is released
+                under the MIT license. The math is available under the public domain.</p>
 
-          <p>The reference implementation is in JavaScript. This code is used to generate a snapshot of the color space. These snapshots, serialized in JSON, are used for regression testing. If you want to port HUSL to a different language or finish one of the started ports, you should match your implementation against the snapshot generated by the reference implementation. The snapshots are <a href="https://github.com/husl-colors/husl/tree/master/test">stored in the repo</a>. Contact the original author by <a href="mailto://alexei@boronine.com">email</a>.</p>
+            <p>The reference implementation is in JavaScript. This code is used to generate a snapshot of the color
+                space. These snapshots, serialized in JSON, are used for regression testing. If you want to port HUSL to
+                a different language or finish one of the started ports, you should match your implementation against
+                the snapshot generated by the reference implementation. The snapshots are <a
+                        href="https://github.com/husl-colors/husl/tree/master/test">stored in the repo</a>. Contact the
+                original author by <a href="mailto://alexei@boronine.com">email</a>.</p>
         </div>
         <div class="col-md-5 col-xs-12">
             <table class="table">
-              <tr>
-                <th></th>
-                <th>Testing</th>
-                <th>Package</th>
-              </tr>
-              <tr>
-                <th>
-                  <a href="https://github.com/husl-colors/husl">
-                    JavaScript
-                  </a>
-                </th>
-                <td>
-                  <a href="http://travis-ci.org/husl-colors/husl">
-                    <img src="https://travis-ci.org/husl-colors/husl.svg?branch=master"/>
-                  </a>
-                </td>
-                <td>
-                  <a href="https://www.npmjs.com/package/husl">
-                    <img src="https://img.shields.io/npm/v/husl.svg"/>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <a href="https://github.com/husl-colors/husl-python">
-                    Python
-                  </a>
-                </th>
-                <td>
-                  <a href="http://travis-ci.org/husl-colors/husl-python">
-                    <img src="https://travis-ci.org/husl-colors/husl-python.svg?branch=master"/>
-                  </a>
-                </td>
-                <td>
-                  <a href="https://pypi.python.org/pypi/husl/">
-                    <img src="https://img.shields.io/pypi/v/husl.svg"/>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <a href="https://github.com/husl-colors/husl-ruby">
-                    Ruby
-                  </a>
-                </th>
-                <td>
-                  <a href="http://travis-ci.org/husl-colors/husl-ruby">
-                    <img src="https://travis-ci.org/husl-colors/husl-ruby.svg?branch=master"/>
-                  </a>
-                </td>
-                <td>
-                  <a href="https://rubygems.org/gems/husl">
-                    <img src="https://img.shields.io/gem/v/husl.svg"/>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <a href="https://github.com/husl-colors/husl-csharp">
-                    C#
-                  </a>
-                </th>
-                <td>
-                  <a href="http://travis-ci.org/husl-colors/husl-csharp">
-                    <img src="https://travis-ci.org/husl-colors/husl-csharp.svg?branch=master"/>
-                  </a>
-                </td>
-                <td>
-                  <a href="https://www.nuget.org/packages/HUSL">
-                    <img src="https://img.shields.io/nuget/v/HUSL.svg"/>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <a href="https://github.com/husl-colors/husl-lua">
-                    Lua
-                  </a>
-                </th>
-                <td>
-                  <a href="http://travis-ci.org/husl-colors/husl-lua">
-                    <img src="https://travis-ci.org/husl-colors/husl-lua.svg?branch=master"/>
-                  </a>
-                </td>
-                <td>
-                  <a href="https://luarocks.org/modules/husl-colors/husl">
-                    <img src="https://img.shields.io/badge/luarocks-1.0--0-blue.svg"/>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <a href="https://github.com/husl-colors/husl-go">
-                    Go
-                  </a>
-                </th>
-                <td>
-                  <a href="http://travis-ci.org/husl-colors/husl-go">
-                    <img src="https://travis-ci.org/husl-colors/husl-go.svg?branch=master"/>
-                  </a>
-                </td>
-                <td></td>
-              </tr>
-              <tr>
-                <th>
-                  <a href="https://github.com/husl-colors/husl-objc">
-                    <nobr>Objective-C</nobr>
-                  </a>
-                </th>
-                <td></td>
-                <td>
-                  <a href="https://cocoapods.org/pods/husl-objc">
-                    <img src="https://img.shields.io/cocoapods/v/husl-objc.svg"/>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <a href="https://metacpan.org/release/Convert-Color-HUSL">
-                    Perl
-                  </a>
-                </th>
-                <td></td>
-                <td>
-                  <a href="https://metacpan.org/release/Convert-Color-HUSL">
-                    <img src="https://img.shields.io/cpan/v/Convert-Color-HUSL.svg"/>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <th>
-                  <a href="https://github.com/husl-colors/husl-swift">
-                    Swift
-                  </a>
-                </th>
-                <td></td>
-                <td>
-                  <a href="https://github.com/husl-colors/husl-swift/releases/tag/v1.0.0">
-                    <img src="https://img.shields.io/cocoapods/v/HUSLSwift.svg"/>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="3">
-                  <strong>Unfinished ports: <a href="https://github.com/husl-colors/husl/tree/master/ports/c">C</a>, <a href="https://github.com/husl-colors/husl/tree/master/ports/java">Java</a>.</strong>
-                </td>
-              </tr>
+                <tr>
+                    <th></th>
+                    <th>Testing</th>
+                    <th>Package</th>
+                </tr>
+                <tr>
+                    <th>
+                        <a href="https://github.com/husl-colors/husl">
+                            JavaScript
+                        </a>
+                    </th>
+                    <td>
+                        <a href="http://travis-ci.org/husl-colors/husl">
+                            <img src="https://travis-ci.org/husl-colors/husl.svg?branch=master"/>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="https://www.npmjs.com/package/husl">
+                            <img src="https://img.shields.io/npm/v/husl.svg"/>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <a href="https://github.com/husl-colors/husl-python">
+                            Python
+                        </a>
+                    </th>
+                    <td>
+                        <a href="http://travis-ci.org/husl-colors/husl-python">
+                            <img src="https://travis-ci.org/husl-colors/husl-python.svg?branch=master"/>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="https://pypi.python.org/pypi/husl/">
+                            <img src="https://img.shields.io/pypi/v/husl.svg"/>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <a href="https://github.com/husl-colors/husl-ruby">
+                            Ruby
+                        </a>
+                    </th>
+                    <td>
+                        <a href="http://travis-ci.org/husl-colors/husl-ruby">
+                            <img src="https://travis-ci.org/husl-colors/husl-ruby.svg?branch=master"/>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="https://rubygems.org/gems/husl">
+                            <img src="https://img.shields.io/gem/v/husl.svg"/>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <a href="https://github.com/husl-colors/husl-csharp">
+                            C#
+                        </a>
+                    </th>
+                    <td>
+                        <a href="http://travis-ci.org/husl-colors/husl-csharp">
+                            <img src="https://travis-ci.org/husl-colors/husl-csharp.svg?branch=master"/>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="https://www.nuget.org/packages/HUSL">
+                            <img src="https://img.shields.io/nuget/v/HUSL.svg"/>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <a href="https://github.com/husl-colors/husl-lua">
+                            Lua
+                        </a>
+                    </th>
+                    <td>
+                        <a href="http://travis-ci.org/husl-colors/husl-lua">
+                            <img src="https://travis-ci.org/husl-colors/husl-lua.svg?branch=master"/>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="https://luarocks.org/modules/husl-colors/husl">
+                            <img src="https://img.shields.io/badge/luarocks-1.0--0-blue.svg"/>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <a href="https://github.com/husl-colors/husl-go">
+                            Go
+                        </a>
+                    </th>
+                    <td>
+                        <a href="http://travis-ci.org/husl-colors/husl-go">
+                            <img src="https://travis-ci.org/husl-colors/husl-go.svg?branch=master"/>
+                        </a>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>
+                        <a href="https://github.com/husl-colors/husl-java">
+                            Java
+                        </a>
+                    </th>
+                    <td>
+                        <a href="http://travis-ci.org/husl-colors/husl-java">
+                            <img src="https://travis-ci.org/husl-colors/husl-java.svg?branch=master"/>
+                        </a>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th>
+                        <a href="https://github.com/husl-colors/husl-objc">
+                            <nobr>Objective-C</nobr>
+                        </a>
+                    </th>
+                    <td></td>
+                    <td>
+                        <a href="https://cocoapods.org/pods/husl-objc">
+                            <img src="https://img.shields.io/cocoapods/v/husl-objc.svg"/>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <a href="https://metacpan.org/release/Convert-Color-HUSL">
+                            Perl
+                        </a>
+                    </th>
+                    <td></td>
+                    <td>
+                        <a href="https://metacpan.org/release/Convert-Color-HUSL">
+                            <img src="https://img.shields.io/cpan/v/Convert-Color-HUSL.svg"/>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        <a href="https://github.com/husl-colors/husl-swift">
+                            Swift
+                        </a>
+                    </th>
+                    <td></td>
+                    <td>
+                        <a href="https://github.com/husl-colors/husl-swift/releases/tag/v1.0.0">
+                            <img src="https://img.shields.io/cocoapods/v/HUSLSwift.svg"/>
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <strong>Unfinished ports: <a
+                                href="https://github.com/husl-colors/husl/tree/master/ports/c">C</a>.</strong>
+                    </td>
+                </tr>
             </table>
         </div>
-      </div>
-      <div class="row" style="margin-top:60px;" id="comparison">
+    </div>
+    <div class="row" style="margin-top:60px;" id="comparison">
         <div class="col-md-6 col-xs-12">
-          <h1>Comparison</h1>
+            <h1>Comparison</h1>
         </div>
         <div class="col-md-6 col-xs-12">
-          <table class="table">
-            <thead>
-              <tr>
-                <th></th>
-                <th class="text-center">HSL</th>
-                <th class="text-center">CIE&nbsp;LCh<sub>uv</sub></th>
-                <th class="text-center">HUSL</th>
-                <th class="text-center">HUSLp</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>Lightness</th>
-                <td class="text-center cell-red">Relative</td>
-                <td class="text-center cell-green">Absolute</td>
-                <td class="text-center cell-green">Absolute</td>
-                <td class="text-center cell-green">Absolute</td>
-              </tr>
-              <tr>
-                <th>Saturation<sup>*</sup></th>
-                <td class="text-center cell-red">Relative</td>
-                <td class="text-center cell-green">Absolute</td>
-                <td class="text-center cell-red">Relative</td>
-                <td class="text-center cell-green">Absolute</td>
-              </tr>
-              <tr>
-                <th>Hue uniformity</th>
-                <td class="text-center cell-red">Poor</td>
-                <td class="text-center cell-green">Good</td>
-                <td class="text-center cell-green">Good</td>
-                <td class="text-center cell-green">Good</td>
-              </tr>
-              <tr>
-                <th>Component ranges</th>
-                <td class="text-center cell-green">Defined</td>
-                <td class="text-center cell-red">Undefined</td>
-                <td class="text-center cell-green">Defined</td>
-                <td class="text-center cell-green">Defined</td>
-              </tr>
-              <tr>
-                <th>Saturated colors</th>
-                <td class="text-center cell-green">Yes</td>
-                <td class="text-center cell-green">Yes</td>
-                <td class="text-center cell-green">Yes</td>
-                <td class="text-center cell-red">No</td>
-              </tr>
-              <tr>
-                <td colspan="5">
-                  <sup>*</sup> Saturation and chroma are actually distinct concepts
-                </td>
-              </tbody>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th class="text-center">HSL</th>
+                    <th class="text-center">CIE&nbsp;LCh<sub>uv</sub></th>
+                    <th class="text-center">HUSL</th>
+                    <th class="text-center">HUSLp</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th>Lightness</th>
+                    <td class="text-center cell-red">Relative</td>
+                    <td class="text-center cell-green">Absolute</td>
+                    <td class="text-center cell-green">Absolute</td>
+                    <td class="text-center cell-green">Absolute</td>
+                </tr>
+                <tr>
+                    <th>Saturation<sup>*</sup></th>
+                    <td class="text-center cell-red">Relative</td>
+                    <td class="text-center cell-green">Absolute</td>
+                    <td class="text-center cell-red">Relative</td>
+                    <td class="text-center cell-green">Absolute</td>
+                </tr>
+                <tr>
+                    <th>Hue uniformity</th>
+                    <td class="text-center cell-red">Poor</td>
+                    <td class="text-center cell-green">Good</td>
+                    <td class="text-center cell-green">Good</td>
+                    <td class="text-center cell-green">Good</td>
+                </tr>
+                <tr>
+                    <th>Component ranges</th>
+                    <td class="text-center cell-green">Defined</td>
+                    <td class="text-center cell-red">Undefined</td>
+                    <td class="text-center cell-green">Defined</td>
+                    <td class="text-center cell-green">Defined</td>
+                </tr>
+                <tr>
+                    <th>Saturated colors</th>
+                    <td class="text-center cell-green">Yes</td>
+                    <td class="text-center cell-green">Yes</td>
+                    <td class="text-center cell-green">Yes</td>
+                    <td class="text-center cell-red">No</td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        <sup>*</sup> Saturation and chroma are actually distinct concepts
+                    </td>
+                </tbody>
             </table>
-          </div>
         </div>
-      <div class="row" style="padding-top:60px">
+    </div>
+    <div class="row" style="padding-top:60px">
         <div class="col-demo col-md-3 col-xs-6">
-          <h2 class="center">HSL</h2>
-          <img src="img/demo/hsl.png" class="demo"/>
-        </div>
-        <div class="col-demo col-md-3 col-xs-6">
-          <h2 class="center">CIE&nbsp;LCh<sub>uv</sub></h2>
-          <img src="img/demo/cielchuv.png" class="demo"/>
-          <p>The dips in the graph represent impossible colors (such as dark saturated yellow). <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> doesn't warn you about them, making it unsuitable for generating colors.</p> 
+            <h2 class="center">HSL</h2>
+            <img src="img/demo/hsl.png" class="demo"/>
         </div>
         <div class="col-demo col-md-3 col-xs-6">
-          <h2 class="center">HUSL</h2>
-          <img src="img/demo/husl.png" class="demo"/>
-          <p><abbr class="initialism">HUSL</abbr> preserves the lightness and hue components of <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> and stretches its chroma so that every color has the same range, defined as a percentage.</p>
+            <h2 class="center">CIE&nbsp;LCh<sub>uv</sub></h2>
+            <img src="img/demo/cielchuv.png" class="demo"/>
+            <p>The dips in the graph represent impossible colors (such as dark saturated yellow). <abbr
+                    class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> doesn't warn you about them, making it
+                unsuitable for generating colors.</p>
         </div>
         <div class="col-demo col-md-3 col-xs-6">
-          <h2 class="center">HUSLp</h2>
-          <img src="img/demo/huslp.png" class="demo"/>
-          <p><abbr class="initialism">HUSLp</abbr> takes as many colors as it can from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> without distorting the chroma. As you can see, the resulting color space is smooth, but only pastel colors can be included.</p>
-        </div>
-      </div>
-      <h2>Chroma</h2>
-      <div class="row">
-        <div class="col-demo col-md-3 col-xs-6">
-          <img src="img/demo/hsl-chroma.png" class="demo"/>
+            <h2 class="center">HUSL</h2>
+            <img src="img/demo/husl.png" class="demo"/>
+            <p><abbr class="initialism">HUSL</abbr> preserves the lightness and hue components of <abbr
+                    class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> and stretches its chroma so that every color has
+                the same range, defined as a percentage.</p>
         </div>
         <div class="col-demo col-md-3 col-xs-6">
-          <img src="img/demo/cielchuv-chroma.png" class="demo"/>
-          <p>The chroma component of <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> is absolute. Unlike <abbr class="initialist">HSL</abbr>'s saturation you can effectively use it to compare two different colors.</p> 
+            <h2 class="center">HUSLp</h2>
+            <img src="img/demo/huslp.png" class="demo"/>
+            <p><abbr class="initialism">HUSLp</abbr> takes as many colors as it can from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>
+                without distorting the chroma. As you can see, the resulting color space is smooth, but only pastel
+                colors can be included.</p>
+        </div>
+    </div>
+    <h2>Chroma</h2>
+    <div class="row">
+        <div class="col-demo col-md-3 col-xs-6">
+            <img src="img/demo/hsl-chroma.png" class="demo"/>
         </div>
         <div class="col-demo col-md-3 col-xs-6">
-          <img src="img/demo/husl-chroma.png" class="demo"/>
-          <p>Both <abbr class="initialism">HSL</abbr> and <abbr class="initialism">HUSL</abbr> have a distorted chroma map, this is a trade-off of their convenient shape. Admittedly, <abbr class="initialism">HUSL</abbr>'s chroma has more sudden shifts.</p>
+            <img src="img/demo/cielchuv-chroma.png" class="demo"/>
+            <p>The chroma component of <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> is absolute. Unlike
+                <abbr class="initialist">HSL</abbr>'s saturation you can effectively use it to compare two different
+                colors.</p>
         </div>
         <div class="col-demo col-md-3 col-xs-6">
-          <img src="img/demo/huslp-chroma.png" class="demo"/>
-        </div>
-      </div>
-      <h2>Lightness</h2>
-      <div class="row">
-        <div class="col-demo col-md-3 col-xs-6">
-          <img src="img/demo/hsl-lightness.png" class="demo"/>
-          <p>This is why <abbr class="initialism">HSL</abbr> is useless for working out contrast. The actual lightness varies drastically between hues.</p>
+            <img src="img/demo/husl-chroma.png" class="demo"/>
+            <p>Both <abbr class="initialism">HSL</abbr> and <abbr class="initialism">HUSL</abbr> have a distorted chroma
+                map, this is a trade-off of their convenient shape. Admittedly, <abbr class="initialism">HUSL</abbr>'s
+                chroma has more sudden shifts.</p>
         </div>
         <div class="col-demo col-md-3 col-xs-6">
-          <img src="img/demo/cielchuv-lightness.png" class="demo"/>
+            <img src="img/demo/huslp-chroma.png" class="demo"/>
+        </div>
+    </div>
+    <h2>Lightness</h2>
+    <div class="row">
+        <div class="col-demo col-md-3 col-xs-6">
+            <img src="img/demo/hsl-lightness.png" class="demo"/>
+            <p>This is why <abbr class="initialism">HSL</abbr> is useless for working out contrast. The actual lightness
+                varies drastically between hues.</p>
         </div>
         <div class="col-demo col-md-3 col-xs-6">
-          <img src="img/demo/husl-lightness.png" class="demo"/>
-          <p>For this demo I am using <abbr class="initialism">CIE</abbr>'s definition of lightness. Both <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> and <abbr class="initialism">HUSL</abbr> use this component, so their picture is an even gray.</p>
+            <img src="img/demo/cielchuv-lightness.png" class="demo"/>
         </div>
         <div class="col-demo col-md-3 col-xs-6">
-          <img src="img/demo/huslp-lightness.png" class="demo"/>
+            <img src="img/demo/husl-lightness.png" class="demo"/>
+            <p>For this demo I am using <abbr class="initialism">CIE</abbr>'s definition of lightness. Both <abbr
+                    class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr> and <abbr class="initialism">HUSL</abbr> use
+                this component, so their picture is an even gray.</p>
         </div>
-      </div>
-      <div class="row" style="height:300px;margin-top:100px">
+        <div class="col-demo col-md-3 col-xs-6">
+            <img src="img/demo/huslp-lightness.png" class="demo"/>
+        </div>
+    </div>
+    <div class="row" style="height:300px;margin-top:100px">
         <div class="col-md-8 col-xs-12">
-          <p style="margin-top:20px">Let's try to generate some random background colors:</p>
+            <p style="margin-top:20px">Let's try to generate some random background colors:</p>
           <pre><code class="javascript">function randomHue() {
   return Math.floor(Math.random() * 360);
 }
@@ -379,27 +425,28 @@ $(...).css('background-color', $.husl.toHex(randomHue(), 90, 60));
 $(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
         </div>
         <div class="col-md-2 col-xs-6" style="padding-bottom:30px">
-          <button class="btn btn-large btn-block" id="demo1">Test HUSL</button>
-          <div class="demo">Lightness: 60%</div>
-          <div class="demo">Lightness: 60%</div>
-          <div class="demo">Lightness: 60%</div>
-          <div class="demo">Lightness: 60%</div>
-          <div class="demo">Lightness: 60%</div>
-          <div class="demo">Lightness: 60%</div>
+            <button class="btn btn-large btn-block" id="demo1">Test HUSL</button>
+            <div class="demo">Lightness: 60%</div>
+            <div class="demo">Lightness: 60%</div>
+            <div class="demo">Lightness: 60%</div>
+            <div class="demo">Lightness: 60%</div>
+            <div class="demo">Lightness: 60%</div>
+            <div class="demo">Lightness: 60%</div>
         </div>
         <div class="col-md-2 col-xs-6" style="padding-bottom:30px">
-          <button class="btn btn-large btn-block" id="demo2">Test HSL</button>
-          <div class="demo">Lightness: 60%</div>
-          <div class="demo">Lightness: 60%</div>
-          <div class="demo">Lightness: 60%</div>
-          <div class="demo">Lightness: 60%</div>
-          <div class="demo">Lightness: 60%</div>
-          <div class="demo">Lightness: 60%</div>
+            <button class="btn btn-large btn-block" id="demo2">Test HSL</button>
+            <div class="demo">Lightness: 60%</div>
+            <div class="demo">Lightness: 60%</div>
+            <div class="demo">Lightness: 60%</div>
+            <div class="demo">Lightness: 60%</div>
+            <div class="demo">Lightness: 60%</div>
+            <div class="demo">Lightness: 60%</div>
         </div>
-      </div>
-      <div class="row">
+    </div>
+    <div class="row">
         <div class="col-md-8 col-xs-12">
-          <p><abbr class="initialism">HUSL</abbr>'s uniform hue means random colors will be truly random. Iterating over colors will also produce better results.</p>
+            <p><abbr class="initialism">HUSL</abbr>'s uniform hue means random colors will be truly random. Iterating
+                over colors will also produce better results.</p>
           <pre><code class="javascript">$('#rainbow-husl div').each(function(index) {
   $(this).css('background-color', $.husl.toHex(index * 36, 90, 60));
 });
@@ -409,74 +456,88 @@ $('#rainbow-hsl div').each(function(index) {
 });</code></pre>
         </div>
         <div class="col-md-2 col-xs-6" id="rainbow-husl">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
         <div class="col-md-2 col-xs-6" id="rainbow-hsl">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
         </div>
-      </div>
-      <div class="row" id="math">
-        <div class="col-md-12 col-xs-12">
-          <h2>How does <abbr class="initialism">HUSL</abbr> work?</h2>
-          <p><abbr class="initialism">HUSL</abbr> is defined as a conversion to and from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>. For both <abbr class="initialism">HUSL</abbr> and <abbr class="initialism">HUSLp</abbr>, the first step is to find the chroma bounds for a given lightness. These are lines, crossing which will push the color out of the <abbr class="initialism">RGB</abbr> gamut. We define a function, <em>getBounds(L)</em> which returns 6 straight lines in slope-intercept format. Each of them represents one of three <abbr class="initialism">RGB</abbr> channels being pushed either below 0 or above 1.</p>
-          <p><strong>HUSL:</strong></p>
-          <ol>
-            <li>Given a hue (angle), build a ray starting from <em>(0, 0)</em> and find the point where it first intersects with one of the bounding lines.</li>
-            <li>The distance from <em>(0, 0)</em> to this point is the maximum chroma for given <em>L</em> and <em>H</em>. Scale saturation to be a percentage of this distance.</li>
-          </ol>
-          <p><strong>HUSLp:</strong></p>
-          <ol>
-            <li>Use perpendiculars to find the shortest distance from <em>(0, 0)</em> to one of the bounding lines.</li>
-            <li>This distance is the lowest common chroma. For the given <em>L</em> and any <em>H</em> let saturation span this distance.</li>
-          </ol>
-          <p>I used <a href="http://maxima.sourceforge.net/">Maxima</a> to build and solve these equations, and <a href="https://github.com/husl-colors/husl/blob/master/math/bounds.wxm">a wxMaxima file</a> is bundled with the code explaining how to get the bounding lines. The rest is simple geometry you can see in the reference implementation.</p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <footer>
-            © Copyright 2015 by <a href="http://www.boronine.com">Alexei Boronine</a>.
-          </footer>
-        </div>
-      </div>
     </div>
-  </div>
-  <script src="js/underscore-min.js"></script>
-  <script src="js/jquery-1.11.3.min.js"></script>
-  <script src="js/d3.v3.min.js"></script>
-  <script src="js/d3.slider.js"></script>
-  <script src="bootstrap/js/bootstrap.min.js"></script>
-  <script src="js/husl.min.js"></script>
-  <script src="js/main.js"></script>
-  <!--
-  <script type="text/javascript">
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-31795350-1']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-  </script>
-  -->
+    <div class="row" id="math">
+        <div class="col-md-12 col-xs-12">
+            <h2>How does <abbr class="initialism">HUSL</abbr> work?</h2>
+            <p><abbr class="initialism">HUSL</abbr> is defined as a conversion to and from <abbr class="initialism">CIE&nbsp;LCh<sub>uv</sub></abbr>.
+                For both <abbr class="initialism">HUSL</abbr> and <abbr class="initialism">HUSLp</abbr>, the first step
+                is to find the chroma bounds for a given lightness. These are lines, crossing which will push the color
+                out of the <abbr class="initialism">RGB</abbr> gamut. We define a function, <em>getBounds(L)</em> which
+                returns 6 straight lines in slope-intercept format. Each of them represents one of three <abbr
+                        class="initialism">RGB</abbr> channels being pushed either below 0 or above 1.</p>
+            <p><strong>HUSL:</strong></p>
+            <ol>
+                <li>Given a hue (angle), build a ray starting from <em>(0, 0)</em> and find the point where it first
+                    intersects with one of the bounding lines.
+                </li>
+                <li>The distance from <em>(0, 0)</em> to this point is the maximum chroma for given <em>L</em> and
+                    <em>H</em>. Scale saturation to be a percentage of this distance.
+                </li>
+            </ol>
+            <p><strong>HUSLp:</strong></p>
+            <ol>
+                <li>Use perpendiculars to find the shortest distance from <em>(0, 0)</em> to one of the bounding lines.
+                </li>
+                <li>This distance is the lowest common chroma. For the given <em>L</em> and any <em>H</em> let
+                    saturation span this distance.
+                </li>
+            </ol>
+            <p>I used <a href="http://maxima.sourceforge.net/">Maxima</a> to build and solve these equations, and <a
+                    href="https://github.com/husl-colors/husl/blob/master/math/bounds.wxm">a wxMaxima file</a> is
+                bundled with the code explaining how to get the bounding lines. The rest is simple geometry you can see
+                in the reference implementation.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <footer>
+                © Copyright 2016 by <a href="http://www.boronine.com">Alexei Boronine</a>.
+            </footer>
+        </div>
+    </div>
+</div>
+
+<script src="js/underscore-min.js"></script>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/d3.v3.min.js"></script>
+<script src="js/d3.slider.js"></script>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="js/husl.min.js"></script>
+<script src="js/main.js"></script>
+<!--
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-31795350-1']);
+_gaq.push(['_trackPageview']);
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+-->
 </body>
-</html>
