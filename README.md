@@ -52,7 +52,7 @@ Run `npm install` and `npm test`. Try `coffee test/snapshot.coffee` to generate 
 
 # License
 
-Copyright (c) 2015 Alexei Boronine
+Copyright (c) 2016 Alexei Boronine
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
