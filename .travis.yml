@@ -4,4 +4,3 @@ node_js:
 - "4.1"
 script:
 - make dist
-- make deploy
