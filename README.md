@@ -36,7 +36,7 @@ This repo contains the canonical implementation of HUSL, its source code being H
 
 # Testing
 
-Run `npm install` and `npm test`. Try `coffee test/snapshot.coffee` to generate a JSON file of the entire gamut to be used for debugging and regression tests. The format of the file is as follows:
+Run `npm install` and `npm test`. Try `node test/snapshot.js` to generate a JSON file of the entire gamut to be used for debugging and regression tests. The format of the file is as follows:
 
     {
       "#000000": {

@@ -13,12 +13,10 @@
   },
   "homepage": "http://www.husl-colors.org",
   "devDependencies": {
-    "coffee-script": "*",
-    "underscore": "*",
     "uglify-js": "*",
     "mocha": "*"
   },
   "scripts": {
-    "test": "mocha --compilers coffee:coffee-script/register"
+    "test": "mocha"
   }
 }

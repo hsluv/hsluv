@@ -1,5 +1,2 @@
-husl.js: husl.coffee
-	coffee --compile husl.coffee
-
 husl.min.js: husl.js
-	uglifyjs husl.js > husl.min.js
+	node_modules/.bin/uglifyjs husl.js > husl.min.js
