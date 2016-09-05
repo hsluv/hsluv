@@ -1,14 +1,8 @@
 .PHONY: deploy
 
-dist/js/main.js: src/main.coffee
-	node_modules/.bin/coffee --compile --bare --output dist/js src/main.coffee
-
-dist/img/demo: generate.coffee
+dist: generate.js
 	mkdir -p dist/img/demo
-	node_modules/.bin/coffee generate.coffee
-	touch dist/img/demo
-
-dist: dist/js/main.js dist/img/demo
+	node generate.js
 	touch dist
 
 deploy:

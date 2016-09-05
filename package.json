@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "coffee-script": "1.7.1",
     "colorspaces": "0.1.3",
     "husl": "^6.0.0",
     "onecolor": "2.4.0",
