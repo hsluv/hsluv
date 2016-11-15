@@ -1,0 +1,13 @@
+{
+  "name": "HuSL",
+  //"url" : "https://github.com/jasononeil/useless/",
+  "license": "MIT",
+  //"tags": ["cross", "useless"],
+  "description": "Human-friendly HSL.",
+  "version": "1.0.0",
+  "classPath": "src/",
+  "releasenote": "Initial release, everything is working correctly.",
+  "contributors": ["Eiyeron"],
+  "dependencies": {
+  }
+}
