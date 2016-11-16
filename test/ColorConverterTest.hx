@@ -50,7 +50,7 @@ class ColorConverterTest extends TestCase {
 
     function testHusl() {
 
-        var file = sys.io.File.getContent("test/resources/snapshot-rev4.json");
+        var file = haxe.Resource.getString("snapshot-rev4");
         var object = haxe.Json.parse(file);
 
         for (fieldName in Reflect.fields(object))

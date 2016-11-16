@@ -2,3 +2,4 @@
 -cp test
 -main RunTests
 --interp
+-resource test/resources/snapshot-rev4.json@snapshot-rev4
