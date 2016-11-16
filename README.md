@@ -10,17 +10,11 @@
 
 You can also test yourself the library by running `haxe tests.hxml`. It'll run with Haxe's built-in interpreter.
 
+Seems to work on some targets. Here are the tests that couldn't pass on my computer :
+- PHP : PHP7 parseInt function doesn't convert hexadecimal values anymore.
 
-
-Seems to work on some targets. PHP seems to break on int parsing.
-Tests working in:
-- Interpreter (`--interp`)
-- Python (found an issue with a divie by zero)    
-- Lua (found an issue with integer parsing)
-
-Tests not working in:
-- PHP : Std.parseInt doesn't work with hexadecimal values.
-
-*More to come...*
+Tests to do:
+- SWF
+- Windows and Mac
 
 [husl-java]: https://github.com/husl-colors/husl-java

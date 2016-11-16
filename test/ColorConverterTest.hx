@@ -27,6 +27,30 @@ class ColorConverterTest extends TestCase {
         return diff <= largest * MAXRELDIFF;
     }
 
+    private function getTargetName():String {
+        #if js 
+        return "js";
+        #elseif php
+        return "php";
+        #elseif cpp
+        return "cpp";
+        #elseif java
+        return "java";
+        #elseif python
+        return "python";
+        #elseif neko
+        return "neko";
+        #elseif sys
+        return "sys";
+        #elseif flash
+        return "flash";
+        #elseif cs
+        return "cs";
+        #else
+        return "unknown";
+        #end
+    }
+
     private function assertTuplesClose(label:String, expected:Array<Float>, actual:Array<Float>):Void {
         var mismatch:Bool = false;
         var deltas:Array<Float> = [];
@@ -57,7 +81,7 @@ class ColorConverterTest extends TestCase {
         {
 
             var field = Reflect.field(object, fieldName);
-            trace("testing " + fieldName);
+            // print("testing " + fieldName + " on "+getTargetName()+"\n");
 
             // forward functions
 
@@ -70,14 +94,14 @@ class ColorConverterTest extends TestCase {
             var huslFromHex = Husl.hexToHusl(fieldName);
             var huslpFromHex = Husl.hexToHuslp(fieldName);
 
-            assertTuplesClose("hexToRgb", field.rgb, rgbFromHex);
-            assertTuplesClose("rgbToXyz", field.xyz, xyzFromRgb);
-            assertTuplesClose("xyzToLuv", field.luv, luvFromXyz);
-            assertTuplesClose("luvToLch", field.lch, lchFromLuv);
-            assertTuplesClose("lchToHusl", field.husl, huslFromLch);
-            assertTuplesClose("lchToHuslp", field.huslp, huslpFromLch);
-            assertTuplesClose("hexToHusl", field.husl, huslFromHex);
-            assertTuplesClose("hexToHuslp", field.huslp, huslpFromHex);
+            assertTuplesClose(fieldName + "→" + "hexToRgb", field.rgb, rgbFromHex);
+            assertTuplesClose(fieldName + "→" + "rgbToXyz", field.xyz, xyzFromRgb);
+            assertTuplesClose(fieldName + "→" + "xyzToLuv", field.luv, luvFromXyz);
+            assertTuplesClose(fieldName + "→" + "luvToLch", field.lch, lchFromLuv);
+            assertTuplesClose(fieldName + "→" + "lchToHusl", field.husl, huslFromLch);
+            assertTuplesClose(fieldName + "→" + "lchToHuslp", field.huslp, huslpFromLch);
+            assertTuplesClose(fieldName + "→" + "hexToHusl", field.husl, huslFromHex);
+            assertTuplesClose(fieldName + "→" + "hexToHuslp", field.huslp, huslpFromHex);
 
             // backward functions
 
