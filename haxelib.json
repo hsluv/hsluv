@@ -1,8 +1,8 @@
 {
-  "name": "HuSL",
-  //"url" : "https://github.com/jasononeil/useless/",
+  "name": "husl",
+  "url" : "https://github.com/husl-colors/husl-haxe",
   "license": "MIT",
-  //"tags": ["cross", "useless"],
+  "tags": ["cross", "color"],
   "description": "Human-friendly HSL.",
   "version": "1.0.0",
   "classPath": "src/",
