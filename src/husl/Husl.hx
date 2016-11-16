@@ -11,6 +11,23 @@ private class Length {
     }
 }
 
+/**
+The math for most of this module was taken from:
+
+ * http://www.easyrgb.com
+ * http://www.brucelindbloom.com
+ * Wikipedia
+
+All numbers below taken from math/bounds.wxm wxMaxima file. We use 17
+digits of decimal precision to export the numbers, effectively exporting
+them as double precision IEEE 754 floats.
+
+"If an IEEE 754 double precision is converted to a decimal string with at
+least 17 significant digits and then converted back to double, then the
+final number must match the original"
+
+Source: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+*/
 class Husl {
 
     private static var m = 
@@ -32,9 +49,15 @@ class Husl {
     private static var refU:Float = 0.19783000664283;
     private static var refV:Float = 0.46831999493879;
 
+    // CIE LUV constants
     private static var kappa:Float = 903.2962962;
     private static var epsilon:Float = 0.0088564516;
 
+    /**
+    For a given lightness, return a list of 6 lines in slope-intercept
+    form that represent the bounds in CIELUV, stepping over which will
+    push a value out of the RGB gamut
+    */
     private static function getBounds(L:Float):Array<Array<Float>> {
         var result:Array<Array<Float>> = [];
 
@@ -68,11 +91,33 @@ class Husl {
 
 
     private static function lengthOfRayUntilIntersect(theta:Float, line:Array<Float>):Length {
+        /*
+        theta  -- angle of ray starting at (0, 0)
+        m, b   -- slope and intercept of line
+        x1, y1 -- coordinates of intersection
+        len    -- length of ray until it intersects with line
+        
+        b + m * x1        = y1
+        len              >= 0
+        len * cos(theta)  = x1
+        len * sin(theta)  = y1
+        
+        
+        b + m * (len * cos(theta)) = len * sin(theta)
+        b = len * sin(hrad) - m * len * cos(theta)
+        b = len * (sin(hrad) - m * cos(hrad))
+        len = b / (sin(hrad) - m * cos(hrad))
+        */
         var length:Float = line[1] / (Math.sin(theta) - line[0] * Math.cos(theta));
 
         return new Length(length);
     }
 
+    /**
+    For given lightness, returns the maximum chroma. Keeping the chroma value
+    below this number will ensure that for any hue, the color is within the RGB
+    gamut.
+    */
     private static function maxSafeChromaForL(L:Float):Float {
         var bounds:Array<Array<Float>> = getBounds(L);
         // var min:Float = Float.MAX_VALUE;
@@ -125,6 +170,7 @@ class Husl {
         return Math.round(value * n) / n;
     }
 
+    // Used for rgb conversions
     private static function fromLinear(c:Float):Float {
         if (c <= 0.0031308) {
             return 12.92 * c;
@@ -183,6 +229,12 @@ class Husl {
         ];
     }
 
+    /*
+    http://en.wikipedia.org/wiki/CIELUV
+    In these formulas, Yn refers to the reference white point. We are using
+    illuminant D65, so Yn (see refY in Maxima file) equals 1. The formula is
+    simplified accordingly.
+    */
     private static function yToL(Y:Float):Float {
         if (Y <= epsilon) {
             return (Y / refY) * kappa;
@@ -257,6 +309,7 @@ class Husl {
         var C:Float = Math.sqrt(U * U + V * V);
         var H:Float;
 
+        // Greys: disambiguate hue
         if (C < 0.00000001) {
             H = 0;
         } else {
@@ -290,6 +343,7 @@ class Husl {
         var S:Float = tuple[1];
         var L:Float = tuple[2];
 
+        // White and black: disambiguate chroma
         if (L > 99.9999999) {
             return [100, 0, H];
         }
@@ -309,6 +363,7 @@ class Husl {
         var C:Float = tuple[1];
         var H:Float = tuple[2];
 
+        // White and black: disambiguate chroma
         if (L > 99.9999999) {
             return [H, 0, 100];
         }
@@ -347,6 +402,7 @@ class Husl {
         var C:Float = tuple[1];
         var H:Float = tuple[2];
 
+        // White and black: disambiguate saturation
         if (L > 99.9999999) {
             return [H, 0, 100];
         }

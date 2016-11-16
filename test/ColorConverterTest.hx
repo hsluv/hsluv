@@ -27,6 +27,7 @@ class ColorConverterTest extends TestCase {
         return diff <= largest * MAXRELDIFF;
     }
 
+    /*
     private function getTargetName():String {
         #if js 
         return "js";
@@ -50,6 +51,7 @@ class ColorConverterTest extends TestCase {
         return "unknown";
         #end
     }
+    */
 
     private function assertTuplesClose(label:String, expected:Array<Float>, actual:Array<Float>):Void {
         var mismatch:Bool = false;
