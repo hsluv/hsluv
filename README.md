@@ -24,12 +24,12 @@ public class Main {
 # Global language test (You have to install the libraries to set up the languages' compilation workflow.)
 haxe tests.hxml
 # Specific language.
-haxe -cp src -cp test -main RunTests --interp
+haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 --interp
 # Replace --interp by your prefered compilation flags such as
 #  (Java)
-haxe -cp src -cp test -main RunTests --java bin/java -cmd java bin/java/RunTests.jar
+haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -java bin/java -cmd java bin/java/RunTests.jar
 # (CPP)
-haxe -cp src -cp test -main RunTests --cpp bin/cpp -cmd java bin/cpp/RunTests
+haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -cpp bin/cpp -cmd java bin/cpp/RunTests
 # And so on...
 ```
 
