@@ -77,6 +77,10 @@ class ColorConverterTest extends TestCase {
     function testHusl() {
 
         var file = haxe.Resource.getString("snapshot-rev4");
+        if(file == null) {
+            trace("Couldn't load the snapshot file " + "snapshot-rev4"  +", make sure it's present in test/resources.");
+        }
+        assertFalse(file == null);
         var object = haxe.Json.parse(file);
 
         for (fieldName in Reflect.fields(object))
