@@ -1,16 +1,5 @@
 package husl;
 
-private class Length {
-    public var greaterEqualZero(default, null):Bool;
-    public var length(default, null):Float;
-
-
-    public function new(length:Float) {
-        this.greaterEqualZero = length >= 0;
-        this.length = length;
-    }
-}
-
 /**
 Human-friendly HSL conversion utility class.
 
@@ -31,6 +20,7 @@ final number must match the original"
 Source: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 =======
 */
+
 
 @:expose
 class Husl {
@@ -95,7 +85,7 @@ class Husl {
     }
 
 
-    private static function lengthOfRayUntilIntersect(theta:Float, line:Array<Float>):Length {
+    private static function lengthOfRayUntilIntersect(theta:Float, line:Array<Float>):Float {
         /*
         theta  -- angle of ray starting at (0, 0)
         m, b   -- slope and intercept of line
@@ -115,7 +105,7 @@ class Husl {
         */
         var length:Float = line[1] / (Math.sin(theta) - line[0] * Math.cos(theta));
 
-        return new Length(length);
+        return length;
     }
 
     /**
@@ -150,9 +140,9 @@ class Husl {
         var min:Float = 1.7976931348623157e+308;
 
         for (bound in bounds) {
-            var length:Length = lengthOfRayUntilIntersect(hrad, bound);
-            if (length.greaterEqualZero) {
-                min = Math.min(min, length.length);
+            var length:Float = lengthOfRayUntilIntersect(hrad, bound);
+            if (length >= 0) {
+                min = Math.min(min, length);
             }
         }
 
@@ -167,12 +157,6 @@ class Husl {
         }
 
         return sum;
-    }
-
-    private static function round(value:Float, places:Int):Float {
-        var n:Float = Math.pow(10, places);
-
-        return Math.round(value * n) / n;
     }
 
     // Used for rgb conversions
@@ -190,24 +174,6 @@ class Husl {
         } else {
             return c / 12.92;
         }
-    }
-
-    private static function rgbPrepare(tuple:Array<Float>):Array<Int> {
-
-        var results:Array<Int> = [];
-
-        for (i in 0...tuple.length) {
-            var chan:Float = tuple[i];
-            var rounded = round(chan, 3);
-
-            if (rounded < -0.0001 || rounded > 1.0001) {
-                throw "Illegal rgb value: " + rounded;
-            }
-
-            results[i] = Math.round(rounded * 255);
-        }
-
-        return results;
     }
 
     /**
@@ -475,12 +441,14 @@ class Husl {
     * @return A string containing a `#RRGGBB` representation of given color.
     **/
     private static function rgbToHex(tuple:Array<Float>):String {
-        var prepared = rgbPrepare(tuple);
+        var h:String = "#";
 
-        return "#"
-            +StringTools.hex(prepared[0], 2)
-            +StringTools.hex(prepared[1], 2)
-            +StringTools.hex(prepared[2], 2);
+        for (i in 0...tuple.length) {
+            var chan:Float = tuple[i];
+            h += StringTools.hex(Math.round(chan * 255), 2);
+        }
+
+        return h;
     }
 
     /**
