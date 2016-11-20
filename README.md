@@ -52,7 +52,8 @@ Run `npm install` and `npm test`. Try `node test/snapshot.js` to generate a JSON
 
 # License
 
-Copyright (c) 2016 Alexei Boronine
+Copyright (c) 2012-2016 Alexei Boronine
+Copyright (c) 2016 Florian Dormont
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

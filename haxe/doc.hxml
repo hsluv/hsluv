@@ -1,0 +1,8 @@
+-cp src
+-D doc-gen
+--macro include('husl')
+--no-output
+-xml doc/xml/settings.xml
+--interp
+--next
+-cmd "haxelib run dox -i doc/xml -o doc/api"
