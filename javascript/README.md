@@ -1,6 +1,6 @@
 # Usage
 
-Client-side: include [husl.js](https://raw.githubusercontent.com/husl-colors/husl/master/husl.js) or [husl.min.js](https://raw.githubusercontent.com/husl-colors/husl/master/husl.min.js) in your webpage, access it as a global ``HUSL`` object or as a jQuery plugin with ``$.husl``.
+Client-side: include [husl.min.js](https://raw.githubusercontent.com/husl-colors/husl/master/husl.min.js) in your webpage, access it as a global ``HUSL`` object or as a jQuery plugin with ``$.husl``.
 
 Server-side: ``npm install husl``.
 
@@ -27,20 +27,10 @@ HUSL can also be used as a [Stylus](http://learnboost.github.com/stylus/) plugin
 
 # Versioning
 
-This repo contains the canonical implementation of HUSL, its source code being HUSL's informal specification. Following [semantic versioning](http://semver.org/), the major version must be incremented whenever the color math changes. These changes can be tested for with snapshot files.
+Following [semantic versioning](http://semver.org/), the major version must be incremented whenever the color math changes. These changes can be tested for with snapshot files.
 
 # Testing
 
-Run `npm install` and `npm test`. Try `node test/snapshot.js` to generate a JSON file of the entire gamut to be used for debugging and regression tests. The format of the file is as follows:
-
-    {
-      "#000000": {
-        rgb: [ 0, 0, 0 ],
-        xyz: [ 0, 0, 0 ],
-        luv: [ 0, 0, 0 ],
-        lch: [ 0, 0, 0 ],
-        husl: [ 0, 0, 0 ],
-        huslp: [ 0, 0, 0 ]
-      },
-      ...
-    }
+```
+node test.js
+```

@@ -11,12 +11,5 @@
     "type" : "git",
     "url" : "http://github.com/husl-colors/husl.git"
   },
-  "homepage": "http://www.husl-colors.org",
-  "devDependencies": {
-    "uglify-js": "*",
-    "mocha": "*"
-  },
-  "scripts": {
-    "test": "mocha"
-  }
+  "homepage": "http://www.husl-colors.org"
 }
