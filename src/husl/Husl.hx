@@ -29,7 +29,10 @@ least 17 significant digits and then converted back to double, then the
 final number must match the original"
 
 Source: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
-**/
+=======
+*/
+
+@:expose
 class Husl {
 
     private static var m = 
