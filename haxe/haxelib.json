@@ -1,6 +1,6 @@
 {
   "name": "husl",
-  "url" : "https://github.com/husl-colors/husl-haxe",
+  "url" : "https://github.com/husl-colors/husl",
   "license": "MIT",
   "tags": ["cross", "color"],
   "description": "Human-friendly HSL.",

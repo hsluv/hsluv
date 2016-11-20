@@ -1,11 +1,8 @@
-/node_modules
-/docs/build/index.html
-/docs/build/img/demo
-/docs/build/css/main.css
-/docs/build/js/main.js
-
+/bin
+/haxe/doc
+/javascript/node_modules
+/javascript/npm-debug.log
 /.idea
 *.iml
-npm-debug.log
-
 *~
+.vscode

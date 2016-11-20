@@ -1,8 +1,4 @@
-# Husl-Haxe
-## Human-Friendly HSL color space library for Haxe 3
-## Port from [husl-java]
-
-**Note** : this is a WIP small project. Expect things to break or change here and there.
+# Reference implementation
 
 ## Usage
 Once imported, use the library by importing Husl. Here's an example:
