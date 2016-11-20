@@ -215,7 +215,7 @@ class Husl {
     * @param tuple An array containing the color's X,Y and Z values.
     * @return An array containing the resulting color's red, green and blue.
     **/
-    public static function xyzToRgb(tuple:Array<Float>):Array<Float> {
+    private static function xyzToRgb(tuple:Array<Float>):Array<Float> {
         return [                
             fromLinear(dotProduct(m[0], tuple)),
             fromLinear(dotProduct(m[1], tuple)),
@@ -228,7 +228,7 @@ class Husl {
     * @param tuple An array containing the color's R,G,B values.
     * @return An array containing the resulting color's XYZ coordinates.
     **/
-    public static function rgbToXyz(tuple:Array<Float>):Array<Float> {
+    private static function rgbToXyz(tuple:Array<Float>):Array<Float> {
         var rgbl:Array<Float> = 
                 [
                     toLinear(tuple[0]),
@@ -270,7 +270,7 @@ class Husl {
     * @param tuple An array containing the color's X,Y,Z values.
     * @return An array containing the resulting color's LUV coordinates.
     **/
-    public static function xyzToLuv(tuple:Array<Float>):Array<Float> {
+    private static function xyzToLuv(tuple:Array<Float>):Array<Float> {
         var X:Float = tuple[0];
         var Y:Float = tuple[1];
         var Z:Float = tuple[2];
@@ -306,7 +306,7 @@ class Husl {
     * @param tuple An array containing the color's L,U,V values.
     * @return An array containing the resulting color's XYZ coordinates.
     **/
-    public static function luvToXyz(tuple:Array<Float>):Array<Float> {
+    private static function luvToXyz(tuple:Array<Float>):Array<Float> {
         var L:Float = tuple[0];
         var U:Float = tuple[1];
         var V:Float = tuple[2];
@@ -329,7 +329,7 @@ class Husl {
     * @param tuple An array containing the color's L,U,V values.
     * @return An array containing the resulting color's LCH coordinates.
     **/
-    public static function luvToLch(tuple:Array<Float>):Array<Float> {
+    private static function luvToLch(tuple:Array<Float>):Array<Float> {
         var L:Float = tuple[0];
         var U:Float = tuple[1];
         var V:Float = tuple[2];
@@ -358,7 +358,7 @@ class Husl {
     * @param tuple An array containing the color's L,C,H values.
     * @return An array containing the resulting color's LUV coordinates.
     **/
-    public static function lchToLuv(tuple:Array<Float>):Array<Float> {
+    private static function lchToLuv(tuple:Array<Float>):Array<Float> {
         var L:Float = tuple[0];
         var C:Float = tuple[1];
         var H:Float = tuple[2];
@@ -375,7 +375,7 @@ class Husl {
     * @param tuple An array containing the color's H,S,L values in Husl color space.
     * @return An array containing the resulting color's LCH coordinates.
     **/
-    public static function huslToLch(tuple:Array<Float>):Array<Float> {
+    private static function huslToLch(tuple:Array<Float>):Array<Float> {
         var H:Float = tuple[0];
         var S:Float = tuple[1];
         var L:Float = tuple[2];
@@ -400,7 +400,7 @@ class Husl {
     * @param tuple An array containing the color's LCH values.
     * @return An array containing the resulting color's HSL coordinates in Husl color space.
     **/
-    public static function lchToHusl(tuple:Array<Float>):Array<Float> {
+    private static function lchToHusl(tuple:Array<Float>):Array<Float> {
         var L:Float = tuple[0];
         var C:Float = tuple[1];
         var H:Float = tuple[2];
@@ -425,7 +425,7 @@ class Husl {
     * @param tuple An array containing the color's H,S,L values in Huslp (pastel variant) color space.
     * @return An array containing the resulting color's LCH coordinates.
     **/
-    public static function huslpToLch(tuple:Array<Float>):Array<Float> {
+    private static function huslpToLch(tuple:Array<Float>):Array<Float> {
         var H:Float = tuple[0];
         var S:Float = tuple[1];
         var L:Float = tuple[2];
@@ -449,7 +449,7 @@ class Husl {
     * @param tuple An array containing the color's LCH values.
     * @return An array containing the resulting color's HSL coordinates in Huslp (pastel variant) color space.
     **/
-    public static function lchToHuslp(tuple:Array<Float>):Array<Float> {
+    private static function lchToHuslp(tuple:Array<Float>):Array<Float> {
         var L:Float = tuple[0];
         var C:Float = tuple[1];
         var H:Float = tuple[2];
@@ -474,7 +474,7 @@ class Husl {
     * @param tuple An array containing the color's RGB values.
     * @return A string containing a `#RRGGBB` representation of given color.
     **/
-    public static function rgbToHex(tuple:Array<Float>):String {
+    private static function rgbToHex(tuple:Array<Float>):String {
         var prepared = rgbPrepare(tuple);
 
         return "#"
@@ -488,7 +488,7 @@ class Husl {
     * @param hex A `#RRGGBB` representation of a color.
     * @return An array containing the color's RGB values.
     **/
-    public static function hexToRgb(hex:String):Array<Float> {
+    private static function hexToRgb(hex:String):Array<Float> {
         // toUpperCase because some targets such as lua have hard time parsing hex code with various cases
         return [
             Std.parseInt("0x"+hex.substr(1, 2).toUpperCase()) / 255.0,
@@ -502,7 +502,7 @@ class Husl {
     * @param tuple An array containing the color's LCH values.
     * @return An array containing the resulting color's RGB coordinates.
     **/
-    public static function lchToRgb(tuple:Array<Float>):Array<Float> {
+    private static function lchToRgb(tuple:Array<Float>):Array<Float> {
         return xyzToRgb(luvToXyz(lchToLuv(tuple)));
     }
 
@@ -511,7 +511,7 @@ class Husl {
     * @param tuple An array containing the color's RGB values.
     * @return An array containing the resulting color's LCH coordinates.
     **/
-    public static function rgbToLch(tuple:Array<Float>):Array<Float> {
+    private static function rgbToLch(tuple:Array<Float>):Array<Float> {
         return luvToLch(xyzToLuv(rgbToXyz(tuple)));
     }
 
