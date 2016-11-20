@@ -1,5 +1,5 @@
 var assert = require('assert');
-var husl = require('../husl.js');
+var husl = require('../husl.min.js');
 var snapshot = require('./snapshot.js');
 
 function manySamples(assertion) {
@@ -16,12 +16,12 @@ function manySamples(assertion) {
 describe('HUSL consistency', function () {
     it('should convert between HUSL and hex', function () {
         manySamples(function (hex) {
-            assert.deepEqual(hex, husl.toHex.apply(this, husl.fromHex(hex)));
+            assert.deepEqual(hex, husl.toHex.apply(this, husl.fromHex(hex)).toLowerCase());
         });
     });
     it('should convert between HUSLp and hex', function () {
         manySamples(function (hex) {
-            assert.deepEqual(hex, husl.p.toHex.apply(this, husl.p.fromHex(hex)));
+            assert.deepEqual(hex, husl.p.toHex.apply(this, husl.p.fromHex(hex)).toLowerCase());
         });
     });
 });
