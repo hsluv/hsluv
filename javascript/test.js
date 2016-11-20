@@ -1,6 +1,9 @@
 var assert = require('assert');
-var husl = require('../husl.min.js');
-var snapshot = require('./snapshot.js');
+var husl = require('../bin/husl.min.js');
+
+var rgbRangeTolerance = 0.00000000001;
+var snapshotTolerance = 0.000000001;
+
 
 function manySamples(assertion) {
     var samples = '0123456789abcdef'.split('');
@@ -25,9 +28,6 @@ describe('HUSL consistency', function () {
         });
     });
 });
-
-var rgbRangeTolerance = 0.00000000001;
-var snapshotTolerance = 0.00000000001;
 
 describe('Fits within RGB ranges', function () {
     return it('should fit', function () {
@@ -68,13 +68,16 @@ describe('HUSL snapshot', function () {
         var diff;
         this.timeout(10000);
 
-        var current = snapshot.snapshot();
-        var stable = require('./snapshot-rev4.json');
+        var stable = require('../snapshots/snapshot-rev4.json');
 
         Object.keys(stable).map(function (hex) {
             stableSamples = stable[hex];
-            currentSamples = current[hex];
-            Object.keys(stableSamples).map(function (tag) {
+            currentSamples = {
+                'husl': husl.fromHex(hex),
+                'huslp': husl.p.fromHex(hex)
+            };
+
+            ['husl', 'huslp'].map(function (tag) {
                 stableTuple = stableSamples[tag];
                 currentTuple = currentSamples[tag];
                 [0, 1, 2].map(function (i) {
@@ -85,4 +88,3 @@ describe('HUSL snapshot', function () {
         });
     });
 });
-

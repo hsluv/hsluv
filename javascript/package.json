@@ -2,11 +2,11 @@
   "name": "husl",
   "description": "Human-friendly HSL",
   "keywords": ["color", "color space", "CIE", "RGB", "HUSL", "HSL"],
-  "version": "6.0.1",
+  "version": "6.0.2",
   "author": "Alexei Boronine <alexei@boronine.com>",
   "license": "MIT",
-  "main": "husl.js",
-  "files": ["husl.js"],
+  "main": "../bin/husl.min.js",
+  "files": ["../bin/husl.min.js"],
   "repository": {
     "type" : "git",
     "url" : "http://github.com/husl-colors/husl.git"

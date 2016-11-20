@@ -66,33 +66,54 @@ The passing/returning values, when not `String` are `Array<Float>` containing ea
 
 ```sh
 # Prefered way : Haxe's builtin interpreter. Doesn't require any external libs to execute the tests.
-haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 --interp
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 --interp
 # Neko
-haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -x bin/neko/RunTests.n
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -x bin/neko/RunTests.n
 # CPP Linux
-haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -cpp bin/cpp -cmd bin/cpp/RunTests
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -cpp bin/cpp -cmd bin/cpp/RunTests
 # CPP Windows
-haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -cpp bin/cpp -cmd bin/cpp/RunTests.exe
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -cpp bin/cpp -cmd bin/cpp/RunTests.exe
 # C# Linux
-haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -cs bin/cs -cmd mono bin/cs/RunTests.exe
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -cs bin/cs -cmd mono bin/cs/RunTests.exe
 # C# Windows
-haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -cs bin/cs -cmd bin/cs/RunTests.exe
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -cs bin/cs -cmd bin/cs/RunTests.exe
 #  Java
-haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -java bin/java -cmd java -jar bin/java/RunTests.jar
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -java bin/java -cmd java -jar bin/java/RunTests.jar
 #  PHP
-haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -php bin/php -cmd php bin/php/index.php
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -php bin/php -cmd php bin/php/index.php
 #  NodeJS
-haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -js bin/js/RunTests.js -cmd node bin/js/RunTests.js
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -js bin/js/RunTests.js -cmd node bin/js/RunTests.js
 #  Python
-haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -python bin/python/RunTests.py -cmd python bin/python/RunTests.py
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -python bin/python/RunTests.py -cmd python bin/python/RunTests.py
 #  Lua
-haxe -cp src -cp test -main RunTests -resource test/resources/snapshot-rev4.json@snapshot-rev4 -lua bin/lua/RunTests.lua -cmd lua bin/lua/RunTests.lua
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -lua bin/lua/RunTests.lua -cmd lua bin/lua/RunTests.lua
 # And so on...
 ```
 
+The snapshot file is stored for regression testing. If a backwards-incompatible change is made,
+a new snapshot file can be generated as follows:
+
+```sh
+haxe -cp src -cp test -main Snapshot --interp > new-snapshot.json
+```
+
+The format of the file is as follows:
+
+```
+{
+  "#000000": {
+    rgb: [ 0, 0, 0 ],
+    xyz: [ 0, 0, 0 ],
+    luv: [ 0, 0, 0 ],
+    lch: [ 0, 0, 0 ],
+    husl: [ 0, 0, 0 ],
+    huslp: [ 0, 0, 0 ]
+  },
+  ...
+}
+```
 
 # Notes
-**Note**: An unit test has been ported from [husl-java] to make sure the library was working during development.
 
 Husl-haxe seems to work on some targets. Here are the tests that couldn't pass on my computer :
 - PHP : PHP7 parseInt function doesn't convert hexadecimal values anymore.
@@ -100,5 +121,3 @@ Husl-haxe seems to work on some targets. Here are the tests that couldn't pass o
 Tests to do:
 - SWF
 - Windows and Mac
-
-[husl-java]: https://github.com/husl-colors/husl-java

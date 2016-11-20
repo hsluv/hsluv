@@ -1,4 +1,5 @@
 sudo: false
-language: node_js
-node_js:
-  - 0.10
+language: haxe
+haxe:
+  - "3.2.1"
+script: (cd haxe; haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 --interp)
