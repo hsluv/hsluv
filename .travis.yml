@@ -2,10 +2,6 @@ sudo: false
 language: haxe
 haxe:
   - "3.2.1"
-addons:
-  apt:
-    packages:
-    - libclosure-compiler-java
 before_install:
   - nvm install v4.6.2
 script:
