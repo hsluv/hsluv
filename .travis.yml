@@ -2,4 +2,11 @@ sudo: false
 language: haxe
 haxe:
   - "3.2.1"
-script: (cd haxe; haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 --interp)
+before_install:
+  - sudo apt-get -qq update
+  - apt-get install -y libclosure-compiler-java
+  - nvm install v4.6.2
+script:
+  - (cd haxe; haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 --interp)
+  - make bin/husl.min.js
+  - (cd javascript; npm test)
