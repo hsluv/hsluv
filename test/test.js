@@ -2,30 +2,26 @@ var assert = require('assert');
 var husl = require('../husl.js');
 var snapshot = require('./snapshot.js');
 
-describe('HUSL consistency', function () {
-    var manySamples = function manySamples(assertion) {
-        var samples = '0123456789abcdef'.split('');
-        return samples.map(function (r) {
-            return samples.map(function (g) {
-                return samples.map(function (b) {
-                    return assertion('#' + r + r + g + g + b + b);
-                });
+function manySamples(assertion) {
+    var samples = '0123456789abcdef'.split('');
+    samples.map(function (r) {
+        samples.map(function (g) {
+            samples.map(function (b) {
+                assertion('#' + r + r + g + g + b + b);
             });
         });
-    };
+    });
+}
 
+describe('HUSL consistency', function () {
     it('should convert between HUSL and hex', function () {
-        return manySamples(function (hex) {
-            var _husl;
-
-            return assert.deepEqual(hex, (_husl = husl).toHex.apply(_husl, husl.fromHex(hex)));
+        manySamples(function (hex) {
+            assert.deepEqual(hex, husl.toHex.apply(this, husl.fromHex(hex)));
         });
     });
-    return it('should convert between HUSLp and hex', function () {
-        return manySamples(function (hex) {
-            var _husl$p;
-
-            return assert.deepEqual(hex, (_husl$p = husl.p).toHex.apply(_husl$p, husl.p.fromHex(hex)));
+    it('should convert between HUSLp and hex', function () {
+        manySamples(function (hex) {
+            assert.deepEqual(hex, husl.p.toHex.apply(this, husl.p.fromHex(hex)));
         });
     });
 });
@@ -38,30 +34,28 @@ describe('Fits within RGB ranges', function () {
         var H = 0;
         var S = 0;
         var L = 0;
-        return function () {
-            var result = [];
-            while (H <= 360) {
-                while (S <= 100) {
-                    while (L <= 100) {
-                        var RGB = husl.toRGB(H, S, L);
-                        for (var i = 0; i < RGB.length; i++) {
-                            var channel = RGB[i];
-                            assert(-rgbRangeTolerance <= channel && channel <= 1 + rgbRangeTolerance, 'HUSL: ' + [H, S, L] + ' -> ' + RGB);
-                        }
 
-                        RGB = husl.p.toRGB(H, S, L);
-                        for (var j = 0; j < RGB.length; j++) {
-                            var channel = RGB[j];
-                            assert(-rgbRangeTolerance <= channel && channel <= 1 + rgbRangeTolerance, 'HUSLp: ' + [H, S, L] + ' -> ' + RGB);
-                        }
-                        L += 5;
+        var channel;
+        while (H <= 360) {
+            while (S <= 100) {
+                while (L <= 100) {
+                    var RGB = husl.toRGB(H, S, L);
+                    for (var i = 0; i < RGB.length; i++) {
+                        channel = RGB[i];
+                        assert(-rgbRangeTolerance <= channel && channel <= 1 + rgbRangeTolerance, 'HUSL: ' + [H, S, L] + ' -> ' + RGB);
                     }
-                    S += 5;
+
+                    RGB = husl.p.toRGB(H, S, L);
+                    for (var j = 0; j < RGB.length; j++) {
+                        channel = RGB[j];
+                        assert(-rgbRangeTolerance <= channel && channel <= 1 + rgbRangeTolerance, 'HUSLp: ' + [H, S, L] + ' -> ' + RGB);
+                    }
+                    L += 5;
                 }
-                result.push(H += 5);
+                S += 5;
             }
-            return result;
-        }();
+            H += 5;
+        }
     });
 });
 
