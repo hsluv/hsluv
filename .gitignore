@@ -1,6 +1,6 @@
 dist
-/javascript/node_modules
-/javascript/npm-debug.log
+node_modules
+npm-debug.log
 /.idea
 *.iml
 .vscode
