@@ -1,5 +1,5 @@
 var assert = require('assert');
-var husl = require('../bin/husl.min.js');
+var husl = require('./dist/husl.min.js');
 
 var rgbRangeTolerance = 0.00000000001;
 var snapshotTolerance = 0.000000001;

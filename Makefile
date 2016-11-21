@@ -12,8 +12,8 @@ dist/husl.js: dist/husl.auto.js
 	cat javascript/exports.js >> dist/husl.js
 	echo '})();\n' >> dist/husl.js
 
-dist/husl.min.js: dist/husl.js dist/closure-compiler.jar
-	java -jar dist/closure-compiler.jar --js_output_file=dist/husl.min.js --compilation_level ADVANCED dist/husl.js
+javascript/dist/husl.min.js: dist/husl.js dist/closure-compiler.jar
+	java -jar dist/closure-compiler.jar --js_output_file=javascript/dist/husl.min.js --compilation_level ADVANCED dist/husl.js
 
 dist/husl.xml: haxe/src/husl/Husl.hx
 	haxe -cp haxe/src -D doc-gen --macro 'include("husl")' --no-output -xml dist/husl.xml

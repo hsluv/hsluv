@@ -1,5 +1,5 @@
 'use strict';
-var husl = require('../bin/husl.min.js');
+var husl = require('./dist/husl.min.js');
 var digits = '0123456789abcdef';
 
 

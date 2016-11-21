@@ -14,7 +14,7 @@ Requirements: GNU Make, Haxe 3, JDK 7+.
 To build the JavaScript version:
 
 ```sh
-make bin/husl.min.js
+make javascript/dist/husl.min.js
 ```
 
 To build Haxe documentation:
