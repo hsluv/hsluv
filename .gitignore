@@ -1,8 +1,6 @@
-/bin
-/haxe/doc
+/dist
 /javascript/node_modules
 /javascript/npm-debug.log
 /.idea
 *.iml
-*~
 .vscode

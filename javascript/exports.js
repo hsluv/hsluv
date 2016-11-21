@@ -19,18 +19,19 @@ var publicApi = {
     }
 };
 
-// Export to Node.js
-if (typeof module !== 'undefined') {
-    module['exports'] = publicApi;
-}
-
+// TODO: Deprecated. Remove with the next major version
 // Export to jQuery
 if (typeof jQuery !== 'undefined') {
     jQuery['husl'] = publicApi;
 }
 
-// Export to RequireJS
-if (typeof requirejs !== 'undefined' && typeof define !== 'undefined') {
+// CommonJS module system (including Node)
+if (typeof module !== 'undefined') {
+    module['exports'] = publicApi;
+}
+
+// AMD module system
+if (typeof define !== 'undefined') {
     define(publicApi);
 }
 
