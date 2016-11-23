@@ -1,4 +1,5 @@
 package husl;
+import husl.Geometry;
 
 /**
 Human-friendly HSL conversion utility class.
@@ -21,23 +22,21 @@ Source: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 =======
 */
 
-
-@:expose
 class Husl {
 
     private static var m = 
-            [
-                    [3.240969941904521, -1.537383177570093, -0.498610760293],
-                    [-0.96924363628087, 1.87596750150772, 0.041555057407175],
-                    [0.055630079696993, -0.20397695888897, 1.056971514242878],
-            ];
+        [
+            [3.240969941904521, -1.537383177570093, -0.498610760293],
+            [-0.96924363628087, 1.87596750150772, 0.041555057407175],
+            [0.055630079696993, -0.20397695888897, 1.056971514242878],
+        ];
 
     private static var minv =
-            [
-                    [0.41239079926595, 0.35758433938387, 0.18048078840183],
-                    [0.21263900587151, 0.71516867876775, 0.072192315360733],
-                    [0.019330818715591, 0.11919477979462, 0.95053215224966],
-            ];
+        [
+            [0.41239079926595, 0.35758433938387, 0.18048078840183],
+            [0.21263900587151, 0.71516867876775, 0.072192315360733],
+            [0.019330818715591, 0.11919477979462, 0.95053215224966],
+        ];
 
     private static var refY:Float = 1.0;
 
@@ -53,8 +52,8 @@ class Husl {
     form that represent the bounds in CIELUV, stepping over which will
     push a value out of the RGB gamut
     */
-    private static function getBounds(L:Float):Array<Array<Float>> {
-        var result:Array<Array<Float>> = [];
+    private static function getBounds(L:Float):Array<Line> {
+        var result:Array<Line> = [];
 
         var sub1:Float = Math.pow(L + 16, 3) / 1560896;
         var sub2:Float = sub1 > epsilon ? sub1 : L / kappa;
@@ -69,43 +68,14 @@ class Husl {
                 var top2:Float = (838422 * m3 + 769860 * m2 + 731718 * m1) * L * sub2 - 769860 * t * L;
                 var bottom:Float = (632260 * m3 - 126452 * m2) * sub2 + 126452 * t;
 
-                result.push([top1 / bottom, top2 / bottom]);
+                result.push({
+                    slope: top1 / bottom,
+                    intercept: top2 / bottom
+                });
             }
         }
 
         return result;
-    }
-
-    private static function intersectLineLine(lineA:Array<Float>, lineB:Array<Float>) {
-        return (lineA[1] - lineB[1]) / (lineB[0] - lineA[0]);
-    }
-
-    private static function distanceFromPole(point:Array<Float>) {
-        return Math.sqrt(Math.pow(point[0], 2) + Math.pow(point[1], 2));
-    }
-
-
-    private static function lengthOfRayUntilIntersect(theta:Float, line:Array<Float>):Float {
-        /*
-        theta  -- angle of ray starting at (0, 0)
-        m, b   -- slope and intercept of line
-        x1, y1 -- coordinates of intersection
-        len    -- length of ray until it intersects with line
-        
-        b + m * x1        = y1
-        len              >= 0
-        len * cos(theta)  = x1
-        len * sin(theta)  = y1
-        
-        
-        b + m * (len * cos(theta)) = len * sin(theta)
-        b = len * sin(hrad) - m * len * cos(theta)
-        b = len * (sin(hrad) - m * cos(hrad))
-        len = b / (sin(hrad) - m * cos(hrad))
-        */
-        var length:Float = line[1] / (Math.sin(theta) - line[0] * Math.cos(theta));
-
-        return length;
     }
 
     /**
@@ -114,18 +84,12 @@ class Husl {
     gamut.
     */
     private static function maxSafeChromaForL(L:Float):Float {
-        var bounds:Array<Array<Float>> = getBounds(L);
+        var bounds:Array<Line> = getBounds(L);
         // var min:Float = Float.MAX_VALUE;
         var min:Float = 1.7976931348623157e+308;
 
         for (i in 0...2) {
-            var m1:Float = bounds[i][0];
-            var b1:Float = bounds[i][1];
-            var line:Array<Float> = [m1, b1];
-
-            var x:Float = intersectLineLine(line, [-1 / m1, 0]);
-            var length:Float = distanceFromPole([x, b1 + x * m1]);
-
+            var length:Float = Geometry.distanceLineFromOrigin(bounds[i]);
             min = Math.min(min, length);
         }
 
@@ -135,12 +99,12 @@ class Husl {
     private static function maxChromaForLH(L:Float, H:Float) {
         var hrad:Float = H / 360 * Math.PI * 2;
 
-        var bounds:Array<Array<Float>> = getBounds(L);
+        var bounds:Array<Line> = getBounds(L);
         // var min:Float = Float.MAX_VALUE;
         var min:Float = 1.7976931348623157e+308;
 
         for (bound in bounds) {
-            var length:Float = lengthOfRayUntilIntersect(hrad, bound);
+            var length:Float = Geometry.lengthOfRayUntilIntersect(hrad, bound);
             if (length >= 0) {
                 min = Math.min(min, length);
             }
@@ -246,11 +210,10 @@ class Husl {
         var varU:Float = 4 * X;
         var varV:Float = 9 * Y;
 
-        if(divider != 0) {
+        if (divider != 0) {
             varU /= divider;
             varV /= divider;
-        }
-        else {
+        } else {
             varU = Math.NaN;
             varV = Math.NaN;
         }
@@ -458,10 +421,11 @@ class Husl {
     **/
     private static function hexToRgb(hex:String):Array<Float> {
         // toUpperCase because some targets such as lua have hard time parsing hex code with various cases
+        hex = hex.toUpperCase();
         return [
-            Std.parseInt("0x"+hex.substr(1, 2).toUpperCase()) / 255.0,
-            Std.parseInt("0x"+hex.substr(3, 2).toUpperCase()) / 255.0,
-            Std.parseInt("0x"+hex.substr(5, 2).toUpperCase()) / 255.0,
+            Std.parseInt("0x"+hex.substr(1, 2)) / 255.0,
+            Std.parseInt("0x"+hex.substr(3, 2)) / 255.0,
+            Std.parseInt("0x"+hex.substr(5, 2)) / 255.0,
         ];
     }
 
@@ -490,6 +454,7 @@ class Husl {
     * @param tuple An array containing the color's HSL values in Husl color space.
     * @return An array containing the resulting color's RGB coordinates.
     **/
+    @:keep
     public static function huslToRgb(tuple:Array<Float>):Array<Float> {
         return lchToRgb(huslToLch(tuple));
     }
@@ -499,6 +464,7 @@ class Husl {
     * @param tuple An array containing the color's RGB coordinates.
     * @return An array containing the resulting color's HSL coordinates in Husl color space.
     **/
+    @:keep
     public static function rgbToHusl(tuple:Array<Float>):Array<Float> {
         return lchToHusl(rgbToLch(tuple));
     }
@@ -508,6 +474,7 @@ class Husl {
     * @param tuple An array containing the color's HSL values in Huslp (pastel variant) color space.
     * @return An array containing the resulting color's RGB coordinates.
     **/
+    @:keep
     public static function huslpToRgb(tuple:Array<Float>):Array<Float> {
         return lchToRgb(huslpToLch(tuple));
     }
@@ -517,6 +484,7 @@ class Husl {
     * @param tuple An array containing the color's RGB coordinates.
     * @return An array containing the resulting color's HSL coordinates in Huslp (pastel variant) color space.
     **/
+    @:keep
     public static function rgbToHuslp(tuple:Array<Float>):Array<Float> {
         return lchToHuslp(rgbToLch(tuple));
     }
@@ -528,10 +496,12 @@ class Husl {
     * @param tuple An array containing the color's HSL values in Husl color space.
     * @return A string containing a `#RRGGBB` representation of given color.
     **/
+    @:keep
     public static function huslToHex(tuple:Array<Float>):String {
         return rgbToHex(huslToRgb(tuple));
     }
 
+    @:keep
     public static function huslpToHex(tuple:Array<Float>):String {
         return rgbToHex(huslpToRgb(tuple));
     }
@@ -541,6 +511,7 @@ class Husl {
     * @param tuple An array containing the color's HSL values in Huslp (pastel variant) color space.
     * @return An array containing the color's HSL values in Husl color space.
     **/
+    @:keep
     public static function hexToHusl(s:String):Array<Float> {
         return rgbToHusl(hexToRgb(s));
     }
@@ -550,6 +521,7 @@ class Husl {
     * @param hex A `#RRGGBB` representation of a color.
     * @return An array containing the color's HSL values in Huslp (pastel variant) color space.
     **/
+    @:keep
     public static function hexToHuslp(s:String):Array<Float> {
         return rgbToHuslp(hexToRgb(s));
     }
