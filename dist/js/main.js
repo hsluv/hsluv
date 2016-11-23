@@ -65,7 +65,7 @@ $('#rainbow-hsl div').each(function (index) {
 });
 
 var size = 400;
-var sameColorSquareSize = 8;
+var squareSize = 8;
 
 var height = size;
 var width = size;
@@ -82,39 +82,85 @@ var S = 100;
 var L;
 var U;
 var V;
+var minC;
+var scale = 1;
+var shapePixel;
+var shapePointsPixel;
+
+function pointToVector(point) {
+    return [point.x, point.y];
+}
+
+function toPixelCoordinate(point) {
+    return {
+        x: 200 - point.x * scale,
+        y: 200 - point.y * scale
+    }
+}
+
+function fromPixelCoordinate(point) {
+    return {
+        x: (200 - point.x) / scale,
+        y: (200 - point.y) / scale
+    }
+}
+
+// function toPixelCoordinate(point) {
+//     return {
+//         x: point.x * scale + 200,
+//         y: point.y * scale + 200
+//     }
+// }
+//
+// function fromPixelCoordinate(point) {
+//     return {
+//         x: (point.x - 200) / scale,
+//         y: (point.y - 200) / scale
+//     }
+// }
 
 function setL(value) {
     L = value;
+    minC = HUSL.Husl.maxSafeChromaForL(L);
     contrasting = L > 70 ? '#1b1b1b' : '#ffffff';
+    var shapePoints = HUSL.Geometry.polygonAroundOrigin(HUSL.Husl.getBounds(L));
+    shapePoints.reverse();
+
+    var longest = _.chain(shapePoints).map(HUSL.Geometry.distanceFromOrigin).max().value();
+
+    scale = 190 / longest;
+
+    shapePointsPixel = _(shapePoints).map(toPixelCoordinate);
+    shapePixel = d3.geom.polygon(_(shapePointsPixel).map(pointToVector));
+
+    elCenter.attr("fill", contrasting);
+    if (L !== 0 && L !== 100) {
+        elPastelBoundary.attr("r", scale * minC).attr("stroke", contrasting);
+    } else {
+        elPastelBoundary.attr("r", 0).attr("stroke", contrasting);
+    }
 }
-
-setL(50);
-
-var scale = null;
-var shape = null;
 
 
 var elSvg = d3.select("#picker svg");
+var centerPoint = toPixelCoordinate({x: 0, y: 0});
 
 var elPastelBoundary = elSvg.append("circle")
-    .attr("cx", 0)
-    .attr("cy", 0)
-    .attr("transform", "translate(200, 200)")
+    .attr("cx", centerPoint.x)
+    .attr("cy", centerPoint.y)
     .attr("stroke-width", 2)
     .attr("fill", "none");
 
 var elCenter = elSvg.append("circle")
-    .attr("cx", 0)
-    .attr("cy", 0)
-    .attr("r", 2)
-    .attr("transform", "translate(200, 200)");
+    .attr("cx", centerPoint.x)
+    .attr("cy", centerPoint.y)
+    .attr("r", 2);
 
 elSvg.append("circle")
     .attr("class", "picker-container")
-    .attr("cx", 0)
-    .attr("cy", 0)
+    .attr("cx", centerPoint.x)
+    .attr("cy", centerPoint.y)
     .attr("r", 190)
-    .attr("transform", "translate(200, 200)")
     .attr("fill", "#ffffff")
     .attr("fill-opacity", "0.0")
     .attr("stroke", "#ffffff")
@@ -122,54 +168,33 @@ elSvg.append("circle")
 
 var elPickerScope = elSvg.append("circle")
     .attr("class", "scope")
-    .attr("cx", 0)
-    .attr("cy", 0)
+    .attr("cx", centerPoint.x)
+    .attr("cy", centerPoint.y)
     .attr("r", 4)
     .attr("style", "display:none")
-    .attr("transform", "translate(200, 200)")
     .attr("fill", "none")
     .attr("stroke-width", 2);
 
-elSvg.call(d3.behavior.drag().on("drag", function () {
-    var x = d3.event.x - 200;
-    var y = d3.event.y - 200;
+var controlHue = d3.select("#picker div.control-hue");
+var controlSaturation = d3.select("#picker div.control-saturation");
+var controlLightness = d3.select("#picker div.control-lightness");
+var counterHue = d3.select('#picker .counter-hue');
+var counterSaturation = d3.select('#picker .counter-saturation');
+var counterLightness = d3.select('#picker .counter-lightness');
+var inputHex = d3.select("#picker .hex");
+var pickerSwatch = d3.select('table.sliders .swatch');
 
-    return adjustPosition(x, y);
+
+elSvg.call(d3.behavior.drag().on("drag", function () {
+    return adjustPosition({x: d3.event.x, y: d3.event.y});
 }));
 
 elSvg.on('mousedown', function () {
     var point = d3.mouse(this);
-    var x = point[0] - 200;
-    var y = point[1] - 200;
-
-    return adjustPosition(x, y);
+    return adjustPosition({x: point[0], y: point[1]});
 });
 
-function distancePointFromOrigin(point) {
-    return Math.sqrt(Math.pow(point[0], 2) + Math.pow(point[1], 2));
-}
-
-function getCurrentShape() {
-    return HUSL.Geometry.polygonAroundOrigin(HUSL.Husl.getBounds(L));
-}
-
-function redrawSquare(x, y, dim) {
-    var vx = (x - 200) / scale;
-    var vy = (y - 200) / scale;
-    var polygon = d3.geom.polygon([[vx, vy], [vx, vy + dim], [vx + dim, vy + dim], [vx + dim, vy]]);
-    shape.clip(polygon);
-    if (polygon.length > 0) {
-        var centroid = polygon.centroid();
-        var u = centroid[0];
-        var v = centroid[1];
-
-        ctx.fillStyle = HUSL.Husl.rgbToHex(HUSL.Husl.xyzToRgb(HUSL.Husl.luvToXyz([L, u, v])));
-        return ctx.fillRect(x, y, dim, dim);
-    }
-}
-
 function redrawCanvas() {
-    var dim = sameColorSquareSize;
     var point;
     ctx.clearRect(0, 0, width, height);
     ctx.globalCompositeOperation = 'source-over';
@@ -178,76 +203,72 @@ function redrawCanvas() {
         return;
     }
 
-    var xn = width / dim;
-    var yn = height / dim;
+    var xn = width / squareSize;
+    var yn = height / squareSize;
 
     var xs = [];
     var ys = [];
-    for (var i = 0; i < shape.length; i++) {
-        point = shape[i];
-        xs.push(200 + point[0] * scale);
-        ys.push(200 + point[1] * scale);
+    for (var i = 0; i < shapePointsPixel.length; i++) {
+        point = shapePointsPixel[i];
+        xs.push(point.x);
+        ys.push(point.y);
     }
 
-    var xnMin = Math.floor(Math.min.apply(Math, xs) / dim);
-    var ynMin = Math.floor(Math.min.apply(Math, ys) / dim);
+    var xnMin = Math.floor(Math.min.apply(Math, xs) / squareSize);
+    var ynMin = Math.floor(Math.min.apply(Math, ys) / squareSize);
 
     for (var x = xnMin; x < xn; x++) {
         for (var y = ynMin; y < yn; y++) {
-            var vx = x * dim;
-            var vy = y * dim;
-            redrawSquare(vx, vy, dim);
+            var p = {
+                x: x * squareSize,
+                y: y * squareSize
+            };
+
+            var polygonPixel = d3.geom.polygon([
+                [p.x, p.y],
+                [p.x, p.y + squareSize],
+                [p.x + squareSize, p.y + squareSize],
+                [p.x + squareSize, p.y]
+            ]);
+            shapePixel.clip(polygonPixel);
+
+            if (polygonPixel.length > 0) {
+                var centroid = polygonPixel.centroid();
+                var po = fromPixelCoordinate({
+                    x: centroid[0],
+                    y: centroid[1]
+                });
+
+                ctx.fillStyle = HUSL.Husl.rgbToHex(HUSL.Husl.xyzToRgb(HUSL.Husl.luvToXyz([L, po.x, po.y])));
+                ctx.fillRect(p.x, p.y, squareSize, squareSize);
+            }
         }
     }
     ctx.globalCompositeOperation = 'destination-in';
     ctx.beginPath();
-    ctx.moveTo(200 + shape[0][0] * scale, 200 + shape[0][1] * scale);
-    var iterable2 = _.rest(shape);
-    for (var i1 = 0; i1 < iterable2.length; i1++) {
-        point = iterable2[i1];
-        ctx.lineTo(200 + point[0] * scale, 200 + point[1] * scale);
+    ctx.moveTo(shapePointsPixel[0].x, shapePointsPixel[0].y);
+    for (var j = 1; j < shapePointsPixel.length; j++) {
+        point = shapePointsPixel[j];
+        ctx.lineTo(point.x, point.y);
     }
     ctx.closePath();
     ctx.fill();
 }
 
-function redrawBackground() {
-    if (L !== 0 && L !== 100) {
-        var minC = HUSL.Husl.maxSafeChromaForL(L);
-
-        var sortedIntersections = getCurrentShape();
-        var longest = _.chain(sortedIntersections).map(HUSL.Geometry.distanceFromOrigin).max().value();
-
-        var vectorPoints = _(sortedIntersections).map(function(p) {
-            return [p.x, p.y];
-        });
-
-        scale = 190 / longest;
-        shape = d3.geom.polygon(vectorPoints);
-        if (shape.area() < 0) {
-            vectorPoints.reverse();
-            shape = d3.geom.polygon(vectorPoints);
-        }
-
-        elPastelBoundary.attr("r", scale * minC).attr("stroke", contrasting);
-        elCenter.attr("fill", contrasting);
-
-    } else {
-        elPastelBoundary.attr("r", 0).attr("stroke", contrasting);
-        elCenter.attr("fill", contrasting);
-    }
-}
-
 function redrawForeground() {
-
     if (L !== 0 && L !== 100) {
 
         var maxChroma = HUSL.Husl.maxChromaForLH(L, H);
         var chroma = maxChroma * S / 100;
         var hrad = H / 360 * 2 * Math.PI;
+        var point = toPixelCoordinate({
+            x: chroma * Math.cos(hrad),
+            y: chroma * Math.sin(hrad)
+        });
 
-        elPickerScope.attr("cx", chroma * Math.cos(hrad) * scale)
-            .attr("cy", chroma * Math.sin(hrad) * scale)
+        elPickerScope
+            .attr("cx", point.x)
+            .attr("cy", point.y)
             .attr("stroke", contrasting)
             .attr("style", "display:inline");
 
@@ -256,25 +277,22 @@ function redrawForeground() {
         elPickerScope.attr("style", "display:none");
     }
 
-    var colors = d3.range(0, 360, 10).map(function (_) {
-        return HUSL.Husl.huslToHex([_, S, L]);
+    var colors = d3.range(0, 360, 10).map(function (x) {
+        return HUSL.Husl.huslToHex([x, S, L]);
     });
-    d3.select("#picker div.control-hue").style({
+    controlHue.style({
         'background': 'linear-gradient(to right,' + colors.join(',') + ')'
     });
-
-    colors = d3.range(0, 100, 10).map(function (_) {
-        return HUSL.Husl.huslToHex([H, _, L]);
+    colors = d3.range(0, 100, 10).map(function (x) {
+        return HUSL.Husl.huslToHex([H, x, L]);
     });
-
-    d3.select("#picker div.control-saturation").style({
+    controlSaturation.style({
         'background': 'linear-gradient(to right,' + colors.join(',') + ')'
     });
-
-    colors = d3.range(0, 100, 10).map(function (_) {
-        return HUSL.Husl.huslToHex([H, S, _]);
+    colors = d3.range(0, 100, 10).map(function (x) {
+        return HUSL.Husl.huslToHex([H, S, x]);
     });
-    d3.select("#picker div.control-lightness").style({
+    controlLightness.style({
         'background': 'linear-gradient(to right,' + colors.join(',') + ')'
     });
 }
@@ -295,29 +313,29 @@ var redrawSliderLightnessPosition = function redrawSliderLightnessPosition() {
     sliderLightness.redraw();
 };
 
-var updateSliderHueCounter = function updateSliderHueCounter() {
-    d3.select('#picker .counter-hue').property('value', H.toFixed(1));
-};
+function updateSliderHueCounter() {
+    counterHue.property('value', H.toFixed(1));
+}
 
-var updateSliderSaturationCounter = function updateSliderSaturationCounter() {
-    d3.select('#picker .counter-saturation').property('value', S.toFixed(1));
-};
+function updateSliderSaturationCounter() {
+    counterSaturation.property('value', S.toFixed(1));
+}
 
-var updateSliderLightnessCounter = function updateSliderLightnessCounter() {
-    d3.select('#picker .counter-lightness').property('value', L.toFixed(1));
-};
+function updateSliderLightnessCounter() {
+    counterLightness.property('value', L.toFixed(1));
+}
 
-var redrawSwatch = function redrawSwatch() {
+function redrawSwatch() {
     var hex = HUSL.Husl.huslToHex([H, S, L]);
-    d3.select('table.sliders .swatch').style({
+    pickerSwatch.style({
         'background-color': hex
     });
-};
+}
 
-var updateHexText = function updateHexText() {
+function updateHexText() {
     var hex = HUSL.Husl.huslToHex([H, S, L]);
-    d3.select('#picker .hex').property('value', hex);
-};
+    inputHex.property('value', hex);
+}
 
 function doArraysContainAnyEqualElement(arr1, arr2) {
     return arr1.some(function (element) {
@@ -328,11 +346,6 @@ function doArraysContainAnyEqualElement(arr1, arr2) {
 function redrawAfterUpdatingVariables(changedVariables, triggeredBy) {
     // out of the redraw functions…
     var necessaryRedrawers = [
-        {
-            func: redrawBackground,
-            executeIfAnyOfTheseVariablesChange: ["L"],
-            ignoreIfTriggeredByAnyOf: []
-        },
         {
             func: redrawCanvas,
             executeIfAnyOfTheseVariablesChange: ["L"],
@@ -402,17 +415,17 @@ function redrawAfterUpdatingVariables(changedVariables, triggeredBy) {
     });
 }
 
-function adjustPosition(x, y) {
-    var pointer = [x / scale, y / scale];
-    U = pointer[0];
-    V = pointer[1];
+function adjustPosition(p) {
+    var pointer = fromPixelCoordinate(p);
+    U = pointer.x;
+    V = pointer.y;
 
     var lch = HUSL.Husl.luvToLch([L, U, V]);
     var husl = HUSL.Husl.lchToHusl(lch);
     H = husl[0];
 
     var maxChroma = HUSL.Husl.maxChromaForLH(L, H);
-    var pointerDistance = distancePointFromOrigin(pointer);
+    var pointerDistance = HUSL.Geometry.distanceFromOrigin(pointer);
     S = Math.min(pointerDistance / maxChroma * 100, 100);
     redrawAfterUpdatingVariables(["H", "S"], "adjustPosition");
 }
@@ -432,50 +445,50 @@ var sliderLightness = d3.slider().min(0).max(100).on('slide', function (e, value
     redrawAfterUpdatingVariables(["L"], "sliderLightness");
 });
 
-d3.select("#picker div.control-hue").call(sliderHue);
-d3.select("#picker div.control-saturation").call(sliderSaturation);
-d3.select("#picker div.control-lightness").call(sliderLightness);
-
-var stringIsValidHex = function stringIsValidHex(string) {
+function stringIsValidHex(string) {
     return string.match(/#?[0-9a-f]{6}/i);
-};
+}
 
-d3.select("#picker .hex").on('input', function () {
+
+function stringIsNumberWithinRange(string, min, max) {
+    var middle = parseFloat(string);
+    return $.isNumeric(string) && min <= middle && middle <= max;
+}
+
+
+inputHex.on('input', function () {
     if (stringIsValidHex(this.value)) {
         var husl = HUSL.Husl.hexToHusl(this.value);
-
         H = husl[0];
         S = husl[1];
         L = husl[2];
-
         return redrawAfterUpdatingVariables(["H", "S", "L"], "hexText");
     }
 });
 
-function stringIsNumberWithinRange(string, min, max) {
-    var middle;
-    return $.isNumeric(string) && min <= (middle = parseFloat(string)) && middle <= max;
-}
-
-d3.select('#picker .counter-hue').on('input', function () {
+counterHue.on('input', function () {
     if (stringIsNumberWithinRange(this.value, 0, 360)) {
         H = parseFloat(this.value);
         return redrawAfterUpdatingVariables(["H"], "sliderHueCounterText");
     }
 });
 
-d3.select('#picker .counter-saturation').on('input', function () {
+counterSaturation.on('input', function () {
     if (stringIsNumberWithinRange(this.value, 0, 100)) {
         S = parseFloat(this.value);
         return redrawAfterUpdatingVariables(["S"], "sliderSaturationCounterText");
     }
 });
 
-d3.select('#picker .counter-lightness').on('input', function () {
+counterLightness.on('input', function () {
     if (stringIsNumberWithinRange(this.value, 0, 100)) {
         L = parseFloat(this.value);
         return redrawAfterUpdatingVariables(["L"], "sliderLightnessCounterText");
     }
 });
 
+setL(50);
 redrawAfterUpdatingVariables(["H", "S", "L"], "pageLoad");
+controlHue.call(sliderHue);
+controlSaturation.call(sliderSaturation);
+controlLightness.call(sliderLightness);
