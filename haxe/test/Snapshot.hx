@@ -6,12 +6,7 @@ import haxe.Log;
 import haxe.Json;
 import haxe.ds.StringMap;
 
-@:access(husl.Husl.hexToRgb)
-@:access(husl.Husl.rgbToXyz)
-@:access(husl.Husl.xyzToLuv)
-@:access(husl.Husl.luvToLch)
-@:access(husl.Husl.lchToHusl)
-@:access(husl.Husl.lchToHuslp)
+
 class Snapshot extends Husl {
     static public function main () {
         var digits:String = "0123456789abcdef";

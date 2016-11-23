@@ -13,9 +13,9 @@ dist/husl.public.js: haxe/src/husl/Husl.hx haxe/src/husl/Geometry.hx javascript/
 	cat javascript/exports.js >> dist/husl.public.js
 	echo '})();\n' >> dist/husl.public.js
 
-dist/husl.full.js: haxe/src/husl/Husl.hx haxe/src/husl/Geometry.hx javascript/exports.js
+dist/husl.full.js: haxe/src/husl/Husl.hx haxe/src/husl/Geometry.hx haxe/src/husl/ColorPicker.hx javascript/exports.js
     # Standard dead code elimination, keeping all of our code
-	haxe -cp haxe/src husl.Husl -js dist/husl.full.raw.js -D js-classic
+	haxe -cp haxe/src husl.ColorPicker -js dist/husl.full.raw.js -D js-classic
 	sed -i -e '/global/d' dist/husl.full.raw.js
 	echo '(function() {\n' > dist/husl.full.js
 	cat dist/husl.full.raw.js >> dist/husl.full.js

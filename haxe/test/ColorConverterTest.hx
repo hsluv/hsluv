@@ -4,21 +4,7 @@ import haxe.unit.TestCase;
 import husl.Husl;
 
 
-// Those are necessary as those functions are private
-@:access(husl.Husl.hexToRgb)
-@:access(husl.Husl.rgbToHex)
-@:access(husl.Husl.lchToLuv)
-@:access(husl.Husl.luvToLch)
-@:access(husl.Husl.xyzToLuv)
-@:access(husl.Husl.luvToXyz)
-@:access(husl.Husl.rgbToXyz)
-@:access(husl.Husl.xyzToRgb)
-@:access(husl.Husl.lchToHusl)
-@:access(husl.Husl.huslToLch)
-@:access(husl.Husl.lchToHuslp)
-@:access(husl.Husl.huslpToLch)
 class ColorConverterTest extends TestCase {
-
 
     private static inline var MAXDIFF:Float = 0.0000000001;
     private static inline var MAXRELDIFF:Float = 0.000000001;

@@ -31,6 +31,15 @@ class Geometry {
         return Math.abs(line.intercept) / Math.sqrt(Math.pow(line.slope, 2) + 1);
     }
 
+    public static function perpendicularThroughPoint(line:Line, point:Point):Line {
+        var slope = -1 / line.slope;
+        var intercept = point.y - slope * point.x;
+        return {
+            slope: slope,
+            intercept: intercept
+        }
+    }
+
     public static function angleFromOrigin(point:Point):Angle {
         return Math.atan2(point.y, point.x);
     }
@@ -59,78 +68,6 @@ class Geometry {
         len = b / (sin(hrad) - m * cos(hrad))
         */
         return line.intercept / (Math.sin(theta) - line.slope * Math.cos(theta));
-    }
-
-    public static function polygonAroundOrigin(lines:Array<Line>):Array<Point> {
-        // Array of lines
-        var numLines = lines.length;
-
-        // Find the line closest to origin
-        var closestLineIndex = null;
-        var closestLineDistance = null;
-
-        for (i in 0...numLines) {
-            var d = distanceLineFromOrigin(lines[i]);
-            if (closestLineDistance == null || d < closestLineDistance) {
-                closestLineDistance = d;
-                closestLineIndex = i;
-            }
-        }
-
-        var closestLine = lines[closestLineIndex];
-        var perpendicularLine = {slope: 0 - (1 / closestLine.slope), intercept: 0.0};
-        var closestPoint = intersectLineLine(closestLine, perpendicularLine);
-        var startingAngle = angleFromOrigin(closestPoint);
-
-        var intersections = [];
-        var intersectionPoint;
-        var intersectionPointAngle;
-        var relativeAngle;
-
-        for (i1 in 0...numLines - 1) {
-            for (i2 in i1 + 1...numLines) {
-                intersectionPoint = intersectLineLine(lines[i1], lines[i2]);
-                intersectionPointAngle = angleFromOrigin(intersectionPoint);
-                relativeAngle = intersectionPointAngle - startingAngle;
-                intersections.push({
-                    line1: i1,
-                    line2: i2,
-                    intersectionPoint: intersectionPoint,
-                    relativeAngle: normalizeAngle(intersectionPointAngle - startingAngle)
-                });
-            }
-        }
-
-        intersections.sort(function (a, b) { 
-            if (a.relativeAngle > b.relativeAngle) {
-                return 1;
-            } else {
-                return -1;
-            }
-        });
-
-        var orderedLineIndexes = [closestLineIndex];
-        var orderedVirtices = [];
-        var currentLineIndex;
-        var nextLineIndex;
-        var currentIntersection;
-
-        for (j in 0...intersections.length) {
-            currentLineIndex = orderedLineIndexes[orderedLineIndexes.length - 1];
-            currentIntersection = intersections[j];
-            nextLineIndex = null;
-            if (currentIntersection.line1 == currentLineIndex) {
-                nextLineIndex = currentIntersection.line2;
-            } else if (currentIntersection.line2 == currentLineIndex) {
-                nextLineIndex = currentIntersection.line1;
-            }
-            if (nextLineIndex != null) {
-                orderedLineIndexes.push(nextLineIndex);
-                orderedVirtices.push(currentIntersection.intersectionPoint);
-            }
-        }
-
-        return orderedVirtices;
     }
 
 }
