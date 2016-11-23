@@ -35,7 +35,7 @@ var hslToRgb = function hslToRgb(h, s, l) {
 
 var hslToHex = function hslToHex(h, s, l) {
     var rgb = hslToRgb(h, s / 100, l / 100);
-    return $.husl._conv.rgb.hex(rgb);
+    return HUSL.Husl.rgbToHex(rgb);
 };
 
 var randomHue = function randomHue() {
@@ -44,7 +44,7 @@ var randomHue = function randomHue() {
 
 $('#demo1').click(function () {
     return $(this).closest('div').find('.demo').each(function () {
-        return $(this).css('background-color', $.husl.toHex(randomHue(), 90, 60));
+        return $(this).css('background-color', HUSL.Husl.huslToHex([randomHue(), 90, 60]));
     });
 });
 
@@ -58,7 +58,7 @@ $('#demo1').click();
 $('#demo2').click();
 
 $('#rainbow-husl div').each(function (index) {
-    return $(this).css('background-color', $.husl.toHex(index * 36, 90, 60));
+    return $(this).css('background-color', HUSL.Husl.huslToHex([index * 36, 90, 60]));
 });
 $('#rainbow-hsl div').each(function (index) {
     return $(this).css('background-color', hslToHex(index * 36, 90, 60));
@@ -149,89 +149,8 @@ function distancePointFromOrigin(point) {
     return Math.sqrt(Math.pow(point[0], 2) + Math.pow(point[1], 2));
 }
 
-function distanceLineFromOrigin(line) {
-    // https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
-    var m = line[0]; // slope
-    var k = line[1]; // intercept
-    return Math.abs(k) / Math.sqrt(Math.pow(m, 2) + 1);
-}
-
-function intersectionLineLine(line1, line2) {
-    var x = (line2[1] - line1[1]) / (line1[0] - line2[0]);
-    var y = line1[1] + x * line1[0];
-    return [x, y];
-}
-
-function normalizeRadian(angle) {
-    var m = 2 * Math.PI;
-    return ((angle % m) + m) % m;
-}
-
 function getCurrentShape() {
-    // Array of lines
-    var lines = $.husl._getBounds(L);
-    var numLines = lines.length;
-
-    // Find the line closest to origin
-    var closestLineIndex = null;
-    var closestLineDistance = null;
-
-    for (var i = 0; i < numLines; i++) {
-        var d = distanceLineFromOrigin(lines[i]);
-        if (closestLineDistance === null || d < closestLineDistance) {
-            closestLineDistance = d;
-            closestLineIndex = i;
-        }
-    }
-
-    var closestLine = lines[closestLineIndex];
-    var perpendicularLine = [0 - (1 / closestLine[0]), 0];
-    var closestPoint = intersectionLineLine(closestLine, perpendicularLine);
-    var startingAngle = Math.atan2(closestPoint[1], closestPoint[0]);
-
-    var intersections = [];
-    var intersectionPoint;
-    var intersectionPointAngle;
-    var relativeAngle;
-
-    for (var i1 = 0; i1 < numLines - 1; i1++) {
-        for (var i2 = i1 + 1; i2 < numLines; i2++) {
-            intersectionPoint = intersectionLineLine(lines[i1], lines[i2]);
-            intersectionPointAngle = Math.atan2(intersectionPoint[1], intersectionPoint[0]);
-            relativeAngle = intersectionPointAngle - startingAngle;
-            intersections.push({
-                line1: i1,
-                line2: i2,
-                intersectionPoint: intersectionPoint,
-                relativeAngle: normalizeRadian(intersectionPointAngle - startingAngle)
-            });
-        }
-    }
-
-    intersections = _(intersections).sortBy('relativeAngle');
-
-    var orderedLineIndexes = [closestLineIndex];
-    var orderedVirtices = [];
-    var currentLineIndex;
-    var nextLineIndex;
-    var currentIntersection;
-
-    for (var j = 0; j < intersections.length; j++) {
-        currentLineIndex = _(orderedLineIndexes).last();
-        currentIntersection = intersections[j];
-        nextLineIndex = null;
-        if (currentIntersection.line1 === currentLineIndex) {
-            nextLineIndex = currentIntersection.line2;
-        } else if (currentIntersection.line2 === currentLineIndex) {
-            nextLineIndex = currentIntersection.line1;
-        }
-        if (nextLineIndex !== null) {
-            orderedLineIndexes.push(nextLineIndex);
-            orderedVirtices.push(currentIntersection.intersectionPoint);
-        }
-    }
-
-    return orderedVirtices;
+    return HUSL.Geometry.polygonAroundOrigin(HUSL.Husl.getBounds(L));
 }
 
 function redrawSquare(x, y, dim) {
@@ -244,7 +163,7 @@ function redrawSquare(x, y, dim) {
         var u = centroid[0];
         var v = centroid[1];
 
-        ctx.fillStyle = $.husl._conv.rgb.hex($.husl._conv.xyz.rgb($.husl._conv.luv.xyz([L, u, v])));
+        ctx.fillStyle = HUSL.Husl.rgbToHex(HUSL.Husl.xyzToRgb(HUSL.Husl.luvToXyz([L, u, v])));
         return ctx.fillRect(x, y, dim, dim);
     }
 }
@@ -294,15 +213,20 @@ function redrawCanvas() {
 
 function redrawBackground() {
     if (L !== 0 && L !== 100) {
-        var minC = $.husl._maxSafeChromaForL(L);
+        var minC = HUSL.Husl.maxSafeChromaForL(L);
+
         var sortedIntersections = getCurrentShape();
-        var longest = _.chain(sortedIntersections).map(distancePointFromOrigin).max().value();
+        var longest = _.chain(sortedIntersections).map(HUSL.Geometry.distanceFromOrigin).max().value();
+
+        var vectorPoints = _(sortedIntersections).map(function(p) {
+            return [p.x, p.y];
+        });
 
         scale = 190 / longest;
-        shape = d3.geom.polygon(sortedIntersections);
+        shape = d3.geom.polygon(vectorPoints);
         if (shape.area() < 0) {
-            sortedIntersections.reverse();
-            shape = d3.geom.polygon(sortedIntersections);
+            vectorPoints.reverse();
+            shape = d3.geom.polygon(vectorPoints);
         }
 
         elPastelBoundary.attr("r", scale * minC).attr("stroke", contrasting);
@@ -318,7 +242,7 @@ function redrawForeground() {
 
     if (L !== 0 && L !== 100) {
 
-        var maxChroma = $.husl._maxChromaForLH(L, H);
+        var maxChroma = HUSL.Husl.maxChromaForLH(L, H);
         var chroma = maxChroma * S / 100;
         var hrad = H / 360 * 2 * Math.PI;
 
@@ -333,21 +257,22 @@ function redrawForeground() {
     }
 
     var colors = d3.range(0, 360, 10).map(function (_) {
-        return $.husl.toHex(_, S, L);
+        return HUSL.Husl.huslToHex([_, S, L]);
     });
     d3.select("#picker div.control-hue").style({
         'background': 'linear-gradient(to right,' + colors.join(',') + ')'
     });
 
     colors = d3.range(0, 100, 10).map(function (_) {
-        return $.husl.toHex(H, _, L);
+        return HUSL.Husl.huslToHex([H, _, L]);
     });
+
     d3.select("#picker div.control-saturation").style({
         'background': 'linear-gradient(to right,' + colors.join(',') + ')'
     });
 
     colors = d3.range(0, 100, 10).map(function (_) {
-        return $.husl.toHex(H, S, _);
+        return HUSL.Husl.huslToHex([H, S, _]);
     });
     d3.select("#picker div.control-lightness").style({
         'background': 'linear-gradient(to right,' + colors.join(',') + ')'
@@ -383,14 +308,14 @@ var updateSliderLightnessCounter = function updateSliderLightnessCounter() {
 };
 
 var redrawSwatch = function redrawSwatch() {
-    var hex = $.husl.toHex(H, S, L);
+    var hex = HUSL.Husl.huslToHex([H, S, L]);
     d3.select('table.sliders .swatch').style({
         'background-color': hex
     });
 };
 
 var updateHexText = function updateHexText() {
-    var hex = $.husl.toHex(H, S, L);
+    var hex = HUSL.Husl.huslToHex([H, S, L]);
     d3.select('#picker .hex').property('value', hex);
 };
 
@@ -482,11 +407,11 @@ function adjustPosition(x, y) {
     U = pointer[0];
     V = pointer[1];
 
-    var lch = $.husl._conv.luv.lch([L, U, V]);
-    var husl = $.husl._conv.lch.husl(lch);
+    var lch = HUSL.Husl.luvToLch([L, U, V]);
+    var husl = HUSL.Husl.lchToHusl(lch);
     H = husl[0];
 
-    var maxChroma = $.husl._maxChromaForLH(L, H);
+    var maxChroma = HUSL.Husl.maxChromaForLH(L, H);
     var pointerDistance = distancePointFromOrigin(pointer);
     S = Math.min(pointerDistance / maxChroma * 100, 100);
     redrawAfterUpdatingVariables(["H", "S"], "adjustPosition");
@@ -517,7 +442,7 @@ var stringIsValidHex = function stringIsValidHex(string) {
 
 d3.select("#picker .hex").on('input', function () {
     if (stringIsValidHex(this.value)) {
-        var husl = $.husl.fromHex(this.value);
+        var husl = HUSL.Husl.hexToHusl(this.value);
 
         H = husl[0];
         S = husl[1];
