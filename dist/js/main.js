@@ -82,10 +82,10 @@ var S = 100;
 var L;
 var U;
 var V;
-var minC;
 var scale = 1;
 var shapePixel;
 var shapePointsPixel;
+var pickerGeometry;
 
 function pointToVector(point) {
     return [point.x, point.y];
@@ -93,49 +93,31 @@ function pointToVector(point) {
 
 function toPixelCoordinate(point) {
     return {
-        x: 200 - point.x * scale,
+        x: point.x * scale + 200,
         y: 200 - point.y * scale
     }
 }
 
 function fromPixelCoordinate(point) {
     return {
-        x: (200 - point.x) / scale,
+        x: (point.x - 200) / scale,
         y: (200 - point.y) / scale
     }
 }
 
-// function toPixelCoordinate(point) {
-//     return {
-//         x: point.x * scale + 200,
-//         y: point.y * scale + 200
-//     }
-// }
-//
-// function fromPixelCoordinate(point) {
-//     return {
-//         x: (point.x - 200) / scale,
-//         y: (point.y - 200) / scale
-//     }
-// }
 
 function setL(value) {
     L = value;
-    minC = HUSL.Husl.maxSafeChromaForL(L);
     contrasting = L > 70 ? '#1b1b1b' : '#ffffff';
-    var shapePoints = HUSL.Geometry.polygonAroundOrigin(HUSL.Husl.getBounds(L));
-    shapePoints.reverse();
+    pickerGeometry = HUSL.ColorPicker.getPickerGeometry(L);
+    scale = 190 / pickerGeometry.outerCircleRadius;
 
-    var longest = _.chain(shapePoints).map(HUSL.Geometry.distanceFromOrigin).max().value();
-
-    scale = 190 / longest;
-
-    shapePointsPixel = _(shapePoints).map(toPixelCoordinate);
+    shapePointsPixel = _(pickerGeometry.vertices).map(toPixelCoordinate);
     shapePixel = d3.geom.polygon(_(shapePointsPixel).map(pointToVector));
 
     elCenter.attr("fill", contrasting);
     if (L !== 0 && L !== 100) {
-        elPastelBoundary.attr("r", scale * minC).attr("stroke", contrasting);
+        elPastelBoundary.attr("r", scale * pickerGeometry.innerCircleRadius).attr("stroke", contrasting);
     } else {
         elPastelBoundary.attr("r", 0).attr("stroke", contrasting);
     }
@@ -203,9 +185,6 @@ function redrawCanvas() {
         return;
     }
 
-    var xn = width / squareSize;
-    var yn = height / squareSize;
-
     var xs = [];
     var ys = [];
     for (var i = 0; i < shapePointsPixel.length; i++) {
@@ -214,22 +193,25 @@ function redrawCanvas() {
         ys.push(point.y);
     }
 
-    var xnMin = Math.floor(Math.min.apply(Math, xs) / squareSize);
-    var ynMin = Math.floor(Math.min.apply(Math, ys) / squareSize);
+    var xmin = Math.floor(Math.min.apply(Math, xs) / squareSize);
+    var ymin = Math.floor(Math.min.apply(Math, ys) / squareSize);
+    var xmax = Math.ceil(Math.max.apply(Math, xs) / squareSize);
+    var ymax = Math.ceil(Math.max.apply(Math, ys) / squareSize);
 
-    for (var x = xnMin; x < xn; x++) {
-        for (var y = ynMin; y < yn; y++) {
+    for (var x = xmin; x < xmax; x++) {
+        for (var y = ymin; y < ymax; y++) {
             var p = {
                 x: x * squareSize,
                 y: y * squareSize
             };
 
             var polygonPixel = d3.geom.polygon([
-                [p.x, p.y],
-                [p.x, p.y + squareSize],
+                [p.x + squareSize, p.y],
                 [p.x + squareSize, p.y + squareSize],
-                [p.x + squareSize, p.y]
+                [p.x, p.y + squareSize],
+                [p.x, p.y]
             ]);
+
             shapePixel.clip(polygonPixel);
 
             if (polygonPixel.length > 0) {
@@ -298,20 +280,20 @@ function redrawForeground() {
 }
 
 
-var redrawSliderHuePosition = function redrawSliderHuePosition() {
+function redrawSliderHuePosition() {
     sliderHue.value(H);
     sliderHue.redraw();
-};
+}
 
-var redrawSliderSaturationPosition = function redrawSliderSaturationPosition() {
+function redrawSliderSaturationPosition() {
     sliderSaturation.value(S);
     sliderSaturation.redraw();
-};
+}
 
-var redrawSliderLightnessPosition = function redrawSliderLightnessPosition() {
+function redrawSliderLightnessPosition() {
     sliderLightness.value(L);
     sliderLightness.redraw();
-};
+}
 
 function updateSliderHueCounter() {
     counterHue.property('value', H.toFixed(1));
@@ -417,16 +399,16 @@ function redrawAfterUpdatingVariables(changedVariables, triggeredBy) {
 
 function adjustPosition(p) {
     var pointer = fromPixelCoordinate(p);
+    pointer = HUSL.ColorPicker.closestPoint(pickerGeometry, pointer);
+
     U = pointer.x;
     V = pointer.y;
 
     var lch = HUSL.Husl.luvToLch([L, U, V]);
     var husl = HUSL.Husl.lchToHusl(lch);
-    H = husl[0];
 
-    var maxChroma = HUSL.Husl.maxChromaForLH(L, H);
-    var pointerDistance = HUSL.Geometry.distanceFromOrigin(pointer);
-    S = Math.min(pointerDistance / maxChroma * 100, 100);
+    H = husl[0];
+    S = husl[1];
     redrawAfterUpdatingVariables(["H", "S"], "adjustPosition");
 }
 
