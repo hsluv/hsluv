@@ -10,7 +10,7 @@
         }
 
         pre {
-            font-family: "menlo", monospace;
+            font-family: Menlo, Monaco, Consolas, monospace;
             font-size: 14px;
             padding: 10px 20px;
         }
@@ -82,20 +82,21 @@
             $('#shuffle').css('background-color', HUSL.Husl.huslToHex([H[0], backS, 20]));
         }
         $(document).ready(function () {
+
             if (window.location.hash === '') {
-                $('#shuffle').click();
+                shuffle();
             } else {
                 Math.seedrandom(window.location.hash.substring(1));
                 shuffle();
             }
-        });
-        $(document).delegate('#shuffle', 'click', function () {
-            var seed = generateSeed();
-            window.location.hash = seed;
-            Math.seedrandom(seed);
-            shuffle();
-        });
 
+            $('#shuffle').on('click', function () {
+                var seed = generateSeed();
+                window.location.hash = seed;
+                Math.seedrandom(seed);
+                shuffle();
+            });
+        });
     </script>
 </head>
 <body>
