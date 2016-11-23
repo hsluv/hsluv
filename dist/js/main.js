@@ -64,21 +64,6 @@ $('#rainbow-hsl div').each(function (index) {
     return $(this).css('background-color', hslToHex(index * 36, 90, 60));
 });
 
-var getBounds = function getBounds(L) {
-    var b = $.husl._getBounds(L);
-    var rev = function rev(p) {
-        return [p[1], p[0]];
-    };
-    return {
-        'R0': rev(b[0]),
-        'R1': rev(b[1]),
-        'G0': rev(b[2]),
-        'G1': rev(b[3]),
-        'B0': rev(b[4]),
-        'B1': rev(b[5])
-    };
-};
-
 var size = 400;
 var sameColorSquareSize = 8;
 
@@ -106,8 +91,6 @@ function setL(value) {
 setL(50);
 
 var scale = null;
-var sortedIntersections = [];
-var bounds = [];
 var shape = null;
 
 
@@ -162,92 +145,93 @@ elSvg.on('mousedown', function () {
     return adjustPosition(x, y);
 });
 
-function intersection(c1, s1, c2, s2) {
-    var x = (c1 - c2) / (s2 - s1);
-    var y = c1 + x * s1;
-    return [x, y];
-}
-
-function intersection3(line1, line2) {
-    return intersection(line1[0], line1[1], line2[0], line2[1]);
-}
-
-function intersection2(line1, point) {
-    var line2 = [0, point[1] / point[0]];
-    var int = intersection3(line1, line2);
-    if (int[0] > 0 && int[0] < point[0]) {
-        return int;
-    }
-    if (int[0] < 0 && int[0] > point[0]) {
-        return int;
-    }
-    return null;
-}
-
-function distanceFromPole(point) {
+function distancePointFromOrigin(point) {
     return Math.sqrt(Math.pow(point[0], 2) + Math.pow(point[1], 2));
 }
 
-function getIntersections(lines) {
-    var line = lines[0];
-
-    var fname = line[0];
-    var f = line[1];
-
-    var rest = _.rest(lines);
-    if (rest.length === 0) {
-        return [];
-    }
-    var intersections = _.map(rest, function (r) {
-        var rname = r[0];
-        r = r[1];
-
-        return {
-            point: intersection3(f, r),
-            names: [fname, rname]
-        };
-    });
-
-    return intersections.concat(getIntersections(rest));
+function distanceLineFromOrigin(line) {
+    // https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+    var m = line[0]; // slope
+    var k = line[1]; // intercept
+    return Math.abs(k) / Math.sqrt(Math.pow(m, 2) + 1);
 }
 
-function dominoSortMatch(dominos, match) {
-    if (dominos.length === 1) {
-        return dominos;
-    }
+function intersectionLineLine(line1, line2) {
+    var x = (line2[1] - line1[1]) / (line1[0] - line2[0]);
+    var y = line1[1] + x * line1[0];
+    return [x, y];
+}
 
-    var first = null;
-    var rest = [];
+function normalizeRadian(angle) {
+    var m = 2 * Math.PI;
+    return ((angle % m) + m) % m;
+}
 
-    _(dominos).map(function(domino) {
-        if (__in__(match, domino)) {
-            first = domino;
-        } else {
-            rest.push(domino);
+function getCurrentShape() {
+    // Array of lines
+    var lines = $.husl._getBounds(L);
+    var numLines = lines.length;
+
+    // Find the line closest to origin
+    var closestLineIndex = null;
+    var closestLineDistance = null;
+
+    for (var i = 0; i < numLines; i++) {
+        var d = distanceLineFromOrigin(lines[i]);
+        if (closestLineDistance === null || d < closestLineDistance) {
+            closestLineDistance = d;
+            closestLineIndex = i;
         }
-    });
-
-    if (first !== null) {
-        var next = first[0] !== match ? first[0] : first[1];
-        return [first].concat(dominoSortMatch(rest, next));
-    } else {
-        throw Error();
     }
-}
 
-function dominoSort(dominos) {
-    var first = _.first(dominos);
-    var rest = _.rest(dominos);
-    return [first].concat(dominoSortMatch(rest, first[1]));
-}
+    var closestLine = lines[closestLineIndex];
+    var perpendicularLine = [0 - (1 / closestLine[0]), 0];
+    var closestPoint = intersectionLineLine(closestLine, perpendicularLine);
+    var startingAngle = Math.atan2(closestPoint[1], closestPoint[0]);
 
-function sortIntersections(intersections) {
-    var dominos = dominoSort(_.pluck(intersections, 'names'));
-    return _.map(dominos, function (domino) {
-        return _.find(intersections, function (i) {
-            return i.names[0] === domino[0] && i.names[1] === domino[1];
-        });
-    });
+    var intersections = [];
+    var intersectionPoint;
+    var intersectionPointAngle;
+    var relativeAngle;
+
+    for (var i1 = 0; i1 < numLines - 1; i1++) {
+        for (var i2 = i1 + 1; i2 < numLines; i2++) {
+            intersectionPoint = intersectionLineLine(lines[i1], lines[i2]);
+            intersectionPointAngle = Math.atan2(intersectionPoint[1], intersectionPoint[0]);
+            relativeAngle = intersectionPointAngle - startingAngle;
+            intersections.push({
+                line1: i1,
+                line2: i2,
+                intersectionPoint: intersectionPoint,
+                relativeAngle: normalizeRadian(intersectionPointAngle - startingAngle)
+            });
+        }
+    }
+
+    intersections = _(intersections).sortBy('relativeAngle');
+
+    var orderedLineIndexes = [closestLineIndex];
+    var orderedVirtices = [];
+    var currentLineIndex;
+    var nextLineIndex;
+    var currentIntersection;
+
+    for (var j = 0; j < intersections.length; j++) {
+        currentLineIndex = _(orderedLineIndexes).last();
+        currentIntersection = intersections[j];
+        nextLineIndex = null;
+        if (currentIntersection.line1 === currentLineIndex) {
+            nextLineIndex = currentIntersection.line2;
+        } else if (currentIntersection.line2 === currentLineIndex) {
+            nextLineIndex = currentIntersection.line1;
+        }
+        if (nextLineIndex !== null) {
+            orderedLineIndexes.push(nextLineIndex);
+            orderedVirtices.push(currentIntersection.intersectionPoint);
+        }
+    }
+
+    return orderedVirtices;
 }
 
 function redrawSquare(x, y, dim) {
@@ -311,58 +295,10 @@ function redrawCanvas() {
 function redrawBackground() {
     if (L !== 0 && L !== 100) {
         var minC = $.husl._maxSafeChromaForL(L);
-        var point;
-
-        bounds = getBounds(L);
-
-        var intersections = [];
-        var iterable = getIntersections(_.pairs(bounds));
-        for (var j = 0; j < iterable.length; j++) {
-            var i = iterable[j];
-            var good = true;
-            var iterable1 = _.pairs(bounds);
-            for (var k = 0; k < iterable1.length; k++) {
-                var _iterable1$k = iterable1[k];
-
-                var name = _iterable1$k[0];
-                var bound = _iterable1$k[1];
-
-                if (__in__(name, i.names)) {
-                    continue;
-                }
-                var int = intersection2(bound, i.point);
-                if (int !== null) {
-                    good = false;
-                }
-            }
-            if (good) {
-                intersections.push(i);
-            }
-        }
-
-        var cleanBounds = [];
-        for (var i1 = 0; i1 < intersections.length; i1++) {
-            var _intersections$i = intersections[i1];
-            point = _intersections$i.point;
-            var names = _intersections$i.names;
-
-            cleanBounds = _.union(cleanBounds, names);
-        }
-
-        var longest = 0;
-        for (var j1 = 0; j1 < intersections.length; j1++) {
-            point = intersections[j1].point;
-
-            var length = distanceFromPole(point);
-            if (length > longest) {
-                longest = length;
-            }
-        }
+        var sortedIntersections = getCurrentShape();
+        var longest = _.chain(sortedIntersections).map(distancePointFromOrigin).max().value();
 
         scale = 190 / longest;
-
-        sortedIntersections = _.pluck(sortIntersections(intersections), 'point');
-
         shape = d3.geom.polygon(sortedIntersections);
         if (shape.area() < 0) {
             sortedIntersections.reverse();
@@ -370,12 +306,11 @@ function redrawBackground() {
         }
 
         elPastelBoundary.attr("r", scale * minC).attr("stroke", contrasting);
+        elCenter.attr("fill", contrasting);
 
-        return elCenter.attr("fill", contrasting);
     } else {
         elPastelBoundary.attr("r", 0).attr("stroke", contrasting);
-
-        return elCenter.attr("fill", contrasting);
+        elCenter.attr("fill", contrasting);
     }
 }
 
@@ -552,7 +487,7 @@ function adjustPosition(x, y) {
     H = husl[0];
 
     var maxChroma = $.husl._maxChromaForLH(L, H);
-    var pointerDistance = distanceFromPole(pointer);
+    var pointerDistance = distancePointFromOrigin(pointer);
     S = Math.min(pointerDistance / maxChroma * 100, 100);
     redrawAfterUpdatingVariables(["H", "S"], "adjustPosition");
 }
@@ -582,11 +517,11 @@ var stringIsValidHex = function stringIsValidHex(string) {
 
 d3.select("#picker .hex").on('input', function () {
     if (stringIsValidHex(this.value)) {
-        var _$$husl$fromHex = $.husl.fromHex(this.value);
+        var husl = $.husl.fromHex(this.value);
 
-        H = _$$husl$fromHex[0];
-        S = _$$husl$fromHex[1];
-        L = _$$husl$fromHex[2];
+        H = husl[0];
+        S = husl[1];
+        L = husl[2];
 
         return redrawAfterUpdatingVariables(["H", "S", "L"], "hexText");
     }
@@ -619,7 +554,3 @@ d3.select('#picker .counter-lightness').on('input', function () {
 });
 
 redrawAfterUpdatingVariables(["H", "S", "L"], "pageLoad");
-
-function __in__(needle, haystack) {
-    return haystack.indexOf(needle) >= 0;
-}
