@@ -4,15 +4,16 @@ var colorspaces = require('colorspaces');
 var onecolor = require('onecolor');
 var husl = require('husl');
 
-var hslToRgb = function hslToRgb(h, s, l) {
+function hslToRgb(h, s, l) {
     h *= 360;
     s *= 100;
     l *= 100;
     var c = onecolor('hsl(' + h + ', ' + s + ', ' + l + ')');
     return [c.red(), c.green(), c.blue()];
-};
+}
 
-var makeImage = function makeImage(file, func, width, height) {
+function makeImage(file, func, width, height) {
+    console.log(' - ' + file);
     var png = new pngjs.PNG({
         width: width,
         height: height
@@ -21,62 +22,58 @@ var makeImage = function makeImage(file, func, width, height) {
         for (var x = 0; x < width; x++) {
             var pos = (y * width + x) * 4;
             var rgbVal = func(x / (width - 1), y / (height - 1));
-            png.data[pos] = rgbVal[0];
-            png.data[pos + 1] = rgbVal[1];
-            png.data[pos + 2] = rgbVal[2];
+            var rgb = rgbPrepare(rgbVal);
+
+            png.data[pos] = rgb[0];
+            png.data[pos + 1] = rgb[1];
+            png.data[pos + 2] = rgb[2];
             png.data[pos + 3] = 255;
         }
     }
 
     return png.pack().pipe(fs.createWriteStream(file));
-};
+}
 
-var chromaDemo = function chromaDemo(color) {
+function chromaDemo(color) {
     var C = color.as('CIELCHuv')[1] * 0.8;
     var red = colorspaces.make_color('CIELCHuv', [50, C, 10]);
     return red.as('sRGB');
-};
+}
 
 // Rounds number to a given number of decimal places
-var round = function round(num, places) {
+function round(num, places) {
     var n = Math.pow(10, places);
     return Math.round(num * n) / n;
-};
+}
 
-var rgbPrepare = function rgbPrepare(tuple) {
-    tuple = tuple.map(function (n) {
-        return round(n, 3);
-    });
-    for (var i = 0; i < tuple.length; i++) {
-        var ch = tuple[i];
+function rgbPrepare(tuple) {
+    return tuple.map(function (ch) {
+        ch = round(ch, 3);
         if (ch < 0 || ch > 1) {
             throw new Error("Illegal rgb value");
         }
-    }
-    return tuple.map(function (ch) {
         return Math.round(ch * 255);
     });
-};
+}
 
-var makeDemo = function makeDemo(name, func) {
-    var width = arguments.length <= 2 || arguments[2] === undefined ? 360 : arguments[2];
-    var height = arguments.length <= 3 || arguments[3] === undefined ? 200 : arguments[3];
-
-    console.log(' - ' + name);
+function makeDemo(name, func) {
     var file = 'dist/img/demo/' + name + '.png';
-    var func2 = function func2(x, y) {
-        try {
-            return rgbPrepare(func(x, y));
-        } catch (e) {
-            console.log(x, y);
-            console.log(x * 360, 100 - y * 100);
-            console.log(func(x, y));
-            console.log(husl.p.toRGB(x * 360, 100 - y * 100, 50));
-            throw e;
-        }
-    };
-    return makeImage(file, func2, width, height);
-};
+    return makeImage(file, func, 360, 200);
+}
+
+function luvSquare(x, y) {
+    var c = husl._conv;
+
+    var umin = -30;
+    var umax = 84;
+    var vmin = -70;
+    var vmax = 45;
+
+    var u = umin + x * (umax - umin);
+    var v = vmin + y * (vmax - vmin);
+
+    return c.xyz.rgb(c.luv.xyz([50, u, v]));
+}
 
 console.log("Generating demo images:");
 
@@ -85,6 +82,11 @@ try {
     fs.mkdirSync('dist/img/demo');
 } catch (error) {
 }
+
+makeImage('dist/favicon.png', luvSquare, 32, 32);
+
+// Generate larger picture, e.g. for GitHub
+// makeImage('dist/github.png', luvSquare, 200, 200);
 
 makeDemo('husl', function (x, y) {
     return husl.toRGB(x * 360, 100 - y * 100, 50);

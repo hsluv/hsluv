@@ -1,7 +1,6 @@
 .PHONY: deploy
 
 dist: generate.js
-	mkdir -p dist/img/demo
 	node generate.js
 	touch dist
 
