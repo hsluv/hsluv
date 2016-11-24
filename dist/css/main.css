@@ -1,99 +1,105 @@
 p {
-  padding-left: 10px;
-  padding-right: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
+
 footer {
-  margin-bottom: 50px;
-  margin-top: 100px;
+    margin-bottom: 50px;
+    margin-top: 100px;
 }
+
 .dark {
-  background-color: #1b1b1b;
-  margin-bottom: 50px;
-  box-shadow: inset 0px -3px 5px black;
-  padding-bottom: 50px;
-  padding-top: 50px;
+    background-color: #1b1b1b;
+    margin-bottom: 50px;
+    box-shadow: inset 0px -3px 5px black;
+    padding-bottom: 50px;
+    padding-top: 50px;
 }
+
 abbr.initialism {
-/* I can do my own capitalization, thank you :) */
-  text-transform: none;
+    /* I can do my own capitalization, thank you :) */
+    text-transform: none;
 }
+
 .cell-green {
-  border: 2px solid #fff;
-  background-color: #9f9;
+    border: 2px solid #fff;
+    background-color: #9f9;
 }
+
 .cell-red {
-  border: 2px solid #fff;
-  background-color: #f99;
+    border: 2px solid #fff;
+    background-color: #f99;
 }
+
 h2,
 h1 {
-  margin: 30px;
+    margin: 30px;
 }
+
 h4 {
-  margin: 10px;
+    margin: 10px;
 }
+
 .center {
-  text-align: center;
+    text-align: center;
 }
+
 img.demo {
-  margin-bottom: 20px;
-  max-width: 100%;
+    margin-bottom: 20px;
+    max-width: 100%;
 }
+
 div.demo {
-  padding: 5px;
-  color: #fff;
+    padding: 5px;
+    color: #fff;
 }
-#demo1,
-#demo2 {
-  margin-bottom: 10px;
+
+#demo-husl button, #demo-hsl button {
+    margin-bottom: 10px;
 }
+
 #rainbow-husl div,
 #rainbow-hsl div {
-  height: 20px;
+    height: 20px;
 }
 
 .navbar-static-top {
-  margin-bottom: 0px;
-}
-.navbar-inverse .navbar-nav > li > a {
-  color: #999999;
-}
-.navbar .navbar-brand {
-  color: white;
+    margin-bottom: 0px;
 }
 
-#picker {
+.navbar-inverse .navbar-nav > li > a {
+    color: #999999;
+}
+
+.navbar .navbar-brand {
+    color: white;
 }
 
 #picker #display {
-  position: relative;
-  width: 400px;
-  height: 400px;
-  margin: auto;
-  margin-bottom: 20px;
-  margin-top: 20px;
+    position: relative;
+    width: 400px;
+    height: 400px;
+    margin: 0 auto;
 }
 
-
 #picker .hex, #picker .counter {
-  padding-left: 5px;
-  padding-right: 5px;
-  color: #888;
-  background: transparent;
-  border-width: 1px;
-  border-style: solid;
-  outline: none;
+    padding-left: 5px;
+    padding-right: 5px;
+    color: #888;
+    background: transparent;
+    border: 1px solid;
+    outline: none;
 }
 
 #picker .hex {
-  width: 100px;
-  border-color: #555;
-  margin-bottom: 2px; /* to align with the Lightness field to the left */
+    width: 100px;
+    border-color: #555;
+    margin-bottom: 2px; /* to align with the Lightness field to the left */
 }
 
 #picker .counter {
-  width: 53px;
-  border-color: #333;
+    width: 53px;
+    border-color: #333;
 }
 
 /* hide spinners on <input type="number"> */
@@ -102,49 +108,65 @@ input[type=number]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
 input[type=number] {
-    -moz-appearance:textfield;
+    -moz-appearance: textfield;
 }
 
-
 .header-text {
-  color: #666;
-  margin-bottom: 60px;
-  margin-top: 50px;
+    color: #666;
+    margin-bottom: 60px;
+    margin-top: 50px;
 }
 
 table.sliders {
-  position: relative;
-  width: 100%;
+    position: relative;
+    width: 100%;
 }
 
 table.sliders tr {
-  height: 30px;
+    height: 30px;
 }
 
 table.sliders td.counter-cell {
-  padding-left: 9px;
-  width: 85px;
+    padding-left: 9px;
+    width: 85px;
 }
 
 table.sliders .swatch {
-  width: 100px;
-  height: 60px;
-  margin-bottom: 3px;
+    width: 100px;
+    height: 60px;
+    margin-bottom: 3px;
 }
 
-
 .slider-control {
-  width: auto;
+    width: auto;
 }
 
 table.sliders th {
-  font-weight: normal;
-  color: #eeeeee;
-  width: 30px;
+    font-weight: normal;
+    color: #eeeeee;
+    width: 30px;
 }
 
-.col-demo {
-  /*min-height: 300px;*/
+
+.rangeslider {
+    height: 20px;
+    display: block;
+    position: relative;
+    width: 240px;
 }
 
+.rangeslider__handle {
+    display: inline-block;
+    position: absolute;
+    width: 10px;
+    top: -2px;
+    left: -5px;
+    height: 24px;
+    cursor: default;
+    border: 2px solid #fff;
+    /* box-shadow: 0 0 5px 0 #000; */
+    touch-action: pan-y;
+    -ms-touch-action: pan-y;
+}

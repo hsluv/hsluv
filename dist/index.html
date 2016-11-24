@@ -64,35 +64,35 @@
                             percentage.</p>
                     </div>
                     <table class="col-sm-12 sliders">
-                        <tr>
+                        <tr id="control-h">
                             <th>H</th>
                             <td>
-                                <div class="slider-control control-hue"></div>
+                                <div class="rangeslider"></div>
                             </td>
                             <td class="counter-cell">
-                                <input type="number" step="any" class="counter counter-hue" tabindex="1"/>
+                                <input type="number" min="0" max="360" step="any" class="counter counter-hue" tabindex="1"/>
                             </td>
                             <td rowspan="3" style="width:100px">
                                 <div class="swatch"></div>
                                 <input class="hex" pattern="#?[0-9a-fA-F]{6}" tabindex="4"/>
                             </td>
                         </tr>
-                        <tr>
+                        <tr id="control-s">
                             <th>S</th>
                             <td>
-                                <div class="slider-control control-saturation"></div>
+                                <div class="rangeslider"></div>
                             </td>
                             <td class="counter-cell">
-                                <input type="number" step="any" class="counter counter-saturation" tabindex="2"/>
+                                <input type="number" step="any" min="0" max="100" class="counter counter-saturation" tabindex="2"/>
                             </td>
                         </tr>
-                        <tr>
+                        <tr id="control-l">
                             <th>L</th>
                             <td>
-                                <div class="slider-control control-lightness"></div>
+                                <div class="rangeslider"></div>
                             </td>
                             <td class="counter-cell">
-                                <input type="number" step="any" class="counter counter-lightness" tabindex="3"/>
+                                <input type="number" step="any" min="0" max="100" class="counter counter-lightness" tabindex="3"/>
                             </td>
                         </tr>
                     </table>
@@ -469,8 +469,8 @@
 $(...).css('background-color', HUSL.toHex(randomHue(), 90, 60));
 $(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
         </div>
-        <div class="col-md-2 col-xs-6" style="padding-bottom:30px">
-            <button class="btn btn-large btn-block" id="demo1">Test HUSL</button>
+        <div class="col-md-2 col-xs-6" style="padding-bottom:30px" id="demo-husl">
+            <button class="btn btn-large btn-block">Test HUSL</button>
             <div class="demo">Lightness: 60%</div>
             <div class="demo">Lightness: 60%</div>
             <div class="demo">Lightness: 60%</div>
@@ -478,8 +478,8 @@ $(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
             <div class="demo">Lightness: 60%</div>
             <div class="demo">Lightness: 60%</div>
         </div>
-        <div class="col-md-2 col-xs-6" style="padding-bottom:30px">
-            <button class="btn btn-large btn-block" id="demo2">Test HSL</button>
+        <div class="col-md-2 col-xs-6" style="padding-bottom:30px" id="demo-hsl">
+            <button class="btn btn-large btn-block">Test HSL</button>
             <div class="demo">Lightness: 60%</div>
             <div class="demo">Lightness: 60%</div>
             <div class="demo">Lightness: 60%</div>
@@ -567,12 +567,9 @@ $('#rainbow-hsl div').each(function(index) {
 </div>
 
 <script src="js/underscore-min.js"></script>
-<script src="js/jquery-3.1.1.slim.min.js"></script>
-<script src="js/d3.v3.min.js"></script>
-<script src="js/d3.slider.js"></script>
-<script src="bootstrap/js/bootstrap.min.js"></script>
 <script src="js/husl.full.min.js"></script>
-<script src="js/main.js"></script>
+<script src="js/demos.js"></script>
+<script src="js/picker.js"></script>
 <script type="text/javascript">
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-31795350-1']);
