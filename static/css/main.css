@@ -27,8 +27,8 @@ pre {
 
 sub {
     font-size: 0.7em;
-    /*vertical-align: baseline;*/
     line-height: 0;
+    text-decoration: none !important;
 }
 
 /* hide spinners on <input type="number"> */

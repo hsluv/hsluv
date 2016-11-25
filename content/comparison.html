@@ -174,11 +174,11 @@
 <div class="row">
     <div class="col c8">
         <p>Let's try to generate some random background colors:</p>
-        <pre><code class="javascript">function randomHue() {
+        <pre>function randomHue() {
   return Math.floor(Math.random() * 360);
 }
 $(...).css('background-color', HUSL.toHex(randomHue(), 90, 60));
-$(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
+$(...).css('background-color', hslToHex(randomHue(), 90, 60));</pre>
     </div>
     <div class="col c2">
         <div class="demo" id="demo-husl">
@@ -211,13 +211,13 @@ $(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
             <abbr class="initialism">HUSL</abbr>'s uniform hue means random colors will be truly random.
             Iterating over colors will also produce better results.
         </p>
-        <pre><code class="javascript">$('#rainbow-husl div').each(function(index) {
+        <pre>$('#rainbow-husl div').each(function(index) {
   $(this).css('background-color', HUSL.toHex(index * 36, 90, 60));
 });
 
 $('#rainbow-hsl div').each(function(index) {
   $(this).css('background-color', hslToHex(index * 36, 90, 60));
-});</code></pre>
+});</pre>
     </div>
     <div class="col c2">
         <div class="demo" id="rainbow-husl">

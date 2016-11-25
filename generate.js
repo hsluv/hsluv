@@ -196,7 +196,7 @@ function generateHtml() {
             title: 'Comparing HUSL to HSL'
         },
         {
-            page: 'code',
+            page: 'implementations',
             title: 'Implementations'
         },
         {
