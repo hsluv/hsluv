@@ -171,3 +171,82 @@
         </figure>
     </div>
 </div>
+<div class="row">
+    <div class="col c8">
+        <p>Let's try to generate some random background colors:</p>
+        <pre><code class="javascript">function randomHue() {
+  return Math.floor(Math.random() * 360);
+}
+$(...).css('background-color', HUSL.toHex(randomHue(), 90, 60));
+$(...).css('background-color', hslToHex(randomHue(), 90, 60));</code></pre>
+    </div>
+    <div class="col c2">
+        <div class="demo" id="demo-husl">
+            <button class="btn btn-sm">Test HUSL</button>
+            <div>Lightness: 60%</div>
+            <div>Lightness: 60%</div>
+            <div>Lightness: 60%</div>
+            <div>Lightness: 60%</div>
+            <div>Lightness: 60%</div>
+            <div>Lightness: 60%</div>
+        </div>
+    </div>
+    <div class="col c2">
+        <div class="demo" id="demo-hsl">
+            <button class="btn btn-sm">Test HSL</button>
+            <div>Lightness: 60%</div>
+            <div>Lightness: 60%</div>
+            <div>Lightness: 60%</div>
+            <div>Lightness: 60%</div>
+            <div>Lightness: 60%</div>
+            <div>Lightness: 60%</div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col c8">
+        <p>
+            <abbr class="initialism">HUSL</abbr>'s uniform hue means random colors will be truly random.
+            Iterating over colors will also produce better results.
+        </p>
+        <pre><code class="javascript">$('#rainbow-husl div').each(function(index) {
+  $(this).css('background-color', HUSL.toHex(index * 36, 90, 60));
+});
+
+$('#rainbow-hsl div').each(function(index) {
+  $(this).css('background-color', hslToHex(index * 36, 90, 60));
+});</code></pre>
+    </div>
+    <div class="col c2">
+        <div class="demo" id="rainbow-husl">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <div class="col c2">
+        <div class="demo" id="rainbow-hsl">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+<script src="/static/js/husl.full.min.js"></script>
+<script src="/static/js/demos.js"></script>

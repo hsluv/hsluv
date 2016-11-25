@@ -4,7 +4,17 @@ function stringIsValidHex(string) {
 
 function stringIsNumberWithinRange(string, min, max) {
     var middle = parseFloat(string);
-    return !_.isNaN(middle) && min <= middle && middle <= max;
+    // May be NaN
+    return min <= middle && middle <= max;
+}
+
+function equidistantSamples(numSamples) {
+    // 6 -> [0, 0.2, 0.4, 0.6, 0.8, 1]
+    var samples = [];
+    for (var i=0; i<numSamples; i++) {
+        samples.push(i / (numSamples - 1));
+    }
+    return samples;
 }
 
 function dragListener(element, onDrag) {
@@ -209,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function redrawCanvas() {
-        var shapePointsPixel = _(pickerGeometry.vertices).map(toPixelCoordinate);
+        var shapePointsPixel = pickerGeometry.vertices.map(toPixelCoordinate);
 
         ctx.clearRect(0, 0, width, height);
         ctx.globalCompositeOperation = 'source-over';
@@ -278,14 +288,14 @@ document.addEventListener('DOMContentLoaded', function () {
             pickerScope.style.display = 'none';
         }
 
-        var hueColors = _.range(0, 360, 10).map(function (x) {
-            return HUSL.Husl.huslToHex([x, S, L]);
+        var hueColors = equidistantSamples(20).map(function (s) {
+            return HUSL.Husl.huslToHex([s * 360, S, L]);
         });
-        var saturationColors = _.range(0, 100, 10).map(function (x) {
-            return HUSL.Husl.huslToHex([H, x, L]);
+        var saturationColors = equidistantSamples(10).map(function (s) {
+            return HUSL.Husl.huslToHex([H, s * 100, L]);
         });
-        var lightnessColors = _.range(0, 100, 10).map(function (x) {
-            return HUSL.Husl.huslToHex([H, S, x]);
+        var lightnessColors = equidistantSamples(10).map(function (s) {
+            return HUSL.Husl.huslToHex([H, S, s * 100]);
         });
 
         sliderH.style.background = 'linear-gradient(to right,' + hueColors.join(',') + ')';
@@ -401,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // run all remaining redrawers in their proper order
         necessaryRedrawers.map(function (redrawerData) {
-            return redrawerData["func"]();
+            redrawerData["func"]();
         });
     }
 
@@ -426,21 +436,21 @@ document.addEventListener('DOMContentLoaded', function () {
             H = husl[0];
             S = husl[1];
             L = husl[2];
-            return redrawAfterUpdatingVariables(["H", "S", "L"], "hexText");
+            redrawAfterUpdatingVariables(["H", "S", "L"], "hexText");
         }
     });
 
     counterHue.addEventListener('input', function () {
         if (stringIsNumberWithinRange(this.value, 0, 360)) {
             H = parseFloat(this.value);
-            return redrawAfterUpdatingVariables(["H"], "sliderHueCounterText");
+            redrawAfterUpdatingVariables(["H"], "sliderHueCounterText");
         }
     });
 
     counterSaturation.addEventListener('input', function () {
         if (stringIsNumberWithinRange(this.value, 0, 100)) {
             S = parseFloat(this.value);
-            return redrawAfterUpdatingVariables(["S"], "sliderSaturationCounterText");
+            redrawAfterUpdatingVariables(["S"], "sliderSaturationCounterText");
         }
     });
 
@@ -448,7 +458,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (stringIsNumberWithinRange(this.value, 0, 100)) {
             setL(parseFloat(this.value));
             setSliderL(L / 100);
-            return redrawAfterUpdatingVariables(["L"], "sliderLightnessCounterText");
+            redrawAfterUpdatingVariables(["L"], "sliderLightnessCounterText");
         }
     });
 

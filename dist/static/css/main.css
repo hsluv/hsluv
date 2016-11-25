@@ -62,12 +62,21 @@ figcaption {
     font-weight: bold;
 }
 
-#demo-husl button, #demo-hsl button {
-    margin-bottom: 10px;
+div.demo {
+    margin: 0.2em;
 }
 
-#rainbow-husl div, #rainbow-hsl div {
-    height: 20px;
+div.demo button {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+div.demo div {
+    color: white;
+    height: 2em;
+    line-height: 2em;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
 }
 
 #display {

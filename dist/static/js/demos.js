@@ -1,5 +1,11 @@
 (function () {
 
+    function forEach(iterable, f) {
+        for (var i = 0; i < iterable.length; i++) {
+            f(iterable[i], i);
+        }
+    }
+
     // https://gist.github.com/3716319
     function hslToRgb(h, s, l) {
         var r, g, b;
@@ -45,13 +51,13 @@
     }
 
     function refreshDemoHusl() {
-        _(demoHusl.getElementsByClassName('demo')).map(function(e) {
+        forEach(demoHusl.getElementsByTagName('div'), function (e) {
             e.style.backgroundColor = HUSL.Husl.huslToHex([randomHue(), 90, 60]);
         });
     }
 
     function refreshDemoHsl() {
-        _(demoHsl.getElementsByClassName('demo')).map(function(e) {
+        forEach(demoHsl.getElementsByTagName('div'), function (e) {
             e.style.backgroundColor = hslToHex(randomHue(), 90, 60);
         });
     }
@@ -68,11 +74,11 @@
     var rainbowHusl = document.getElementById('rainbow-husl');
     var rainbowHsl = document.getElementById('rainbow-hsl');
 
-    _(rainbowHusl.getElementsByTagName('div')).map(function (e, i) {
+    forEach(rainbowHusl.getElementsByTagName('div'), function (e, i) {
         e.style.backgroundColor = HUSL.Husl.huslToHex([i * 36, 90, 60]);
     });
 
-    _(rainbowHsl.getElementsByTagName('div')).map(function (e, i) {
+    forEach(rainbowHsl.getElementsByTagName('div'), function (e, i) {
         e.style.backgroundColor = hslToHex(i * 36, 90, 60);
     });
 
