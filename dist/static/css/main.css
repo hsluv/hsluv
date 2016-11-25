@@ -1,0 +1,199 @@
+body {
+    font-size: 15px;
+    line-height: 20px;
+    min-width: 440px;
+    padding: 0;
+}
+
+a {
+    color: #0055B0;
+}
+
+footer {
+    margin-top: 100px;
+}
+
+body.dark {
+    background-color: #1b1b1b;
+    color: #666;
+}
+
+pre {
+    font-family: Menlo, Monaco, Consolas, monospace;
+    font-size: 14px;
+    padding: 10px 20px;
+}
+
+sub {
+    font-size: 0.7em;
+    /*vertical-align: baseline;*/
+    line-height: 0;
+}
+
+/* hide spinners on <input type="number"> */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+td.cell-green {
+    background-color: #9f9;
+}
+
+td.cell-red {
+    background-color: #f99;
+}
+
+figure {
+    margin: 0.2em;
+}
+
+figure img {
+    max-width: 100%;
+}
+
+figcaption {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+#demo-husl button, #demo-hsl button {
+    margin-bottom: 10px;
+}
+
+#rainbow-husl div, #rainbow-hsl div {
+    height: 20px;
+}
+
+#display {
+    position: relative;
+    width: 400px;
+    height: 400px;
+}
+
+#picker {
+    width: 400px;
+    margin: auto;
+}
+
+#picker input {
+    padding-left: 5px;
+    padding-right: 5px;
+    margin: 0;
+    height: 22px;
+    box-sizing: border-box;
+    background: transparent;
+    color: #888;
+    outline: none;
+    border: 1px solid #555;
+    border-radius: 0;
+}
+
+#picker table {
+    margin-top: 20px;
+    width: 400px;
+}
+
+#picker table th, td {
+    padding: 5px 5px;
+    border: none;
+}
+
+#picker table th {
+    font-weight: normal;
+    color: #eeeeee;
+    width: 15px;
+}
+
+#picker table td:nth-child(3) {
+    width: 50px;
+}
+
+#picker table td:nth-child(4) {
+    width: 100px;
+}
+
+#picker table td.counter-cell input {
+    width: 50px;
+    border-color: #333;
+}
+
+#picker table .hex {
+    width: 100px;
+}
+
+#picker table .swatch {
+    height: 54px;
+}
+
+#picker .explanation-text {
+    margin-bottom: 60px;
+    margin-top: 100px;
+}
+
+.range-slider {
+    height: 20px;
+    display: block;
+    position: relative;
+    width: 100%;
+}
+
+.range-slider-handle {
+    display: inline-block;
+    position: absolute;
+    width: 6px;
+    top: -2px;
+    left: -5px;
+    height: 20px;
+    cursor: default;
+    border: 2px solid #fff;
+    touch-action: pan-y;
+    -ms-touch-action: pan-y;
+}
+
+#header {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    line-height: 26px;
+    border-bottom: 1px #080808;
+}
+
+#header .github-button {
+    float: right;
+    height: 20px;
+    margin-top: 3px;
+}
+
+#header a {
+    color: #999999;
+    text-decoration: none;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    vertical-align: top;
+}
+
+#header a:hover {
+    color: white;
+}
+
+#header a.logo {
+    font-size: 2rem;
+    color: white;
+}
+
+/* collapse navbar */
+@media (max-width: 700px) {
+    #header a {
+        display: block;
+    }
+    #header a.logo {
+        margin-bottom: 1rem;
+    }
+}
+

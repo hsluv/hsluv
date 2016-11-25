@@ -3,6 +3,8 @@ var pngjs = require('pngjs');
 var colorspaces = require('colorspaces');
 var onecolor = require('onecolor');
 var husl = require('husl');
+var mustache = require('mustache');
+
 
 function hslToRgb(h, s, l) {
     h *= 360;
@@ -21,7 +23,10 @@ function makeImage(file, func, width, height) {
     for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
             var pos = (y * width + x) * 4;
-            var rgbVal = func(x / (width - 1), y / (height - 1));
+            var xn = x / (width - 1);
+            var yn = 1 - y / (height - 1);
+
+            var rgbVal = func(xn, yn);
             var rgb = rgbPrepare(rgbVal);
 
             png.data[pos] = rgb[0];
@@ -56,11 +61,6 @@ function rgbPrepare(tuple) {
     });
 }
 
-function makeDemo(name, func) {
-    var file = 'dist/img/demo/' + name + '.png';
-    return makeImage(file, func, 360, 200);
-}
-
 function luvSquare(x, y) {
     var c = husl._conv;
 
@@ -75,33 +75,20 @@ function luvSquare(x, y) {
     return c.xyz.rgb(c.luv.xyz([50, u, v]));
 }
 
-console.log("Generating demo images:");
-
-try {
-    fs.mkdirSync('dist/img');
-    fs.mkdirSync('dist/img/demo');
-} catch (error) {
+function demoHusl(x, y) {
+    return husl.toRGB(x * 360, y * 100, 50);
 }
 
-makeImage('dist/favicon.png', luvSquare, 32, 32);
+function demoHuslp(x, y) {
+    return husl.p.toRGB(x * 360, y * 100, 50);
+}
 
-// Generate larger picture, e.g. for GitHub
-// makeImage('dist/github.png', luvSquare, 200, 200);
-
-makeDemo('husl', function (x, y) {
-    return husl.toRGB(x * 360, 100 - y * 100, 50);
-});
-
-makeDemo('huslp', function (x, y) {
-    return husl.p.toRGB(x * 360, 100 - y * 100, 50);
-});
-
-makeDemo('husl-chroma', function (x, y) {
-    var rgb = husl.toRGB(x * 360, 100 - y * 100, 50);
+function demoHuslChroma(x, y) {
+    var rgb = husl.toRGB(x * 360, y * 100, 50);
     return chromaDemo(colorspaces.make_color('sRGB', rgb));
-});
+}
 
-makeDemo('cielchuv-chroma', function (x, y) {
+function demoCielchuvChroma(x, y) {
     var color = colorspaces.make_color('CIELCHuv', [50, 200 - y * 200, x * 360]);
     var rgb;
     if (!color.is_displayable()) {
@@ -110,51 +97,144 @@ makeDemo('cielchuv-chroma', function (x, y) {
         rgb = color.as('sRGB');
     }
     return chromaDemo(colorspaces.make_color('sRGB', rgb));
-});
+}
 
-makeDemo('cielchuv', function (x, y) {
+function demoCielchuv(x, y) {
     var color = colorspaces.make_color('CIELCHuv', [50, 200 - y * 200, x * 360]);
     if (!color.is_displayable()) {
         return [0, 0, 0];
     } else {
         return color.as('sRGB');
     }
-});
+}
 
-makeDemo('hsl', function (x, y) {
+function demoHsl(x, y) {
     return hslToRgb(x, 1 - y, 0.5);
-});
+}
 
-makeDemo('hsl-lightness', function (x, y) {
+function demoHslLightness(x, y) {
     var rgb = hslToRgb(x, 1 - y, 0.5);
     var color = colorspaces.make_color('sRGB', rgb);
     var l = color.as('CIELUV')[0] / 100;
     return [l, l, l];
-});
+}
 
-makeDemo('cielchuv-lightness', function (x, y) {
+function demoCielchuvLightness(x, y) {
     var color = colorspaces.make_color('CIELCHuv', [50, 200 - y * 200, x * 360]);
     if (!color.is_displayable()) {
         return [0, 0, 0];
     } else {
         return [0.5, 0.5, 0.5];
     }
-});
+}
 
-makeDemo('husl-lightness', function () {
+function demoHuslLightness() {
     return [0.5, 0.5, 0.5];
-});
+}
 
-makeDemo('huslp-lightness', function () {
-    return [0.5, 0.5, 0.5];
-});
-
-makeDemo('hsl-chroma', function (x, y) {
+function demoHslChroma(x, y) {
     var rgb = hslToRgb(x, 1 - y, 0.5);
     return chromaDemo(colorspaces.make_color('sRGB', rgb));
-});
+}
 
-makeDemo('huslp-chroma', function (x, y) {
-    var rgb = husl.p.toRGB(x * 360, 100 - y * 100, 50);
+function demoHuslpChroma(x, y) {
+    var rgb = husl.p.toRGB(x * 360, y * 100, 50);
     return chromaDemo(colorspaces.make_color('sRGB', rgb));
-});
+}
+
+
+
+
+// Generate larger picture, e.g. for GitHub
+// makeImage('dist/github.png', luvSquare, 200, 200);
+
+function makeDir(path) {
+    if (!fs.existsSync(path)) {
+        console.log('creating directory', path);
+        fs.mkdirSync(path);
+    }
+}
+
+function generateImages() {
+    var demos = {
+        'husl': demoHusl,
+        'huslp': demoHuslp,
+        'husl-chroma': demoHuslChroma,
+        'cielchuv-chroma': demoCielchuvChroma,
+        'cielchuv': demoCielchuv,
+        'hsl': demoHsl,
+        'hsl-lightness': demoHslLightness,
+        'cielchuv-lightness': demoCielchuvLightness,
+        'husl-lightness': demoHuslLightness,
+        'huslp-lightness': demoHuslLightness,
+        'hsl-chroma': demoHslChroma,
+        'huslp-chroma': demoHuslpChroma
+    };
+    console.log("Generating demo images:");
+
+    makeDir('dist');
+    makeDir('dist/images');
+
+    makeImage('dist/favicon.png', luvSquare, 32, 32);
+    Object.keys(demos).forEach(function(demoName) {
+        var file = 'dist/images/' + demoName + '.png';
+        return makeImage(file, demos[demoName], 360, 200);
+    });
+}
+
+function generateHtml() {
+    var baseTemplate = fs.readFileSync('templates/base.mustache').toString();
+    var pages = [
+        {
+            page: 'index',
+            index: true,
+            bodyClass: 'dark',
+            title: 'HUSL'
+        },
+        {
+            page: 'comparison',
+            title: 'Comparing HUSL to HSL'
+        },
+        {
+            page: 'code',
+            title: 'Implementations'
+        },
+        {
+            page: 'math',
+            title: 'Math'
+        },
+        {
+            page: 'syntax',
+            title: 'Random Syntax Highlighting Color Schemes',
+            bodyClass: 'dark'
+        }
+    ];
+
+    pages.forEach(function (pageInfo) {
+        var pageContent = fs.readFileSync('content/' + pageInfo.page + '.html').toString();
+        var target;
+        var context = {
+            content: pageContent,
+            bodyClass: pageInfo.bodyClass,
+            title: pageInfo.title
+        };
+        if (pageInfo.index) {
+            target = 'dist/' + pageInfo.page + '.html';
+        } else {
+            makeDir('dist/' + pageInfo.page);
+            target = 'dist/' + pageInfo.page + '/index.html';
+        }
+        console.log('generating ' + target);
+        var renderedContent = mustache.render(baseTemplate, context);
+        fs.writeFileSync(target, renderedContent);
+    });
+}
+
+if (require.main === module) {
+    var command = process.argv[2];
+    if (command === '--images') {
+        generateImages();
+    } else if (command === '--html') {
+        generateHtml();
+    }
+}
