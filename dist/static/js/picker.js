@@ -24,10 +24,19 @@ function dragListener(element, onDrag) {
 
     function trigger(event) {
         var rect = element.getBoundingClientRect();
+        var clientX, clientY;
+        if (event.touches) {
+            clientX = event.touches[0].clientX;
+            clientY = event.touches[0].clientY;
+        } else {
+            clientX = event.clientX;
+            clientY = event.clientY;
+        }
+
         var width = rect.width;
         var height = rect.height;
-        var x = (event.clientX - rect.left) / width;
-        var y = (event.clientY - rect.top) / height;
+        var x = (clientX - rect.left) / width;
+        var y = (clientY - rect.top) / height;
         onDrag({
             x: Math.min(1, Math.max(0, x)),
             y: Math.min(1, Math.max(0, y))
