@@ -23,6 +23,8 @@ function dragListener(element, onDrag) {
     var dragging = false;
 
     function trigger(event) {
+        event.preventDefault();
+
         var rect = element.getBoundingClientRect();
         var clientX, clientY;
         if (event.touches) {
