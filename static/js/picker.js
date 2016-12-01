@@ -11,20 +11,22 @@ function stringIsNumberWithinRange(string, min, max) {
 function equidistantSamples(numSamples) {
     // 6 -> [0, 0.2, 0.4, 0.6, 0.8, 1]
     var samples = [];
-    for (var i=0; i<numSamples; i++) {
+    for (var i = 0; i < numSamples; i++) {
         samples.push(i / (numSamples - 1));
     }
     return samples;
 }
 
-function dragListener(element, onDrag) {
+function addDragEventListener(element, options) {
     // Generic drag event listener, onDrag returns mouse position
     // relative to element, x and y normalized to [0, 1] range.
     var dragging = false;
+    var onDrag = options.onDrag;
+    var dragZone = options.dragZone || function () {
+            return true;
+        };
 
-    function trigger(event) {
-        event.preventDefault();
-
+    function getCoordinates(event) {
         var rect = element.getBoundingClientRect();
         var clientX, clientY;
         if (event.touches) {
@@ -39,17 +41,21 @@ function dragListener(element, onDrag) {
         var height = rect.height;
         var x = (clientX - rect.left) / width;
         var y = (clientY - rect.top) / height;
-        onDrag({
+        return {
             x: Math.min(1, Math.max(0, x)),
             y: Math.min(1, Math.max(0, y))
-        })
+        };
     }
 
     function startEvent(event) {
         // Ignore right click
         if (event.which !== 3) {
-            dragging = true;
-            trigger(event);
+            var coordinates = getCoordinates(event);
+            if (dragZone(coordinates)) {
+                dragging = true;
+                event.preventDefault();
+                onDrag(coordinates);
+            }
         }
     }
 
@@ -60,7 +66,7 @@ function dragListener(element, onDrag) {
     function moveEvent(event) {
         if (dragging) {
             event.preventDefault();
-            trigger(event);
+            onDrag(getCoordinates(event));
         }
     }
 
@@ -85,11 +91,13 @@ function makeSlider(element, initVal, onChange) {
         handle.style.left = (val * rangeWidth - handleWidth / 2) + 'px';
     }
 
-    dragListener(element, function (point) {
+    function sliderDragListener(point) {
         val = point.x;
         moveHandle();
         onChange(val);
-    });
+    }
+
+    addDragEventListener(element, {onDrag: sliderDragListener});
 
     return function (newVal) {
         val = newVal;
@@ -211,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
     pickerScope.className = 'scope';
     svg.appendChild(pickerScope);
 
-    dragListener(svg, function (point) {
+    function pickerDragListener(point) {
         var pointer = fromPixelCoordinate({
             x: point.x * size,
             y: point.y * size
@@ -227,7 +235,19 @@ document.addEventListener('DOMContentLoaded', function () {
         H = husl[0];
         S = husl[1];
         redrawAfterUpdatingVariables(["H", "S"], "adjustPosition");
-    });
+    }
+
+    function pickerDragZone(point) {
+        // Don't allow dragging to start when clicked outside outer circle
+        var maximumDistance = pickerGeometry.outerCircleRadius;
+        var actualDistance = HUSL.Geometry.distanceFromOrigin(fromPixelCoordinate({
+            x: point.x * size,
+            y: point.y * size
+        }));
+        return actualDistance < maximumDistance;
+    }
+
+    addDragEventListener(svg, {onDrag: pickerDragListener, dragZone: pickerDragZone});
 
     function redrawCanvas() {
         var shapePointsPixel = pickerGeometry.vertices.map(toPixelCoordinate);
@@ -477,4 +497,3 @@ document.addEventListener('DOMContentLoaded', function () {
     redrawAfterUpdatingVariables(["H", "S", "L"], "pageLoad");
 
 });
-
