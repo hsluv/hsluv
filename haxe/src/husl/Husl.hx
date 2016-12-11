@@ -408,7 +408,7 @@ class Husl {
 
         for (i in 0...tuple.length) {
             var chan:Float = tuple[i];
-            h += StringTools.hex(Math.round(chan * 255), 2);
+            h += StringTools.hex(Math.round(chan * 255), 2).toLowerCase();
         }
 
         return h;

@@ -19,11 +19,11 @@ function manySamples(assertion) {
 function testConsistency() {
     console.log('should consistently convert between HUSL and hex');
     manySamples(function (hex) {
-        assert.deepEqual(hex, husl.toHex.apply(this, husl.fromHex(hex)).toLowerCase());
+        assert.deepEqual(hex, husl.toHex.apply(this, husl.fromHex(hex)));
     });
     console.log('should consistently convert between HUSLp and hex');
     manySamples(function (hex) {
-        assert.deepEqual(hex, husl.p.toHex.apply(this, husl.p.fromHex(hex)).toLowerCase());
+        assert.deepEqual(hex, husl.p.toHex.apply(this, husl.p.fromHex(hex)));
     });
 }
 

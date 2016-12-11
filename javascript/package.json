@@ -2,7 +2,7 @@
   "name": "husl",
   "description": "Human-friendly HSL",
   "keywords": ["color", "color space", "CIE", "RGB", "HUSL", "HSL"],
-  "version": "6.0.3",
+  "version": "6.0.4",
   "author": "Alexei Boronine <alexei@boronine.com>",
   "license": "MIT",
   "main": "dist/husl.min.js",
