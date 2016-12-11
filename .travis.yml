@@ -1,10 +1,3 @@
-sudo: false
-language: haxe
-haxe:
-  - "3.2.1"
-before_install:
-  - nvm install v4.6.2
+language: nix
 script:
-  - haxe -cp haxe/src -cp haxe/test -main RunTests -resource snapshots/snapshot-rev4.json@snapshot-rev4 --interp
-  - make javascript/dist/husl.min.js
-  - node javascript/test.js
+  - nix-build -A huslMinJs

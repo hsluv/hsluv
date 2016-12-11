@@ -1,6 +1,4 @@
 var assert = require('assert');
-var husl = require('./dist/husl.min.js');
-
 var rgbRangeTolerance = 0.00000000001;
 var snapshotTolerance = 0.000000001;
 
@@ -16,7 +14,7 @@ function manySamples(assertion) {
     });
 }
 
-function testConsistency() {
+function testConsistency(husl) {
     console.log('should consistently convert between HUSL and hex');
     manySamples(function (hex) {
         assert.deepEqual(hex, husl.toHex.apply(this, husl.fromHex(hex)));
@@ -27,7 +25,7 @@ function testConsistency() {
     });
 }
 
-function testRGBRange() {
+function testRGBRange(husl) {
     console.log('should fit within the RGB ranges');
     var H = 0;
     var S = 0;
@@ -56,7 +54,7 @@ function testRGBRange() {
     }
 }
 
-function testSnapshot() {
+function testSnapshot(husl, snapshot) {
     console.log('should match the stable snapshot');
     var stableSamples;
     var currentSamples;
@@ -64,10 +62,8 @@ function testSnapshot() {
     var currentTuple;
     var diff;
 
-    var stable = require('../snapshots/snapshot-rev4.json');
-
-    Object.keys(stable).map(function (hex) {
-        stableSamples = stable[hex];
+    Object.keys(snapshot).map(function (hex) {
+        stableSamples = snapshot[hex];
         currentSamples = {
             'husl': husl.fromHex(hex),
             'huslp': husl.p.fromHex(hex)
@@ -86,9 +82,11 @@ function testSnapshot() {
 
 
 function testAll() {
-    testConsistency();
-    testRGBRange();
-    testSnapshot();
+    var husl = require(process.argv[2]);
+    var snapshot = require(process.argv[3]);
+    testConsistency(husl);
+    testRGBRange(husl);
+    testSnapshot(husl, snapshot);
     console.log('All good!')
 }
 

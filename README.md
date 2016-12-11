@@ -9,19 +9,22 @@ The reference implementation is [written in Haxe](https://github.com/husl-colors
 
 ## Building
 
-Requirements: GNU Make, Haxe 3, JDK 7+.
+Requirements: [Nix package manage](http://nixos.org/nix/).
 
-To build the JavaScript version:
+To build JavaScript version, running full test suite:
 
 ```sh
-make javascript/dist/husl.min.js
+nix-build -A huslMinJs
 ```
 
 To build Haxe documentation:
 
 ```sh
-make dist/doc
+nix-build -A huslDocs
 ```
+
+If you want to build without Nix you will require GNU Make, Haxe 3 and JDK 7+.
+See `default.nix` for command line instructions.
 
 ## Versioning
 

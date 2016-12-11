@@ -7,14 +7,14 @@ function expandParams(f) {
 }
 
 var exportObject = {
-    'fromRGB': expandParams(husl_Husl.rgbToHusl),
-    'fromHex': husl_Husl.hexToHusl,
-    'toRGB': expandParams(husl_Husl.huslToRgb),
-    'toHex': expandParams(husl_Husl.huslToHex),
+    'fromRGB': expandParams(husl.Husl.rgbToHusl),
+    'fromHex': husl.Husl.hexToHusl,
+    'toRGB': expandParams(husl.Husl.huslToRgb),
+    'toHex': expandParams(husl.Husl.huslToHex),
     'p': {
-        'fromRGB': expandParams(husl_Husl.rgbToHuslp),
-        'fromHex': husl_Husl.hexToHuslp,
-        'toRGB': expandParams(husl_Husl.huslpToRgb),
-        'toHex': expandParams(husl_Husl.huslpToHex)
+        'fromRGB': expandParams(husl.Husl.rgbToHuslp),
+        'fromHex': husl.Husl.hexToHuslp,
+        'toRGB': expandParams(husl.Husl.huslpToRgb),
+        'toHex': expandParams(husl.Husl.huslpToHex)
     }
 };
