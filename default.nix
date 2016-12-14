@@ -1,7 +1,10 @@
 rec {
-  # Uncomment when Haxe darwin compatibility has been merged upstream
-  # pkgs = import <nixpkgs> {};
-  pkgs = import (fetchTarball https://github.com/boronine/nixpkgs/archive/a64d30949f8f43631a36a6a01d87311f9c5227a7.tar.gz) {};
+  pkgsOriginal = import <nixpkgs> {};
+  pkgsSrc = pkgsOriginal.fetchzip {
+    url = "https://github.com/NixOS/nixpkgs/archive/1beb9e6d1e3bbafa3c953903813b1526fb81c622.zip";
+    sha256 = "139b4q6q1nprg5k3n17p357qjl94r7dnzvafpnh6x6fg2s2m2zvb";
+  };
+  pkgs = import (pkgsSrc) {};
 
   jre = pkgs.jre;
   haxe = pkgs.haxe;
