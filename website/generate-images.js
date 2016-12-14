@@ -1,17 +1,32 @@
 var fs = require('fs');
 var pngjs = require('pngjs');
 var colorspaces = require('colorspaces');
-var onecolor = require('onecolor');
 var husl = require('husl');
-var mustache = require('mustache');
 
 
-function hslToRgb(h, s, l) {
-    h *= 360;
-    s *= 100;
-    l *= 100;
-    var c = onecolor('hsl(' + h + ', ' + s + ', ' + l + ')');
-    return [c.red(), c.green(), c.blue()];
+function hslToRgb(h, s, l){
+    var r, g, b;
+
+    if(s == 0){
+        r = g = b = l; // achromatic
+    }else{
+        var hue2rgb = function hue2rgb(p, q, t){
+            if(t < 0) t += 1;
+            if(t > 1) t -= 1;
+            if(t < 1/6) return p + (q - p) * 6 * t;
+            if(t < 1/2) return q;
+            if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+        };
+
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+    }
+
+    return [r, g, b];
 }
 
 function makeImage(file, func, width, height) {
@@ -155,7 +170,7 @@ function makeDir(path) {
     }
 }
 
-function generateImages() {
+function generateImages(targetDir) {
     var demos = {
         'husl': demoHusl,
         'huslp': demoHuslp,
@@ -171,70 +186,16 @@ function generateImages() {
         'huslp-chroma': demoHuslpChroma
     };
     console.log("Generating demo images:");
+    makeDir(targetDir + '/images');
 
-    makeDir('dist');
-    makeDir('dist/images');
-
-    makeImage('dist/favicon.png', luvSquare, 32, 32);
+    makeImage(targetDir + '/favicon.png', luvSquare, 32, 32);
     Object.keys(demos).forEach(function(demoName) {
-        var file = 'dist/images/' + demoName + '.png';
+        var file = targetDir + '/images/' + demoName + '.png';
         return makeImage(file, demos[demoName], 360, 200);
     });
 }
 
-function generateHtml() {
-    var baseTemplate = fs.readFileSync('templates/base.mustache').toString();
-    var pages = [
-        {
-            page: 'index',
-            index: true,
-            bodyClass: 'dark',
-            title: 'HUSL'
-        },
-        {
-            page: 'comparison',
-            title: 'Comparing HUSL to HSL'
-        },
-        {
-            page: 'implementations',
-            title: 'Implementations'
-        },
-        {
-            page: 'math',
-            title: 'Math'
-        },
-        {
-            page: 'syntax',
-            title: 'Random Syntax Highlighting Color Schemes',
-            bodyClass: 'dark'
-        }
-    ];
-
-    pages.forEach(function (pageInfo) {
-        var pageContent = fs.readFileSync('content/' + pageInfo.page + '.html').toString();
-        var target;
-        var context = {
-            content: pageContent,
-            bodyClass: pageInfo.bodyClass,
-            title: pageInfo.title
-        };
-        if (pageInfo.index) {
-            target = 'dist/' + pageInfo.page + '.html';
-        } else {
-            makeDir('dist/' + pageInfo.page);
-            target = 'dist/' + pageInfo.page + '/index.html';
-        }
-        console.log('generating ' + target);
-        var renderedContent = mustache.render(baseTemplate, context);
-        fs.writeFileSync(target, renderedContent);
-    });
-}
-
 if (require.main === module) {
-    var command = process.argv[2];
-    if (command === '--images') {
-        generateImages();
-    } else if (command === '--html') {
-        generateHtml();
-    }
+    var targetDir = process.argv[2];
+    generateImages(targetDir);
 }

@@ -14,13 +14,25 @@ Requirements: [Nix package manage](http://nixos.org/nix/).
 To build JavaScript version, running full test suite:
 
 ```sh
-nix-build -A huslMinJs
+nix-build -A huslJsLegacyDist
 ```
 
 To build Haxe documentation:
 
 ```sh
 nix-build -A huslDocs
+```
+
+To build website:
+
+```sh
+nix-build -A huslWebsite
+```
+
+To deploy website:
+
+```sh
+surge --project ./result --domain www.husl-colors.org
 ```
 
 If you want to build without Nix you will require GNU Make, Haxe 3 and JDK 7+.
