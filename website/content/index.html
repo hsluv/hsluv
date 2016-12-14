@@ -1,0 +1,67 @@
+<div class="row">
+    <div class="col c6" style="min-width:400px">
+        <div id="picker">
+            <div id="display">
+                <canvas style="position:absolute;left:0" height="400" width="400"></canvas>
+                <svg style="position:absolute;left:0" height="400" width="400"></svg>
+            </div>
+            <table>
+                <tr id="control-h">
+                    <th>H</th>
+                    <td>
+                        <div class="range-slider"></div>
+                    </td>
+                    <td class="counter-cell">
+                        <input type="number" min="0" max="360" step="any" class="counter counter-hue" tabindex="1"/>
+                    </td>
+                    <td rowspan="2">
+                        <div class="swatch"></div>
+                    </td>
+                </tr>
+                <tr id="control-s">
+                    <th>S</th>
+                    <td>
+                        <div class="range-slider"></div>
+                    </td>
+                    <td class="counter-cell">
+                        <input type="number" step="any" min="0" max="100" class="counter counter-saturation"
+                               tabindex="2"/>
+                    </td>
+                </tr>
+                <tr id="control-l">
+                    <th>L</th>
+                    <td>
+                        <div class="range-slider"></div>
+                    </td>
+                    <td class="counter-cell">
+                        <input type="number" step="any" min="0" max="100" class="counter counter-lightness"
+                               tabindex="3"/>
+                    </td>
+                    <td>
+                        <input class="hex" pattern="#?[0-9a-fA-F]{6}" tabindex="4"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col c6 explanation-text">
+        <p>
+            <abbr>HUSL</abbr> is a <a href="http://www.boronine.com/2012/03/26/Color-Spaces-for-Human-Beings/">
+            human-friendly</a> alternative to <abbr>HSL</abbr>.
+        </p>
+        <p>
+            Here you can see <a href="http://en.wikipedia.org/wiki/CIELUV"><abbr>CIELUV</abbr></a>,
+            a color space designed for perceptual uniformity based on human experiments. When accessed by
+            polar coordinates, it becomes functionally similar to <abbr>HSL</abbr>
+            with a single problem: its chroma component doesn't fit into a specific range.
+        <p>
+        <p>
+            <abbr>HUSL</abbr> extends <abbr>CIELUV</abbr> with a
+            new saturation component that allows you to span all the available chroma as a neat
+            percentage.
+        </p>
+    </div>
+</div>
+
+<script src="/static/js/husl.full.min.js"></script>
+<script src="/static/js/picker.js"></script>
