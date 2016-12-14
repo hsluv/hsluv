@@ -25,32 +25,25 @@ rec {
     sha256 = "0yny8zq0pjy2qa6gzdl4h7h2mijg0c3s9xcmm6b1mzq9n04xgzsx";
   };
 
-  colorspacesJs = pkgs.fetchzip {
-    url = "https://github.com/boronine/colorspaces.js/archive/v0.1.4.zip";
-    sha256 = "042lzvz34026dlny5a2zlpxs3g8jna8lks2yhc6kknpibwv4ishx";
-  };
-
   mustacheJs = pkgs.fetchzip {
     url = "https://github.com/janl/mustache.js/archive/v2.3.0.zip";
     sha256 = "09gx8ra0m52bm0zdfbwb151b5ngvv7bq1367pizsgmh5r4sqigzk";
   };
 
-  huslJs601 = pkgs.fetchzip {
-    url = "https://github.com/husl-colors/husl/archive/v6.0.1.zip";
-    sha256 = "1vvvwcxmk52vpw9z46d2724whf5q6n704g6ab3jlw83xc6rzk1k3";
+  minMinCss = pkgs.fetchurl {
+    url = "https://cdn.jsdelivr.net/min/1.5/min.min.css";
+    sha256 = "0616ikg3bzs2i74mvb0pxlxljy3syivlz6k1ppkjp44j6s5b3a2d";
   };
 
   nodeModules = pkgs.stdenv.mkDerivation rec {
     name = "node-modules";
-    inherit nodejs pngJs colorspacesJs mustacheJs huslJs601;
+    inherit nodejs pngJs mustacheJs;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       PATH=$nodejs/bin:$PATH
       HOME=.
       npm install $pngJs
-      npm install $colorspacesJs
       npm install $mustacheJs
-      npm install $huslJs601
       mkdir $out
       mv node_modules/* $out
     '';
@@ -58,16 +51,19 @@ rec {
 
   huslWebsite = pkgs.stdenv.mkDerivation rec {
     name = "husl-website";
-    inherit nodejs nodeModules;
+    inherit nodejs nodeModules huslJsModuleFull minMinCss;
     src = ./website;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       export PATH=$nodejs/bin:$PATH
       export NODE_PATH=$nodeModules:$NODE_PATH
       cp -R $src website
+      cp $huslJsModuleFull husl.js
 
       mkdir $out
-      cp -R $src/static $out/static
+      cp -R --no-preserve=mode,ownership $src/static $out/static
+      cp $huslJsModuleFull $out/static/js/husl.full.min.js
+      cp $minMinCss $out/static/css
       node website/generate-images.js $out
       node website/generate-html.js $out
       echo 'husl-colors.org\n' > $out/CNAME

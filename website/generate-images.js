@@ -1,8 +1,6 @@
 var fs = require('fs');
 var pngjs = require('pngjs');
-var colorspaces = require('colorspaces');
-var husl = require('husl');
-
+var husl = require('../husl');
 
 function hslToRgb(h, s, l){
     var r, g, b;
@@ -54,10 +52,10 @@ function makeImage(file, func, width, height) {
     return png.pack().pipe(fs.createWriteStream(file));
 }
 
-function chromaDemo(color) {
-    var C = color.as('CIELCHuv')[1] * 0.8;
-    var red = colorspaces.make_color('CIELCHuv', [50, C, 10]);
-    return red.as('sRGB');
+function chromaDemo(rgb) {
+    var lch = husl.Husl.rgbToLch(rgb);
+    var C = lch[1] * 0.8;
+    return husl.Husl.lchToRgb([50, C, 10]);
 }
 
 // Rounds number to a given number of decimal places
@@ -77,8 +75,6 @@ function rgbPrepare(tuple) {
 }
 
 function luvSquare(x, y) {
-    var c = husl._conv;
-
     var umin = -30;
     var umax = 84;
     var vmin = -70;
@@ -87,39 +83,41 @@ function luvSquare(x, y) {
     var u = umin + x * (umax - umin);
     var v = vmin + y * (vmax - vmin);
 
-    return c.xyz.rgb(c.luv.xyz([50, u, v]));
+    return husl.Husl.xyzToRgb(husl.Husl.luvToXyz([50, u, v]));
 }
 
 function demoHusl(x, y) {
-    return husl.toRGB(x * 360, y * 100, 50);
+    return husl.Husl.huslToRgb([x * 360, y * 100, 50]);
 }
 
 function demoHuslp(x, y) {
-    return husl.p.toRGB(x * 360, y * 100, 50);
+    return husl.Husl.huslpToRgb([x * 360, y * 100, 50]);
 }
 
 function demoHuslChroma(x, y) {
-    var rgb = husl.toRGB(x * 360, y * 100, 50);
-    return chromaDemo(colorspaces.make_color('sRGB', rgb));
+    var rgb = husl.Husl.huslToRgb([x * 360, y * 100, 50]);
+    return chromaDemo(rgb);
 }
 
 function demoCielchuvChroma(x, y) {
-    var color = colorspaces.make_color('CIELCHuv', [50, 200 - y * 200, x * 360]);
+    var lch = [50, 200 - y * 200, x * 360];
+    var S = husl.Husl.lchToHusl(lch)[1];
     var rgb;
-    if (!color.is_displayable()) {
+    if (S > 100) {
         rgb = [0, 0, 0];
     } else {
-        rgb = color.as('sRGB');
+        rgb = husl.Husl.lchToRgb(lch);
     }
-    return chromaDemo(colorspaces.make_color('sRGB', rgb));
+    return chromaDemo(rgb);
 }
 
 function demoCielchuv(x, y) {
-    var color = colorspaces.make_color('CIELCHuv', [50, 200 - y * 200, x * 360]);
-    if (!color.is_displayable()) {
+    var lch = [50, 200 - y * 200, x * 360];
+    var S = husl.Husl.lchToHusl(lch)[1];
+    if (S > 100) {
         return [0, 0, 0];
     } else {
-        return color.as('sRGB');
+        return husl.Husl.lchToRgb(lch);
     }
 }
 
@@ -129,14 +127,15 @@ function demoHsl(x, y) {
 
 function demoHslLightness(x, y) {
     var rgb = hslToRgb(x, 1 - y, 0.5);
-    var color = colorspaces.make_color('sRGB', rgb);
-    var l = color.as('CIELUV')[0] / 100;
+    var lch = husl.Husl.rgbToLch(rgb);
+    var l = lch[0] / 100;
     return [l, l, l];
 }
 
 function demoCielchuvLightness(x, y) {
-    var color = colorspaces.make_color('CIELCHuv', [50, 200 - y * 200, x * 360]);
-    if (!color.is_displayable()) {
+    var lch = [50, 200 - y * 200, x * 360];
+    var S = husl.Husl.lchToHusl(lch)[1];
+    if (S > 100) {
         return [0, 0, 0];
     } else {
         return [0.5, 0.5, 0.5];
@@ -149,12 +148,12 @@ function demoHuslLightness() {
 
 function demoHslChroma(x, y) {
     var rgb = hslToRgb(x, 1 - y, 0.5);
-    return chromaDemo(colorspaces.make_color('sRGB', rgb));
+    return chromaDemo(rgb);
 }
 
 function demoHuslpChroma(x, y) {
-    var rgb = husl.p.toRGB(x * 360, y * 100, 50);
-    return chromaDemo(colorspaces.make_color('sRGB', rgb));
+    var rgb = husl.Husl.huslpToRgb([x * 360, y * 100, 50]);
+    return chromaDemo(rgb);
 }
 
 

@@ -1,3 +1,4 @@
 language: nix
 script:
-  - nix-build -A huslMinJs
+  - nix-build -A huslWebsite
+  - nix-build -A huslJsModuleLegacyDist
