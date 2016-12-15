@@ -1,10 +1,11 @@
+var r = hsluv.Hsluv;
 var root = {
-    "hsluvToRgb": hsluv.Hsluv.hsluvToRgb,
-    "rgbToHsluv": hsluv.Hsluv.rgbToHsluv,
-    "hpluvToRgb": hsluv.Hsluv.hpluvToRgb,
-    "rgbToHpluv": hsluv.Hsluv.rgbToHpluv,
-    "hsluvToHex": hsluv.Hsluv.hsluvToHex,
-    "hexToHsluv": hsluv.Hsluv.hexToHsluv,
-    "hpluvToHex": hsluv.Hsluv.hpluvToHex,
-    "hexToHpluv": hsluv.Hsluv.hexToHpluv
+    "hsluvToRgb": r.hsluvToRgb,
+    "rgbToHsluv": r.rgbToHsluv,
+    "hpluvToRgb": r.hpluvToRgb,
+    "rgbToHpluv": r.rgbToHpluv,
+    "hsluvToHex": r.hsluvToHex,
+    "hexToHsluv": r.hexToHsluv,
+    "hpluvToHex": r.hpluvToHex,
+    "hexToHpluv": r.hexToHpluv
 };

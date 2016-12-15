@@ -1,32 +1,40 @@
 <div class="row" id="math">
     <div class="col-md-12 col-xs-12">
         <h2>How does HSL<sub>uv</sub> work?</h2>
-        <p>HSL<sub>uv</sub> is defined as a conversion to and from CIELUV&nbsp;LCh.
-            For both HSL<sub>uv</sub> and HPL<sub>uv</sub>, the first step
-            is to find the chroma bounds for a given lightness. These are lines, crossing which will push the color
-            out of the RGB gamut. We define a function, <em>getBounds(L)</em> which
-            returns 6 straight lines in slope-intercept format. Each of them represents one of three
-            RGB channels being pushed either below 0 or above 1.</p>
+        <p>
+            HSL<sub>uv</sub> is defined as a conversion to and from CIELUV&nbsp;LCh. For both
+            HSL<sub>uv</sub> and HPL<sub>uv</sub>, the first step is to find the chroma bounds for a given
+            lightness. These are lines, crossing which will push the color out of the RGB gamut. We define
+            a function, <em>getBounds(L)</em> which returns 6 straight lines in slope-intercept format. Each
+            of them represents one of three RGB channels being pushed either below 0 or above 1.
+        </p>
         <p><strong>HSL<sub>uv</sub>:</strong></p>
         <ol>
-            <li>Given a hue (angle), build a ray starting from <em>(0, 0)</em> and find the point where it first
-                intersects with one of the bounding lines.
+            <li>
+                Given a hue (angle), build a ray starting from <em>(0, 0)</em> and find the point where it
+                first intersects with one of the bounding lines.
             </li>
-            <li>The distance from <em>(0, 0)</em> to this point is the maximum chroma for given <em>L</em> and
-                <em>H</em>. Scale saturation to be a percentage of this distance.
+            <li>
+                The distance from <em>(0, 0)</em> to this point is the maximum chroma for given <em>L</em>
+                and <em>H</em>. Scale saturation to be a percentage of this distance.
             </li>
         </ol>
         <p><strong>HPL<sub>uv</sub>:</strong></p>
         <ol>
-            <li>Use perpendiculars to find the shortest distance from <em>(0, 0)</em> to one of the bounding lines.
+            <li>
+                Use perpendiculars to find the shortest distance from <em>(0, 0)</em> to one of the
+                bounding lines.
             </li>
-            <li>This distance is the lowest common chroma. For the given <em>L</em> and any <em>H</em> let
-                saturation span this distance.
+            <li>
+                This distance is the lowest common chroma. For the given <em>L</em> and any <em>H</em>
+                let saturation span this distance.
             </li>
         </ol>
-        <p>I used <a href="http://maxima.sourceforge.net/">Maxima</a> to build and solve these equations, and <a
-                href="https://github.com/hsluv/husl/blob/master/math/bounds.wxm">a wxMaxima file</a> is
-            bundled with the code explaining how to get the bounding lines. The rest is simple geometry you can see
-            in the reference implementation.</p>
+        <p>
+            I used <a href="http://maxima.sourceforge.net/">Maxima</a> to build and solve these equations,
+            and <a href="https://github.com/hsluv/hsluv/blob/master/math/bounds.wxm">a wxMaxima file</a> is
+            bundled with the code explaining how to get the bounding lines. The rest is simple geometry you
+            can see in the reference implementation.
+        </p>
     </div>
 </div>

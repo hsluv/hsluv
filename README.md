@@ -1,11 +1,11 @@
-[![Build Status](https://travis-ci.org/hsluv/husl.svg?branch=master)](https://travis-ci.org/hsluv/husl)
+[![Build Status](https://travis-ci.org/hsluv/hsluv.svg?branch=master)](https://travis-ci.org/hsluv/hsluv)
 [![NPM package](https://img.shields.io/npm/v/husl.svg)](https://www.npmjs.com/package/husl)
 
 # HSLuv - Human-friendly HSL
 
 [Explanation, demo, ports etc.](http://www.hsluv.org)
 
-The reference implementation is [written in Haxe](https://github.com/hsluv/husl/tree/master/haxe).
+The reference implementation is [written in Haxe](https://github.com/hsluv/hsluv/tree/master/haxe).
 
 ## Building
 

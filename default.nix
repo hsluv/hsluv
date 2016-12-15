@@ -122,7 +122,7 @@ rec {
     '';
   };
 
-  jsTest = { jsFile } : pkgs.stdenv.mkDerivation rec {
+  jsTest = jsFile : pkgs.stdenv.mkDerivation rec {
     inherit nodejs jsFile;
     name = "hsluv-js-test";
     testJs = ./javascript/test.js;
@@ -137,7 +137,7 @@ rec {
   test = pkgs.stdenv.mkDerivation rec {
     inherit jsPublic haxeTest;
     name = "super-test";
-    jsPublicTest = jsTest { jsFile = jsPublic; };
+    jsPublicTest = jsTest jsPublic;
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
       echo $jsPublicTest
@@ -150,11 +150,13 @@ rec {
     inherit jsFile;
     name = "hsluv-js-node-package";
     packageJson = ./javascript/package.json;
+    readme = ./javascript/README.md;
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
       mkdir $out
       cp $jsFile $out/hsluv.js
       cp $packageJson $out/package.json
+      cp $readme $out/README.md
     ";
   };
 
@@ -180,5 +182,7 @@ rec {
          --js_output_file=$out --compilation_level ADVANCED $jsFile
     ";
   };
+
+  jsPublicMin = compileJs jsPublic;
 
 }

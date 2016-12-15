@@ -1,9 +1,9 @@
-# HSLuv - JavaScript implementation
+# HSLuv - Human-friendly HSL
 
 ## Installation
 
 Client-side: download the latest hsluv.min.js from the 
-[releases page](https://github.com/hsluv/husl/releases).
+[releases page](https://github.com/hsluv/hsluv/releases).
  
 Once this module is loaded in the browser, you can access it via the
 global ``window.hsluv``.
@@ -41,9 +41,3 @@ of RGB, so converting arbitrary RGB to it may generate invalid HPLuv colors.
 
 HSLuv can also be used as a [Stylus](http://learnboost.github.com/stylus/) 
 plugin. See [here](https://github.com/hsluv/husl-stylus).
-
-## Testing
-
-```sh
-node test.js
-```

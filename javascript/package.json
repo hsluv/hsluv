@@ -2,14 +2,14 @@
   "name": "hsluv",
   "description": "Human-friendly HSL",
   "keywords": ["color", "color space", "CIE", "RGB", "HSL", "HSLuv", "HPLuv"],
-  "version": "0.1.0",
+  "version": "0.0.1",
   "author": "Alexei Boronine <alexei@boronine.com>",
   "license": "MIT",
   "main": "hsluv.js",
   "files": ["hsluv.js"],
   "repository": {
     "type" : "git",
-    "url" : "http://github.com/hsluv/husl.git"
+    "url" : "http://github.com/hsluv/hsluv.git"
   },
   "homepage": "http://www.hsluv.org"
 }
