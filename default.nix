@@ -103,12 +103,11 @@ rec {
   };
 
   huslJs = { targets } : pkgs.stdenv.mkDerivation rec {
-    inherit haxe haxeSrc haxeTestSrc snapshotRev4;
+    inherit haxe haxeSrc;
     name = "husl-js";
     exportsJs = ./javascript/exports.js;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      $haxe/bin/haxe -cp $haxeSrc -cp $haxeTestSrc -main RunTests -resource $snapshotRev4@snapshot-rev4 --interp
       $haxe/bin/haxe -cp $haxeSrc ${targets} -js compiled.js -D js-classic -dce full
 
       echo '(function() {' > $out
@@ -118,25 +117,36 @@ rec {
     '';
   };
 
+  huslHaxeTest = pkgs.stdenv.mkDerivation rec {
+    inherit haxe haxeSrc haxeTestSrc snapshotRev4;
+    name = "husl-haxe-test";
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      $haxe/bin/haxe -cp $haxeSrc -cp $haxeTestSrc -main RunTests -resource $snapshotRev4@snapshot-rev4 --interp
+      touch $out
+    '';
+  };
+
   huslJsTest = { jsFile } : pkgs.stdenv.mkDerivation rec {
-    inherit nodejs snapshotRev4 jsFile;
+    inherit nodejs jsFile;
     name = "husl-js-test";
     testJs = ./javascript/test.js;
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
-      echo $testJs $jsFile $snapshotRev4
+      echo $testJs $jsFile
       $nodejs/bin/node $testJs $jsFile $snapshotRev4
       touch $out
     ";
   };
 
   test = pkgs.stdenv.mkDerivation rec {
-    inherit huslJsPublic;
+    inherit huslJsPublic huslHaxeTest;
     name = "super-test";
     huslJsPublicTest = huslJsTest { jsFile = huslJsPublic; };
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
       echo $huslJsPublicTest
+      echo $huslHaxeTest
       touch $out
     ";
   };

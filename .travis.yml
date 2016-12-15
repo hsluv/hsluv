@@ -1,4 +1,4 @@
 language: nix
 script:
+  - nix-build -A test
   - nix-build -A huslWebsite
-  - nix-build -A huslJsModuleLegacyDist

@@ -28,32 +28,6 @@ class ColorConverterTest extends TestCase {
         return diff <= largest * MAXRELDIFF;
     }
 
-    /*
-    private function getTargetName():String {
-        #if js 
-        return "js";
-        #elseif php
-        return "php";
-        #elseif cpp
-        return "cpp";
-        #elseif java
-        return "java";
-        #elseif python
-        return "python";
-        #elseif neko
-        return "neko";
-        #elseif sys
-        return "sys";
-        #elseif flash
-        return "flash";
-        #elseif cs
-        return "cs";
-        #else
-        return "unknown";
-        #end
-    }
-    */
-
     private function assertTuplesClose(label:String, expected:Array<Float>, actual:Array<Float>):Void {
         var mismatch:Bool = false;
         var deltas:Array<Float> = [];
@@ -75,11 +49,36 @@ class ColorConverterTest extends TestCase {
         assertFalse(mismatch);
     }
 
+    function testConsistency() {
+        var samples = Snapshot.generateHexSamples();
+        for (hex in samples) {
+            assertEquals(hex, Husl.huslToHex(Husl.hexToHusl(hex)));
+            assertEquals(hex, Husl.huslpToHex(Husl.hexToHuslp(hex)));
+        }
+    }
+
+    function testRgbChannelBounds() {
+        // TODO: Consider clipping RGB channels instead and testing with 0 error tolerance
+        for (r in [0.0, 1.0]) {
+            for (g in [0.0, 1.0]) {
+                for (b in [0.0, 1.0]) {
+                    var sample = [r, g, b];
+                    var husl = Husl.rgbToHusl(sample);
+                    var huslp = Husl.rgbToHuslp(sample);
+                    var rgbHusl = Husl.huslToRgb(husl);
+                    var rgbHuslp = Husl.huslpToRgb(huslp);
+                    assertTuplesClose('RGB -> HUSL -> RGB', sample, rgbHusl);
+                    assertTuplesClose('RGB -> HUSLp -> RGB', sample, rgbHuslp);
+                }
+            }
+        }
+    }
+
     function testHusl() {
 
         var file = haxe.Resource.getString("snapshot-rev4");
         if(file == null) {
-            trace("Couldn't load the snapshot file " + "snapshot-rev4"  +", make sure it's present in test/resources.");
+            trace("Couldn't load the snapshot file snapshot-rev4, make sure it's present in test/resources.");
         }
         assertFalse(file == null);
         var object = haxe.Json.parse(file);
