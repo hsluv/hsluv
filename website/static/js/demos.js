@@ -43,16 +43,16 @@
 
     function hslToHex(h, s, l) {
         var rgb = hslToRgb(h, s / 100, l / 100);
-        return HUSL.Husl.rgbToHex(rgb);
+        return hsluv.Hsluv.rgbToHex(rgb);
     }
 
     function randomHue() {
         return Math.floor(Math.random() * 360);
     }
 
-    function refreshDemoHusl() {
-        forEach(demoHusl.getElementsByTagName('div'), function (e) {
-            e.style.backgroundColor = HUSL.Husl.huslToHex([randomHue(), 90, 60]);
+    function refreshDemoHsluv() {
+        forEach(demoHsluv.getElementsByTagName('div'), function (e) {
+            e.style.backgroundColor = hsluv.Hsluv.hsluvToHex([randomHue(), 90, 60]);
         });
     }
 
@@ -62,20 +62,20 @@
         });
     }
 
-    var demoHusl = document.getElementById('demo-husl');
+    var demoHsluv = document.getElementById('demo-hsluv');
     var demoHsl = document.getElementById('demo-hsl');
 
-    demoHusl.getElementsByTagName('button')[0].addEventListener('click', refreshDemoHusl);
+    demoHsluv.getElementsByTagName('button')[0].addEventListener('click', refreshDemoHsluv);
     demoHsl.getElementsByTagName('button')[0].addEventListener('click', refreshDemoHsl);
 
-    refreshDemoHusl();
+    refreshDemoHsluv();
     refreshDemoHsl();
 
-    var rainbowHusl = document.getElementById('rainbow-husl');
+    var rainbowHsluv = document.getElementById('rainbow-hsluv');
     var rainbowHsl = document.getElementById('rainbow-hsl');
 
-    forEach(rainbowHusl.getElementsByTagName('div'), function (e, i) {
-        e.style.backgroundColor = HUSL.Husl.huslToHex([i * 36, 90, 60]);
+    forEach(rainbowHsluv.getElementsByTagName('div'), function (e, i) {
+        e.style.backgroundColor = hsluv.Hsluv.hsluvToHex([i * 36, 90, 60]);
     });
 
     forEach(rainbowHsl.getElementsByTagName('div'), function (e, i) {

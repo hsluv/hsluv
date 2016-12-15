@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var darkL = getRandomInt(0, 10);
         var rangeL = 90 - darkL;
         for (var i = 0; i <= 7; i++) {
-            data.push(HUSL.Husl.huslToHex([H[0], backS, darkL + rangeL * Math.pow(i / 7, 1.5)]));
+            data.push(hsluv.Hsluv.hsluvToHex([H[0], backS, darkL + rangeL * Math.pow(i / 7, 1.5)]));
         }
         // 8 Random shades
         var minS = getRandomInt(30, 70);
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var _h = H[getRandomInt(0, 5)];
             var _s = getRandomInt(minS, maxS);
             var _l = getRandomInt(minL, maxL);
-            data.push(HUSL.Husl.huslToHex([_h, _s, _l]));
+            data.push(hsluv.Hsluv.hsluvToHex([_h, _s, _l]));
         }
         // Update colors and download links
         var params = [];
@@ -79,8 +79,8 @@ document.addEventListener('DOMContentLoaded', function () {
         vimButton.setAttribute('href', 'http://base16api.boronine.com/vim?' + params);
         textmateButton.setAttribute('href', 'http://base16api.boronine.com/textmate?' + params);
 
-        document.body.style.backgroundColor = HUSL.Husl.huslToHex([H[0], backS, 3]);
+        document.body.style.backgroundColor = hsluv.Hsluv.hsluvToHex([H[0], backS, 3]);
         //document.body.style.backgroundColor = '#000000';
-        shuffleButton.style.backgroundColor = HUSL.Husl.huslToHex([H[0], backS, 20]);
+        shuffleButton.style.backgroundColor = hsluv.Hsluv.hsluvToHex([H[0], backS, 20]);
     }
 });

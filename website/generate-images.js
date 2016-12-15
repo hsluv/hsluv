@@ -2,7 +2,7 @@ var fs = require('fs');
 var pngjs = require('pngjs');
 
 // Expecting full API
-var husl = require('husl');
+var hsluv = require('hsluv');
 
 function hslToRgb(h, s, l){
     var r, g, b;
@@ -55,9 +55,9 @@ function makeImage(file, func, width, height) {
 }
 
 function chromaDemo(rgb) {
-    var lch = husl.Husl.rgbToLch(rgb);
+    var lch = hsluv.Hsluv.rgbToLch(rgb);
     var C = lch[1] * 0.8;
-    return husl.Husl.lchToRgb([50, C, 10]);
+    return hsluv.Hsluv.lchToRgb([50, C, 10]);
 }
 
 // Rounds number to a given number of decimal places
@@ -85,41 +85,41 @@ function luvSquare(x, y) {
     var u = umin + x * (umax - umin);
     var v = vmin + y * (vmax - vmin);
 
-    return husl.Husl.xyzToRgb(husl.Husl.luvToXyz([50, u, v]));
+    return hsluv.Hsluv.xyzToRgb(hsluv.Hsluv.luvToXyz([50, u, v]));
 }
 
-function demoHusl(x, y) {
-    return husl.Husl.huslToRgb([x * 360, y * 100, 50]);
+function demoHsluv(x, y) {
+    return hsluv.Hsluv.hsluvToRgb([x * 360, y * 100, 50]);
 }
 
-function demoHuslp(x, y) {
-    return husl.Husl.huslpToRgb([x * 360, y * 100, 50]);
+function demoHpluv(x, y) {
+    return hsluv.Hsluv.hpluvToRgb([x * 360, y * 100, 50]);
 }
 
-function demoHuslChroma(x, y) {
-    var rgb = husl.Husl.huslToRgb([x * 360, y * 100, 50]);
+function demoHsluvChroma(x, y) {
+    var rgb = hsluv.Hsluv.hsluvToRgb([x * 360, y * 100, 50]);
     return chromaDemo(rgb);
 }
 
 function demoCielchuvChroma(x, y) {
     var lch = [50, 200 - y * 200, x * 360];
-    var S = husl.Husl.lchToHusl(lch)[1];
+    var S = hsluv.Hsluv.lchToHsluv(lch)[1];
     var rgb;
     if (S > 100) {
         rgb = [0, 0, 0];
     } else {
-        rgb = husl.Husl.lchToRgb(lch);
+        rgb = hsluv.Hsluv.lchToRgb(lch);
     }
     return chromaDemo(rgb);
 }
 
 function demoCielchuv(x, y) {
     var lch = [50, 200 - y * 200, x * 360];
-    var S = husl.Husl.lchToHusl(lch)[1];
+    var S = hsluv.Hsluv.lchToHsluv(lch)[1];
     if (S > 100) {
         return [0, 0, 0];
     } else {
-        return husl.Husl.lchToRgb(lch);
+        return hsluv.Hsluv.lchToRgb(lch);
     }
 }
 
@@ -129,14 +129,14 @@ function demoHsl(x, y) {
 
 function demoHslLightness(x, y) {
     var rgb = hslToRgb(x, 1 - y, 0.5);
-    var lch = husl.Husl.rgbToLch(rgb);
+    var lch = hsluv.Hsluv.rgbToLch(rgb);
     var l = lch[0] / 100;
     return [l, l, l];
 }
 
 function demoCielchuvLightness(x, y) {
     var lch = [50, 200 - y * 200, x * 360];
-    var S = husl.Husl.lchToHusl(lch)[1];
+    var S = hsluv.Hsluv.lchToHsluv(lch)[1];
     if (S > 100) {
         return [0, 0, 0];
     } else {
@@ -144,7 +144,7 @@ function demoCielchuvLightness(x, y) {
     }
 }
 
-function demoHuslLightness() {
+function demoHsluvLightness() {
     return [0.5, 0.5, 0.5];
 }
 
@@ -153,8 +153,8 @@ function demoHslChroma(x, y) {
     return chromaDemo(rgb);
 }
 
-function demoHuslpChroma(x, y) {
-    var rgb = husl.Husl.huslpToRgb([x * 360, y * 100, 50]);
+function demoHpluvChroma(x, y) {
+    var rgb = hsluv.Hsluv.hpluvToRgb([x * 360, y * 100, 50]);
     return chromaDemo(rgb);
 }
 
@@ -173,18 +173,18 @@ function makeDir(path) {
 
 function generateImages(targetDir) {
     var demos = {
-        'husl': demoHusl,
-        'huslp': demoHuslp,
-        'husl-chroma': demoHuslChroma,
+        'hsluv': demoHsluv,
+        'hpluv': demoHpluv,
+        'hsluv-chroma': demoHsluvChroma,
         'cielchuv-chroma': demoCielchuvChroma,
         'cielchuv': demoCielchuv,
         'hsl': demoHsl,
         'hsl-lightness': demoHslLightness,
         'cielchuv-lightness': demoCielchuvLightness,
-        'husl-lightness': demoHuslLightness,
-        'huslp-lightness': demoHuslLightness,
+        'hsluv-lightness': demoHsluvLightness,
+        'hpluv-lightness': demoHsluvLightness,
         'hsl-chroma': demoHslChroma,
-        'huslp-chroma': demoHuslpChroma
+        'hpluv-chroma': demoHpluvChroma
     };
     console.log("Generating demo images:");
     makeDir(targetDir + '/images');

@@ -30,29 +30,24 @@ rec {
     sha256 = "09gx8ra0m52bm0zdfbwb151b5ngvv7bq1367pizsgmh5r4sqigzk";
   };
 
-  minMinCss = pkgs.fetchurl {
-    url = "https://cdn.jsdelivr.net/min/1.5/min.min.css";
-    sha256 = "0616ikg3bzs2i74mvb0pxlxljy3syivlz6k1ppkjp44j6s5b3a2d";
-  };
-
   nodeModules = pkgs.stdenv.mkDerivation rec {
     name = "node-modules";
-    inherit nodejs pngJs mustacheJs huslJsFullNodePackage;
+    inherit nodejs pngJs mustacheJs hsluvJsFullNodePackage;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       PATH=$nodejs/bin:$PATH
       HOME=.
       npm install $pngJs
       npm install $mustacheJs
-      npm install $huslJsFullNodePackage
+      npm install $hsluvJsFullNodePackage
       mkdir $out
       cp -R node_modules/* $out
     '';
   };
 
-  huslWebsiteDemoImages = pkgs.stdenv.mkDerivation rec {
-    name = "husl-website-demo-images";
-    inherit nodejs nodeModules minMinCss;
+  hsluvWebsiteDemoImages = pkgs.stdenv.mkDerivation rec {
+    name = "hsluv-website-demo-images";
+    inherit nodejs nodeModules;
     generateImagesJs = ./website/generate-images.js;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
@@ -62,9 +57,9 @@ rec {
     '';
   };
 
-  huslWebsite = pkgs.stdenv.mkDerivation rec {
-    name = "husl-website";
-    inherit nodejs nodeModules minMinCss huslJsFull huslWebsiteDemoImages;
+  hsluvWebsite = pkgs.stdenv.mkDerivation rec {
+    name = "hsluv-website";
+    inherit nodejs nodeModules hsluvJsFull hsluvWebsiteDemoImages;
     src = ./website;
     websiteRoot = ./website;
     builder = builtins.toFile "builder.sh" ''
@@ -73,18 +68,17 @@ rec {
 
       mkdir $out
       cp -R --no-preserve=mode,ownership $websiteRoot/static $out/static
-      cp -R --no-preserve=mode,ownership $huslWebsiteDemoImages/* $out
+      cp -R --no-preserve=mode,ownership $hsluvWebsiteDemoImages/* $out
 
-      cp $huslJsFull $out/static/js/husl.full.min.js
-      cp $minMinCss $out/static/css/min.min.css
+      cp $hsluvJsFull $out/static/js/hsluv.full.js
 
       $nodejs/bin/node $websiteRoot/generate-html.js $out
-      echo 'husl-colors.org\n' > $out/CNAME
+      echo 'hsluv-colors.org\n' > $out/CNAME
     '';
   };
 
-  huslDocs = pkgs.stdenv.mkDerivation rec {
-    name = "huslDocs";
+  hsluvDocs = pkgs.stdenv.mkDerivation rec {
+    name = "hsluvDocs";
     inherit neko;
     inherit haxe;
     inherit haxeSrc;
@@ -97,18 +91,18 @@ rec {
 
       haxelib setup .
       haxelib install $doxZip
-      haxe -cp $haxeSrc/husl/Husl.hx -D doc-gen --macro 'include("husl")' --no-output -xml husl.xml
-      haxelib run dox -i husl.xml -o $out
+      haxe -cp $haxeSrc/hsluv/Hsluv.hx -D doc-gen --macro 'include("hsluv")' --no-output -xml hsluv.xml
+      haxelib run dox -i hsluv.xml -o $out
     '';
   };
 
-  huslJs = { targets } : pkgs.stdenv.mkDerivation rec {
+  hsluvJs = { targets } : pkgs.stdenv.mkDerivation rec {
     inherit haxe haxeSrc;
-    name = "husl-js";
+    name = "hsluv-js";
     exportsJs = ./javascript/exports.js;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      $haxe/bin/haxe -cp $haxeSrc ${targets} -js compiled.js -D js-classic -dce full
+      $haxe/bin/haxe -cp $haxeSrc ${targets} -js compiled.js -D js-classic
 
       echo '(function() {' > $out
       cat compiled.js >> $out
@@ -117,9 +111,9 @@ rec {
     '';
   };
 
-  huslHaxeTest = pkgs.stdenv.mkDerivation rec {
+  hsluvHaxeTest = pkgs.stdenv.mkDerivation rec {
     inherit haxe haxeSrc haxeTestSrc snapshotRev4;
-    name = "husl-haxe-test";
+    name = "hsluv-haxe-test";
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       $haxe/bin/haxe -cp $haxeSrc -cp $haxeTestSrc -main RunTests -resource $snapshotRev4@snapshot-rev4 --interp
@@ -127,9 +121,9 @@ rec {
     '';
   };
 
-  huslJsTest = { jsFile } : pkgs.stdenv.mkDerivation rec {
+  hsluvJsTest = { jsFile } : pkgs.stdenv.mkDerivation rec {
     inherit nodejs jsFile;
-    name = "husl-js-test";
+    name = "hsluv-js-test";
     testJs = ./javascript/test.js;
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
@@ -140,39 +134,39 @@ rec {
   };
 
   test = pkgs.stdenv.mkDerivation rec {
-    inherit huslJsPublic huslHaxeTest;
+    inherit hsluvJsPublic hsluvHaxeTest;
     name = "super-test";
-    huslJsPublicTest = huslJsTest { jsFile = huslJsPublic; };
+    hsluvJsPublicTest = hsluvJsTest { jsFile = hsluvJsPublic; };
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
-      echo $huslJsPublicTest
-      echo $huslHaxeTest
+      echo $hsluvJsPublicTest
+      echo $hsluvHaxeTest
       touch $out
     ";
   };
 
-  huslJsNodePackage = { jsFile } : pkgs.stdenv.mkDerivation rec {
+  hsluvJsNodePackage = { jsFile } : pkgs.stdenv.mkDerivation rec {
     inherit jsFile;
-    name = "husl-js-node-package";
+    name = "hsluv-js-node-package";
     packageJson = ./javascript/package.json;
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
       mkdir $out
-      cp $jsFile $out/husl.js
+      cp $jsFile $out/hsluv.js
       cp $packageJson $out/package.json
     ";
   };
 
-  huslJsPublic = huslJs { targets = "husl.Husl"; };
-  huslJsFull = huslJs { targets = "husl.Husl husl.Geometry husl.ColorPicker"; };
+  hsluvJsPublic = hsluvJs { targets = "hsluv.Hsluv"; };
+  hsluvJsFull = hsluvJs { targets = "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker"; };
 
   # Final artifacts
-  huslJsPublicNodePackage = huslJsNodePackage { jsFile = huslJsPublic; };
-  huslJsFullNodePackage = huslJsNodePackage { jsFile = huslJsFull; };
+  hsluvJsPublicNodePackage = hsluvJsNodePackage { jsFile = hsluvJsPublic; };
+  hsluvJsFullNodePackage = hsluvJsNodePackage { jsFile = hsluvJsFull; };
 
   compileJs = jsFile : pkgs.stdenv.mkDerivation rec {
     inherit jre closureCompiler jsFile;
-    name = "husl-js";
+    name = "hsluv-js";
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
       $jre/bin/java -jar $closureCompiler/share/java/compiler.jar \\

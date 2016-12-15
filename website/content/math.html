@@ -1,13 +1,13 @@
 <div class="row" id="math">
     <div class="col-md-12 col-xs-12">
-        <h2>How does <abbr>HUSL</abbr> work?</h2>
-        <p><abbr>HUSL</abbr> is defined as a conversion to and from <abbr>CIE&nbsp;LCh<sub>uv</sub></abbr>.
-            For both <abbr>HUSL</abbr> and <abbr>HUSLp</abbr>, the first step
+        <h2>How does HSL<sub>uv</sub> work?</h2>
+        <p>HSL<sub>uv</sub> is defined as a conversion to and from CIELUV&nbsp;LCh.
+            For both HSL<sub>uv</sub> and HPL<sub>uv</sub>, the first step
             is to find the chroma bounds for a given lightness. These are lines, crossing which will push the color
-            out of the <abbr>RGB</abbr> gamut. We define a function, <em>getBounds(L)</em> which
+            out of the RGB gamut. We define a function, <em>getBounds(L)</em> which
             returns 6 straight lines in slope-intercept format. Each of them represents one of three
-            <abbr>RGB</abbr> channels being pushed either below 0 or above 1.</p>
-        <p><strong>HUSL:</strong></p>
+            RGB channels being pushed either below 0 or above 1.</p>
+        <p><strong>HSL<sub>uv</sub>:</strong></p>
         <ol>
             <li>Given a hue (angle), build a ray starting from <em>(0, 0)</em> and find the point where it first
                 intersects with one of the bounding lines.
@@ -16,7 +16,7 @@
                 <em>H</em>. Scale saturation to be a percentage of this distance.
             </li>
         </ol>
-        <p><strong>HUSLp:</strong></p>
+        <p><strong>HPL<sub>uv</sub>:</strong></p>
         <ol>
             <li>Use perpendiculars to find the shortest distance from <em>(0, 0)</em> to one of the bounding lines.
             </li>

@@ -1,28 +1,28 @@
 # Reference implementation
 
 ## Usage
-Once imported, use the library by importing Husl. Here's an example:
+Once imported, use the library by importing Hsluv. Here's an example:
 
 ```haxe
 package;
-import husl.Husl;
+import hsluv.Hsluv;
 
 public class Main {
     public static function main() {
-        trace(Husl.rgbToHex([1,1,1])); // Will print "#FFFFFF"
+        trace(Hsluv.rgbToHex([1,1,1])); // Will print "#FFFFFF"
     }
 }
 ```
 
 ### Color values ranges
 - RGB values are ranging in [0;1]
-- Husl and Huslp values have different ranging for their components
+- HSLuv and HPLuv values have different ranging for their components
     - H : [0;360]
     - S and L : [0;100]
 - LUV has different ranging for their components
     - L* : [0;100]
     - u* and v* : [-100;100]
-- LCH has different ranging for their components
+- LCh has different ranging for their components
     - L* : [0;100]
     - C* : [0; ?] Upper bound varies depending on L* and H*
     - H* : [0; 360]
@@ -36,7 +36,7 @@ The passing/returning values, when not `String` are `Array<Float>` containing ea
 - XYZ : [X, Y, Z]
 - LCH : [L, C, H]
 - LUV : [L, u, v]
-- Husl/HuslP : [H, S, L]
+- HSLuv/HPLuv : [H, S, L]
 
 #### Function listing
 - `xyzToRgb(tuple:Array<Float>)`
@@ -45,20 +45,20 @@ The passing/returning values, when not `String` are `Array<Float>` containing ea
 - `luvToXyz(tuple:Array<Float>)`
 - `luvToLch(tuple:Array<Float>)`
 - `lchToLuv(tuple:Array<Float>)`
-- `huslToLch(tuple:Array<Float>)`
-- `lchToHusl(tuple:Array<Float>)`
-- `huslpToLch(tuple:Array<Float>)`
-- `lchToHuslp(tuple:Array<Float>)`
+- `hsluvToLch(tuple:Array<Float>)`
+- `lchToHsluv(tuple:Array<Float>)`
+- `hpluvToLch(tuple:Array<Float>)`
+- `lchToHpluv(tuple:Array<Float>)`
 - `lchToRgb(tuple:Array<Float>)`
 - `rgbToLch(tuple:Array<Float>)`
-- `huslToRgb(tuple:Array<Float>)`
-- `rgbToHusl(tuple:Array<Float>)`
-- `huslpToRgb(tuple:Array<Float>)`
-- `rgbToHuslp(tuple:Array<Float>)`
-- `huslToHex(tuple:Array<Float>)`
-- `huslpToHex(tuple:Array<Float>)`
-- `hexToHusl(s:String)`
-- `hexToHuslp(s:String)`
+- `hsluvToRgb(tuple:Array<Float>)`
+- `rgbToHsluv(tuple:Array<Float>)`
+- `hpluvToRgb(tuple:Array<Float>)`
+- `rgbToHpluv(tuple:Array<Float>)`
+- `hsluvToHex(tuple:Array<Float>)`
+- `hpluvToHex(tuple:Array<Float>)`
+- `hexToHsluv(s:String)`
+- `hexToHpluv(s:String)`
 - `rgbToHex(tuple:Array<Float>)`
 - `hexToRgb(hex:String)`
 
@@ -106,8 +106,8 @@ The format of the file is as follows:
     xyz: [ 0, 0, 0 ],
     luv: [ 0, 0, 0 ],
     lch: [ 0, 0, 0 ],
-    husl: [ 0, 0, 0 ],
-    huslp: [ 0, 0, 0 ]
+    hsluv: [ 0, 0, 0 ],
+    hpluv: [ 0, 0, 0 ]
   },
   ...
 }
@@ -115,7 +115,7 @@ The format of the file is as follows:
 
 # Notes
 
-Husl-haxe seems to work on some targets. Here are the tests that couldn't pass on my computer :
+This code work on some targets, but here are some tests that couldn't pass on my computer:
 - PHP : PHP7 parseInt function doesn't convert hexadecimal values anymore.
 
 Tests to do:

@@ -1,7 +1,7 @@
 package;
 
 import haxe.unit.TestCase;
-import husl.Husl;
+import hsluv.Hsluv;
 
 
 class ColorConverterTest extends TestCase {
@@ -52,8 +52,8 @@ class ColorConverterTest extends TestCase {
     function testConsistency() {
         var samples = Snapshot.generateHexSamples();
         for (hex in samples) {
-            assertEquals(hex, Husl.huslToHex(Husl.hexToHusl(hex)));
-            assertEquals(hex, Husl.huslpToHex(Husl.hexToHuslp(hex)));
+            assertEquals(hex, Hsluv.hsluvToHex(Hsluv.hexToHsluv(hex)));
+            assertEquals(hex, Hsluv.hpluvToHex(Hsluv.hexToHpluv(hex)));
         }
     }
 
@@ -63,18 +63,18 @@ class ColorConverterTest extends TestCase {
             for (g in [0.0, 1.0]) {
                 for (b in [0.0, 1.0]) {
                     var sample = [r, g, b];
-                    var husl = Husl.rgbToHusl(sample);
-                    var huslp = Husl.rgbToHuslp(sample);
-                    var rgbHusl = Husl.huslToRgb(husl);
-                    var rgbHuslp = Husl.huslpToRgb(huslp);
-                    assertTuplesClose('RGB -> HUSL -> RGB', sample, rgbHusl);
-                    assertTuplesClose('RGB -> HUSLp -> RGB', sample, rgbHuslp);
+                    var hsluv = Hsluv.rgbToHsluv(sample);
+                    var hpluv = Hsluv.rgbToHpluv(sample);
+                    var rgbHsluv = Hsluv.hsluvToRgb(hsluv);
+                    var rgbHpluv = Hsluv.hpluvToRgb(hpluv);
+                    assertTuplesClose('RGB -> HSLuv -> RGB', sample, rgbHsluv);
+                    assertTuplesClose('RGB -> HPLuv -> RGB', sample, rgbHpluv);
                 }
             }
         }
     }
 
-    function testHusl() {
+    function testHsluv() {
 
         var file = haxe.Resource.getString("snapshot-rev4");
         if(file == null) {
@@ -91,44 +91,44 @@ class ColorConverterTest extends TestCase {
 
             // forward functions
 
-            var rgbFromHex = Husl.hexToRgb(fieldName);
-            var xyzFromRgb = Husl.rgbToXyz(field.rgb);
-            var luvFromXyz = Husl.xyzToLuv(field.xyz);
-            var lchFromLuv = Husl.luvToLch(field.luv);
-            var huslFromLch = Husl.lchToHusl(field.lch);
-            var huslpFromLch = Husl.lchToHuslp(field.lch);
-            var huslFromHex = Husl.hexToHusl(fieldName);
-            var huslpFromHex = Husl.hexToHuslp(fieldName);
+            var rgbFromHex = Hsluv.hexToRgb(fieldName);
+            var xyzFromRgb = Hsluv.rgbToXyz(field.rgb);
+            var luvFromXyz = Hsluv.xyzToLuv(field.xyz);
+            var lchFromLuv = Hsluv.luvToLch(field.luv);
+            var hsluvFromLch = Hsluv.lchToHsluv(field.lch);
+            var hpluvFromLch = Hsluv.lchToHpluv(field.lch);
+            var hsluvFromHex = Hsluv.hexToHsluv(fieldName);
+            var hpluvFromHex = Hsluv.hexToHpluv(fieldName);
 
             assertTuplesClose(fieldName + "→" + "hexToRgb", field.rgb, rgbFromHex);
             assertTuplesClose(fieldName + "→" + "rgbToXyz", field.xyz, xyzFromRgb);
             assertTuplesClose(fieldName + "→" + "xyzToLuv", field.luv, luvFromXyz);
             assertTuplesClose(fieldName + "→" + "luvToLch", field.lch, lchFromLuv);
-            assertTuplesClose(fieldName + "→" + "lchToHusl", field.husl, huslFromLch);
-            assertTuplesClose(fieldName + "→" + "lchToHuslp", field.huslp, huslpFromLch);
-            assertTuplesClose(fieldName + "→" + "hexToHusl", field.husl, huslFromHex);
-            assertTuplesClose(fieldName + "→" + "hexToHuslp", field.huslp, huslpFromHex);
+            assertTuplesClose(fieldName + "→" + "lchToHsluv", field.hsluv, hsluvFromLch);
+            assertTuplesClose(fieldName + "→" + "lchToHpluv", field.hpluv, hpluvFromLch);
+            assertTuplesClose(fieldName + "→" + "hexToHsluv", field.hsluv, hsluvFromHex);
+            assertTuplesClose(fieldName + "→" + "hexToHpluv", field.hpluv, hpluvFromHex);
 
             // backward functions
 
-            var lchFromHusl = Husl.huslToLch(field.husl);
-            var lchFromHuslp = Husl.huslpToLch(field.huslp);
-            var luvFromLch = Husl.lchToLuv(field.lch);
-            var xyzFromLuv = Husl.luvToXyz(field.luv);
-            var rgbFromXyz = Husl.xyzToRgb(field.xyz);
-            var hexFromRgb:String = Husl.rgbToHex(field.rgb);
-            var hexFromHusl:String = Husl.huslToHex(field.husl);
-            var hexFromHuslp:String = Husl.huslpToHex(field.huslp);
+            var lchFromHsluv = Hsluv.hsluvToLch(field.hsluv);
+            var lchFromHpluv = Hsluv.hpluvToLch(field.hpluv);
+            var luvFromLch = Hsluv.lchToLuv(field.lch);
+            var xyzFromLuv = Hsluv.luvToXyz(field.luv);
+            var rgbFromXyz = Hsluv.xyzToRgb(field.xyz);
+            var hexFromRgb:String = Hsluv.rgbToHex(field.rgb);
+            var hexFromHsluv:String = Hsluv.hsluvToHex(field.hsluv);
+            var hexFromHpluv:String = Hsluv.hpluvToHex(field.hpluv);
 
-            assertTuplesClose("huslToLch", field.lch, lchFromHusl);
-            assertTuplesClose("huslpToLch", field.lch, lchFromHuslp);
+            assertTuplesClose("hsluvToLch", field.lch, lchFromHsluv);
+            assertTuplesClose("hpluvToLch", field.lch, lchFromHpluv);
             assertTuplesClose("lchToLuv", field.luv, luvFromLch);
             assertTuplesClose("luvToXyz", field.xyz, xyzFromLuv);
             assertTuplesClose("xyzToRgb", field.rgb, rgbFromXyz);
             // toLowerCase because some targets such as lua have hard time parsing hex code with various cases
             assertEquals(fieldName, hexFromRgb.toLowerCase());
-            assertEquals(fieldName, hexFromHusl.toLowerCase());
-            assertEquals(fieldName, hexFromHuslp.toLowerCase());
+            assertEquals(fieldName, hexFromHsluv.toLowerCase());
+            assertEquals(fieldName, hexFromHpluv.toLowerCase());
         }
     }
 }

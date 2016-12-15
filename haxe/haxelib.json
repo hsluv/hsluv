@@ -1,5 +1,5 @@
 {
-  "name": "husl",
+  "name": "hsluv",
   "url" : "https://github.com/husl-colors/husl",
   "license": "MIT",
   "tags": ["cross", "color"],

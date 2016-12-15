@@ -1,13 +1,13 @@
 package;
 
 import Sys;
-import husl.Husl;
+import hsluv.Hsluv;
 import haxe.Log;
 import haxe.Json;
 import haxe.ds.StringMap;
 
 
-class Snapshot extends Husl {
+class Snapshot extends Hsluv {
 
     static public function generateHexSamples () {
         var digits:String = "0123456789abcdef";
@@ -34,18 +34,18 @@ class Snapshot extends Husl {
 
         for (hex in samples) {
             
-            var rgb = Husl.hexToRgb(hex);
-            var xyz = Husl.rgbToXyz(rgb);
-            var luv = Husl.xyzToLuv(xyz);
-            var lch = Husl.luvToLch(luv);
+            var rgb = Hsluv.hexToRgb(hex);
+            var xyz = Hsluv.rgbToXyz(rgb);
+            var luv = Hsluv.xyzToLuv(xyz);
+            var lch = Hsluv.luvToLch(luv);
 
             var sample:StringMap<Array<Float>> = new StringMap();
             sample.set("rgb", rgb);
             sample.set("xyz", xyz);
             sample.set("luv", luv);
             sample.set("lch", lch);
-            sample.set("husl", Husl.lchToHusl(lch));
-            sample.set("huslp", Husl.lchToHuslp(lch));
+            sample.set("hsluv", Hsluv.lchToHsluv(lch));
+            sample.set("hpluv", Hsluv.lchToHpluv(lch));
 
             ret.set(hex, sample);
         }

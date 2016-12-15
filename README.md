@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/husl-colors/husl.svg?branch=master)](https://travis-ci.org/husl-colors/husl)
 [![NPM package](https://img.shields.io/npm/v/husl.svg)](https://www.npmjs.com/package/husl)
 
-# HUSL - Human-friendly HSL
+# HSLuv - Human-friendly HSL
 
 [Explanation, demo, ports etc.](http://www.husl-colors.org)
 
@@ -20,19 +20,25 @@ nix-build -A test
 To build JavaScript version:
 
 ```sh
-nix-build -A huslJsPublic
+nix-build -A hsluvJsPublic
 ```
 
 To build Haxe documentation:
 
 ```sh
-nix-build -A huslDocs
+nix-build -A hsluvDocs
 ```
 
 To build website:
 
 ```sh
-nix-build -A huslWebsite
+nix-build -A hsluvWebsite
+```
+
+To build website and start localhost server:
+
+```sh
+(nix-build -A hsluvWebsite && cd result && python3 -m http.server)
 ```
 
 To deploy website (after building):

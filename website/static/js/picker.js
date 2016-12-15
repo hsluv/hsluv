@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function setL(value) {
         L = value;
         contrasting = L > 70 ? '#1b1b1b' : '#ffffff';
-        pickerGeometry = HUSL.ColorPicker.getPickerGeometry(L);
+        pickerGeometry = hsluv.ColorPicker.getPickerGeometry(L);
         scale = outerCircleRadiusPixel / pickerGeometry.outerCircleRadius;
 
         elementCenter.setAttribute('fill', contrasting);
@@ -224,23 +224,23 @@ document.addEventListener('DOMContentLoaded', function () {
             x: point.x * size,
             y: point.y * size
         });
-        pointer = HUSL.ColorPicker.closestPoint(pickerGeometry, pointer);
+        pointer = hsluv.ColorPicker.closestPoint(pickerGeometry, pointer);
 
         U = pointer.x;
         V = pointer.y;
 
-        var lch = HUSL.Husl.luvToLch([L, U, V]);
-        var husl = HUSL.Husl.lchToHusl(lch);
+        var lch = hsluv.Hsluv.luvToLch([L, U, V]);
+        var hsl = hsluv.Hsluv.lchToHsluv(lch);
 
-        H = husl[0];
-        S = husl[1];
+        H = hsl[0];
+        S = hsl[1];
         redrawAfterUpdatingVariables(["H", "S"], "adjustPosition");
     }
 
     function pickerDragZone(point) {
         // Don't allow dragging to start when clicked outside outer circle
         var maximumDistance = pickerGeometry.outerCircleRadius;
-        var actualDistance = HUSL.Geometry.distanceFromOrigin(fromPixelCoordinate({
+        var actualDistance = hsluv.Geometry.distanceFromOrigin(fromPixelCoordinate({
             x: point.x * size,
             y: point.y * size
         }));
@@ -282,9 +282,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     x: px + squareSize / 2,
                     y: py + squareSize / 2
                 });
-                var closest = HUSL.ColorPicker.closestPoint(pickerGeometry, p);
+                var closest = hsluv.ColorPicker.closestPoint(pickerGeometry, p);
                 var luv = [L, closest.x, closest.y];
-                ctx.fillStyle = HUSL.Husl.rgbToHex(HUSL.Husl.xyzToRgb(HUSL.Husl.luvToXyz(luv)));
+                ctx.fillStyle = hsluv.Hsluv.rgbToHex(hsluv.Hsluv.xyzToRgb(hsluv.Hsluv.luvToXyz(luv)));
                 ctx.fillRect(px, py, squareSize, squareSize);
             }
         }
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function redrawForeground() {
         if (L !== 0 && L !== 100) {
 
-            var maxChroma = HUSL.Husl.maxChromaForLH(L, H);
+            var maxChroma = hsluv.Hsluv.maxChromaForLH(L, H);
             var chroma = maxChroma * S / 100;
             var hrad = H / 360 * 2 * Math.PI;
             var point = toPixelCoordinate({
@@ -320,13 +320,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         var hueColors = equidistantSamples(20).map(function (s) {
-            return HUSL.Husl.huslToHex([s * 360, S, L]);
+            return hsluv.Hsluv.hsluvToHex([s * 360, S, L]);
         });
         var saturationColors = equidistantSamples(10).map(function (s) {
-            return HUSL.Husl.huslToHex([H, s * 100, L]);
+            return hsluv.Hsluv.hsluvToHex([H, s * 100, L]);
         });
         var lightnessColors = equidistantSamples(10).map(function (s) {
-            return HUSL.Husl.huslToHex([H, S, s * 100]);
+            return hsluv.Hsluv.hsluvToHex([H, S, s * 100]);
         });
 
         sliderH.style.background = 'linear-gradient(to right,' + hueColors.join(',') + ')';
@@ -360,11 +360,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function redrawSwatch() {
-        swatch.style.backgroundColor = HUSL.Husl.huslToHex([H, S, L]);
+        swatch.style.backgroundColor = hsluv.Hsluv.hsluvToHex([H, S, L]);
     }
 
     function updateHexText() {
-        var hex = HUSL.Husl.huslToHex([H, S, L]);
+        var hex = hsluv.Hsluv.hsluvToHex([H, S, L]);
         inputHex.setAttribute('value', hex);
     }
 
@@ -448,25 +448,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function adjustPosition(p) {
         var pointer = fromPixelCoordinate(p);
-        pointer = HUSL.ColorPicker.closestPoint(pickerGeometry, pointer);
+        pointer = hsluv.ColorPicker.closestPoint(pickerGeometry, pointer);
 
         U = pointer.x;
         V = pointer.y;
 
-        var lch = HUSL.Husl.luvToLch([L, U, V]);
-        var husl = HUSL.Husl.lchToHusl(lch);
+        var lch = hsluv.Hsluv.luvToLch([L, U, V]);
+        var hsl = hsluv.Hsluv.lchToHsluv(lch);
 
-        H = husl[0];
-        S = husl[1];
+        H = hsl[0];
+        S = hsl[1];
         redrawAfterUpdatingVariables(["H", "S"], "adjustPosition");
     }
 
     inputHex.addEventListener('input', function () {
         if (stringIsValidHex(this.value)) {
-            var husl = HUSL.Husl.hexToHusl(this.value);
-            H = husl[0];
-            S = husl[1];
-            L = husl[2];
+            var hsl = hsluv.Hsluv.hexToHsluv(this.value);
+            H = hsl[0];
+            S = hsl[1];
+            L = hsl[2];
             redrawAfterUpdatingVariables(["H", "S", "L"], "hexText");
         }
     });

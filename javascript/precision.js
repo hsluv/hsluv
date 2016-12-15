@@ -1,10 +1,10 @@
 'use strict';
-var husl = require('husl');
+var hsluv = require('hsluv');
 var digits = '0123456789abcdef';
 
 
 var testPrecision = function testPrecision(numDigits) {
-    // Test how many digits of HUSL decimal precision is enough to unambiguously
+    // Test how many digits of HPLuv decimal precision is enough to unambiguously
     // specify a hex-encoded RGB color. Spoiler alert: it's 4.
     // Adapted from: https://gist.github.com/roryokane/f15bb23abcf9938c0707
     for (var i = 0; i < digits.length; i++) {
@@ -24,7 +24,7 @@ var testPrecision = function testPrecision(numDigits) {
                         for (var k1 = 0; k1 < digits.length; k1++) {
                             var b2 = digits[k1];
                             var hex = '#' + r1 + r2 + g1 + g2 + b1 + b2;
-                            var hsl = husl.fromHex(hex);
+                            var hsl = hsluv.fromHex(hex);
                             var key = [hsl.map(function (ch) {
                                 return ch.toFixed(numDigits);
                             })].join('|');

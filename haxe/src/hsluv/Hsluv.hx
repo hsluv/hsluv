@@ -1,5 +1,5 @@
-package husl;
-import husl.Geometry;
+package hsluv;
+import hsluv.Geometry;
 
 /**
 Human-friendly HSL conversion utility class.
@@ -22,7 +22,7 @@ Source: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 =======
 */
 
-class Husl {
+class Hsluv {
 
     private static var m = 
         [
@@ -300,11 +300,11 @@ class Husl {
     }
 
     /**
-    * Husl values are ranging in [0;360], [0;100] and [0;100].
-    * @param tuple An array containing the color's H,S,L values in Husl color space.
+    * HSLuv values are ranging in [0;360], [0;100] and [0;100].
+    * @param tuple An array containing the color's H,S,L values in HSLuv color space.
     * @return An array containing the resulting color's LCH coordinates.
     **/
-    public static function huslToLch(tuple:Array<Float>):Array<Float> {
+    public static function hsluvToLch(tuple:Array<Float>):Array<Float> {
         var H:Float = tuple[0];
         var S:Float = tuple[1];
         var L:Float = tuple[2];
@@ -325,11 +325,11 @@ class Husl {
     }
 
     /**
-    * Husl values are ranging in [0;360], [0;100] and [0;100].
+    * HSLuv values are ranging in [0;360], [0;100] and [0;100].
     * @param tuple An array containing the color's LCH values.
-    * @return An array containing the resulting color's HSL coordinates in Husl color space.
+    * @return An array containing the resulting color's HSL coordinates in HSLuv color space.
     **/
-    public static function lchToHusl(tuple:Array<Float>):Array<Float> {
+    public static function lchToHsluv(tuple:Array<Float>):Array<Float> {
         var L:Float = tuple[0];
         var C:Float = tuple[1];
         var H:Float = tuple[2];
@@ -350,11 +350,11 @@ class Husl {
     }
 
     /**
-    * Husl values are in [0;360], [0;100] and [0;100].
-    * @param tuple An array containing the color's H,S,L values in Huslp (pastel variant) color space.
+    * HSLuv values are in [0;360], [0;100] and [0;100].
+    * @param tuple An array containing the color's H,S,L values in HPLuv (pastel variant) color space.
     * @return An array containing the resulting color's LCH coordinates.
     **/
-    public static function huslpToLch(tuple:Array<Float>):Array<Float> {
+    public static function hpluvToLch(tuple:Array<Float>):Array<Float> {
         var H:Float = tuple[0];
         var S:Float = tuple[1];
         var L:Float = tuple[2];
@@ -374,11 +374,11 @@ class Husl {
     }
 
     /**
-    * Husl values are ranging in [0;360], [0;100] and [0;100].
+    * HSLuv values are ranging in [0;360], [0;100] and [0;100].
     * @param tuple An array containing the color's LCH values.
-    * @return An array containing the resulting color's HSL coordinates in Huslp (pastel variant) color space.
+    * @return An array containing the resulting color's HSL coordinates in HPLuv (pastel variant) color space.
     **/
-    public static function lchToHuslp(tuple:Array<Float>):Array<Float> {
+    public static function lchToHpluv(tuple:Array<Float>):Array<Float> {
         var L:Float = tuple[0];
         var C:Float = tuple[1];
         var H:Float = tuple[2];
@@ -447,83 +447,83 @@ class Husl {
         return luvToLch(xyzToLuv(rgbToXyz(tuple)));
     }
 
-    // RGB <--> HUSL(p)
+    // RGB <--> HPLuv
 
     /**
-    * Husl values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
-    * @param tuple An array containing the color's HSL values in Husl color space.
+    * HSLuv values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
+    * @param tuple An array containing the color's HSL values in HSLuv color space.
     * @return An array containing the resulting color's RGB coordinates.
     **/
     @:keep
-    public static function huslToRgb(tuple:Array<Float>):Array<Float> {
-        return lchToRgb(huslToLch(tuple));
+    public static function hsluvToRgb(tuple:Array<Float>):Array<Float> {
+        return lchToRgb(hsluvToLch(tuple));
     }
 
     /**
-    * Husl values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
+    * HSLuv values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
     * @param tuple An array containing the color's RGB coordinates.
-    * @return An array containing the resulting color's HSL coordinates in Husl color space.
+    * @return An array containing the resulting color's HSL coordinates in HSLuv color space.
     **/
     @:keep
-    public static function rgbToHusl(tuple:Array<Float>):Array<Float> {
-        return lchToHusl(rgbToLch(tuple));
+    public static function rgbToHsluv(tuple:Array<Float>):Array<Float> {
+        return lchToHsluv(rgbToLch(tuple));
     }
 
     /**
-    * Husl values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
-    * @param tuple An array containing the color's HSL values in Huslp (pastel variant) color space.
+    * HSLuv values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
+    * @param tuple An array containing the color's HSL values in HPLuv (pastel variant) color space.
     * @return An array containing the resulting color's RGB coordinates.
     **/
     @:keep
-    public static function huslpToRgb(tuple:Array<Float>):Array<Float> {
-        return lchToRgb(huslpToLch(tuple));
+    public static function hpluvToRgb(tuple:Array<Float>):Array<Float> {
+        return lchToRgb(hpluvToLch(tuple));
     }
 
     /**
-    * Husl values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
+    * HSLuv values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
     * @param tuple An array containing the color's RGB coordinates.
-    * @return An array containing the resulting color's HSL coordinates in Huslp (pastel variant) color space.
+    * @return An array containing the resulting color's HSL coordinates in HPLuv (pastel variant) color space.
     **/
     @:keep
-    public static function rgbToHuslp(tuple:Array<Float>):Array<Float> {
-        return lchToHuslp(rgbToLch(tuple));
+    public static function rgbToHpluv(tuple:Array<Float>):Array<Float> {
+        return lchToHpluv(rgbToLch(tuple));
     }
 
     // Hex
 
     /**
-    * Husl values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
-    * @param tuple An array containing the color's HSL values in Husl color space.
+    * HSLuv values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
+    * @param tuple An array containing the color's HSL values in HSLuv color space.
     * @return A string containing a `#RRGGBB` representation of given color.
     **/
     @:keep
-    public static function huslToHex(tuple:Array<Float>):String {
-        return rgbToHex(huslToRgb(tuple));
+    public static function hsluvToHex(tuple:Array<Float>):String {
+        return rgbToHex(hsluvToRgb(tuple));
     }
 
     @:keep
-    public static function huslpToHex(tuple:Array<Float>):String {
-        return rgbToHex(huslpToRgb(tuple));
+    public static function hpluvToHex(tuple:Array<Float>):String {
+        return rgbToHex(hpluvToRgb(tuple));
     }
 
     /**
-    * Husl values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
-    * @param tuple An array containing the color's HSL values in Huslp (pastel variant) color space.
-    * @return An array containing the color's HSL values in Husl color space.
+    * HSLuv values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
+    * @param tuple An array containing the color's HSL values in HPLuv (pastel variant) color space.
+    * @return An array containing the color's HSL values in HSLuv color space.
     **/
     @:keep
-    public static function hexToHusl(s:String):Array<Float> {
-        return rgbToHusl(hexToRgb(s));
+    public static function hexToHsluv(s:String):Array<Float> {
+        return rgbToHsluv(hexToRgb(s));
     }
 
     /**
-    * Husl values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
+    * HSLuv values are ranging in [0;360], [0;100] and [0;100] and RGB in [0;1].
     * @param hex A `#RRGGBB` representation of a color.
-    * @return An array containing the color's HSL values in Huslp (pastel variant) color space.
+    * @return An array containing the color's HSL values in HPLuv (pastel variant) color space.
     **/
     @:keep
-    public static function hexToHuslp(s:String):Array<Float> {
-        return rgbToHuslp(hexToRgb(s));
+    public static function hexToHpluv(s:String):Array<Float> {
+        return rgbToHpluv(hexToRgb(s));
     }
 
 }

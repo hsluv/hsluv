@@ -16,11 +16,11 @@ function generateHtml(targetDir) {
             page: 'index',
             index: true,
             bodyClass: 'dark',
-            title: 'HUSL'
+            title: 'HSLuv'
         },
         {
             page: 'comparison',
-            title: 'Comparing HUSL to HSL'
+            title: 'Comparing HSLuv to HSL'
         },
         {
             page: 'implementations',

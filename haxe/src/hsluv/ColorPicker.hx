@@ -1,7 +1,8 @@
-package husl;
-import husl.Husl;
+package hsluv;
+import hsluv.Hsluv;
+import hsluv.Geometry;
+
 import haxe.Log;
-import husl.Geometry;
 
 
 typedef PickerGeometry = {
@@ -21,7 +22,7 @@ class ColorPicker {
 
     public static function getPickerGeometry(lightness:Float):PickerGeometry {
         // Array of lines
-        var lines = Husl.getBounds(lightness);
+        var lines = Hsluv.getBounds(lightness);
         var numLines = lines.length;
         var outerCircleRadius = 0.0;
 

@@ -1,4 +1,4 @@
-package husl;
+package hsluv;
 
 typedef Point = {
     var x : Float;
