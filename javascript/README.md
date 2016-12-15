@@ -12,7 +12,7 @@ Server-side: ``npm install hsluv``.
 
 ## Usage
 
-**hsluvToHex([hue, saturation, lightness]**
+**hsluvToHex([hue, saturation, lightness])**
 
 *hue* is a number between 0 and 360, *saturation* and *lightness* are 
 numbers between 0 and 100. This function returns the resulting color as 

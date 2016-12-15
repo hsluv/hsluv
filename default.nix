@@ -32,20 +32,20 @@ rec {
 
   nodeModules = pkgs.stdenv.mkDerivation rec {
     name = "node-modules";
-    inherit nodejs pngJs mustacheJs hsluvJsFullNodePackage;
+    inherit nodejs pngJs mustacheJs jsFullNodePackage;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       PATH=$nodejs/bin:$PATH
       HOME=.
       npm install $pngJs
       npm install $mustacheJs
-      npm install $hsluvJsFullNodePackage
+      npm install $jsFullNodePackage
       mkdir $out
       cp -R node_modules/* $out
     '';
   };
 
-  hsluvWebsiteDemoImages = pkgs.stdenv.mkDerivation rec {
+  websiteDemoImages = pkgs.stdenv.mkDerivation rec {
     name = "hsluv-website-demo-images";
     inherit nodejs nodeModules;
     generateImagesJs = ./website/generate-images.js;
@@ -57,9 +57,9 @@ rec {
     '';
   };
 
-  hsluvWebsite = pkgs.stdenv.mkDerivation rec {
+  website = pkgs.stdenv.mkDerivation rec {
     name = "hsluv-website";
-    inherit nodejs nodeModules hsluvJsFull hsluvWebsiteDemoImages;
+    inherit nodejs nodeModules jsFull websiteDemoImages;
     src = ./website;
     websiteRoot = ./website;
     builder = builtins.toFile "builder.sh" ''
@@ -68,17 +68,17 @@ rec {
 
       mkdir $out
       cp -R --no-preserve=mode,ownership $websiteRoot/static $out/static
-      cp -R --no-preserve=mode,ownership $hsluvWebsiteDemoImages/* $out
+      cp -R --no-preserve=mode,ownership $websiteDemoImages/* $out
 
-      cp $hsluvJsFull $out/static/js/hsluv.full.js
+      cp $jsFull $out/static/js/hsluv.full.js
 
       $nodejs/bin/node $websiteRoot/generate-html.js $out
       echo 'hsluv.org' > $out/CNAME
     '';
   };
 
-  hsluvDocs = pkgs.stdenv.mkDerivation rec {
-    name = "hsluvDocs";
+  docs = pkgs.stdenv.mkDerivation rec {
+    name = "docs";
     inherit neko;
     inherit haxe;
     inherit haxeSrc;
@@ -96,8 +96,8 @@ rec {
     '';
   };
 
-  hsluvJs = { targets } : pkgs.stdenv.mkDerivation rec {
-    inherit haxe haxeSrc;
+  haxeJs = { targets, export } : pkgs.stdenv.mkDerivation rec {
+    inherit haxe haxeSrc export;
     name = "hsluv-js";
     exportsJs = ./javascript/exports.js;
     builder = builtins.toFile "builder.sh" ''
@@ -106,12 +106,13 @@ rec {
 
       echo '(function() {' > $out
       cat compiled.js >> $out
+      cat $export >> $out
       cat $exportsJs >> $out
       echo '})();' >> $out
     '';
   };
 
-  hsluvHaxeTest = pkgs.stdenv.mkDerivation rec {
+  haxeTest = pkgs.stdenv.mkDerivation rec {
     inherit haxe haxeSrc haxeTestSrc snapshotRev4;
     name = "hsluv-haxe-test";
     builder = builtins.toFile "builder.sh" ''
@@ -121,7 +122,7 @@ rec {
     '';
   };
 
-  hsluvJsTest = { jsFile } : pkgs.stdenv.mkDerivation rec {
+  jsTest = { jsFile } : pkgs.stdenv.mkDerivation rec {
     inherit nodejs jsFile;
     name = "hsluv-js-test";
     testJs = ./javascript/test.js;
@@ -134,18 +135,18 @@ rec {
   };
 
   test = pkgs.stdenv.mkDerivation rec {
-    inherit hsluvJsPublic hsluvHaxeTest;
+    inherit jsPublic haxeTest;
     name = "super-test";
-    hsluvJsPublicTest = hsluvJsTest { jsFile = hsluvJsPublic; };
+    jsPublicTest = jsTest { jsFile = jsPublic; };
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
-      echo $hsluvJsPublicTest
-      echo $hsluvHaxeTest
+      echo $jsPublicTest
+      echo $haxeTest
       touch $out
     ";
   };
 
-  hsluvJsNodePackage = { jsFile } : pkgs.stdenv.mkDerivation rec {
+  jsNodePackage = jsFile : pkgs.stdenv.mkDerivation rec {
     inherit jsFile;
     name = "hsluv-js-node-package";
     packageJson = ./javascript/package.json;
@@ -157,12 +158,18 @@ rec {
     ";
   };
 
-  hsluvJsPublic = hsluvJs { targets = "hsluv.Hsluv"; };
-  hsluvJsFull = hsluvJs { targets = "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker"; };
+  jsPublic = haxeJs {
+    targets = "hsluv.Hsluv";
+    export = ./javascript/api-public.js;
+  };
+  jsFull = haxeJs {
+    targets = "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker";
+    export = ./javascript/api-full.js;
+  };
 
   # Final artifacts
-  hsluvJsPublicNodePackage = hsluvJsNodePackage { jsFile = hsluvJsPublic; };
-  hsluvJsFullNodePackage = hsluvJsNodePackage { jsFile = hsluvJsFull; };
+  jsPublicNodePackage = jsNodePackage jsPublic;
+  jsFullNodePackage = jsNodePackage jsFull;
 
   compileJs = jsFile : pkgs.stdenv.mkDerivation rec {
     inherit jre closureCompiler jsFile;

@@ -1,14 +1,14 @@
 // CommonJS module system (including Node)
 if (typeof module !== 'undefined') {
-    module['exports'] = hsluv;
+    module['exports'] = root;
 }
 
 // AMD module system
 if (typeof define !== 'undefined') {
-    define(hsluv);
+    define(root);
 }
 
 // Export to browser
 if (typeof window !== 'undefined') {
-    window['hsluv'] = hsluv;
+    window['hsluv'] = root;
 }

@@ -20,25 +20,25 @@ nix-build -A test
 To build JavaScript version:
 
 ```sh
-nix-build -A hsluvJsPublic
+nix-build -A jsPublic
 ```
 
 To build Haxe documentation:
 
 ```sh
-nix-build -A hsluvDocs
+nix-build -A docs
 ```
 
 To build website:
 
 ```sh
-nix-build -A hsluvWebsite
+nix-build -A website
 ```
 
 To build website and start localhost server:
 
 ```sh
-(nix-build -A hsluvWebsite && cd result && python3 -m http.server)
+(nix-build -A website && cd result && python3 -m http.server)
 ```
 
 To deploy website (after building):
