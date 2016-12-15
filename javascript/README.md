@@ -3,7 +3,7 @@
 ## Installation
 
 Client-side: download the latest hsluv.min.js from the 
-[releases page](https://github.com/husl-colors/husl/releases).
+[releases page](https://github.com/hsluv/husl/releases).
  
 Once this module is loaded in the browser, you can access it via the
 global ``window.hsluv``.
@@ -40,7 +40,7 @@ the pastel variant (HPLuv). Note that HPLuv does not contain all the colors
 of RGB, so converting arbitrary RGB to it may generate invalid HPLuv colors.
 
 HSLuv can also be used as a [Stylus](http://learnboost.github.com/stylus/) 
-plugin. See [here](https://github.com/husl-colors/husl-stylus).
+plugin. See [here](https://github.com/hsluv/husl-stylus).
 
 ## Testing
 

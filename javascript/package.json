@@ -9,7 +9,7 @@
   "files": ["hsluv.js"],
   "repository": {
     "type" : "git",
-    "url" : "http://github.com/husl-colors/husl.git"
+    "url" : "http://github.com/hsluv/husl.git"
   },
   "homepage": "http://www.hsluv.org"
 }

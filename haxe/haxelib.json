@@ -1,6 +1,6 @@
 {
   "name": "hsluv",
-  "url" : "https://github.com/husl-colors/husl",
+  "url" : "https://github.com/hsluv/husl",
   "license": "MIT",
   "tags": ["cross", "color"],
   "description": "Human-friendly HSL.",
