@@ -3,7 +3,7 @@
 
 # HSLuv - Human-friendly HSL
 
-[Explanation, demo, ports etc.](http://www.husl-colors.org)
+[Explanation, demo, ports etc.](http://www.hsluv.org)
 
 The reference implementation is [written in Haxe](https://github.com/husl-colors/husl/tree/master/haxe).
 
@@ -44,7 +44,7 @@ To build website and start localhost server:
 To deploy website (after building):
 
 ```sh
-surge --project ./result --domain www.husl-colors.org
+surge --project ./result
 ```
 
 If you want to build without Nix you will require GNU Make, Haxe 3 and JDK 7+.

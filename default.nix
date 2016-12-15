@@ -73,7 +73,7 @@ rec {
       cp $hsluvJsFull $out/static/js/hsluv.full.js
 
       $nodejs/bin/node $websiteRoot/generate-html.js $out
-      echo 'hsluv-colors.org\n' > $out/CNAME
+      echo 'hsluv.org' > $out/CNAME
     '';
   };
 
