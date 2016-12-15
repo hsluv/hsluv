@@ -11,10 +11,16 @@ The reference implementation is [written in Haxe](https://github.com/husl-colors
 
 Requirements: [Nix package manage](http://nixos.org/nix/).
 
-To build JavaScript version, running full test suite:
+To run full test suite:
 
 ```sh
-nix-build -A huslJsLegacyDist
+nix-build -A test
+```
+
+To build JavaScript version:
+
+```sh
+nix-build -A huslJsPublic
 ```
 
 To build Haxe documentation:
@@ -29,7 +35,7 @@ To build website:
 nix-build -A huslWebsite
 ```
 
-To deploy website:
+To deploy website (after building):
 
 ```sh
 surge --project ./result --domain www.husl-colors.org

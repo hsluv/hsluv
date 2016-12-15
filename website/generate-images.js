@@ -1,6 +1,8 @@
 var fs = require('fs');
 var pngjs = require('pngjs');
-var husl = require('../husl');
+
+// Expecting full API
+var husl = require('husl');
 
 function hslToRgb(h, s, l){
     var r, g, b;

@@ -37,35 +37,48 @@ rec {
 
   nodeModules = pkgs.stdenv.mkDerivation rec {
     name = "node-modules";
-    inherit nodejs pngJs mustacheJs;
+    inherit nodejs pngJs mustacheJs huslJsFullNodePackage;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       PATH=$nodejs/bin:$PATH
       HOME=.
       npm install $pngJs
       npm install $mustacheJs
+      npm install $huslJsFullNodePackage
       mkdir $out
-      mv node_modules/* $out
+      cp -R node_modules/* $out
+    '';
+  };
+
+  huslWebsiteDemoImages = pkgs.stdenv.mkDerivation rec {
+    name = "husl-website-demo-images";
+    inherit nodejs nodeModules minMinCss;
+    generateImagesJs = ./website/generate-images.js;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      export NODE_PATH=$nodeModules:$NODE_PATH
+      mkdir $out
+      $nodejs/bin/node $generateImagesJs $out
     '';
   };
 
   huslWebsite = pkgs.stdenv.mkDerivation rec {
     name = "husl-website";
-    inherit nodejs nodeModules huslJsModuleFull minMinCss;
+    inherit nodejs nodeModules minMinCss huslJsFull huslWebsiteDemoImages;
     src = ./website;
+    websiteRoot = ./website;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      export PATH=$nodejs/bin:$PATH
       export NODE_PATH=$nodeModules:$NODE_PATH
-      cp -R $src website
-      cp $huslJsModuleFull husl.js
 
       mkdir $out
-      cp -R --no-preserve=mode,ownership $src/static $out/static
-      cp $huslJsModuleFull $out/static/js/husl.full.min.js
-      cp $minMinCss $out/static/css
-      node website/generate-images.js $out
-      node website/generate-html.js $out
+      cp -R --no-preserve=mode,ownership $websiteRoot/static $out/static
+      cp -R --no-preserve=mode,ownership $huslWebsiteDemoImages/* $out
+
+      cp $huslJsFull $out/static/js/husl.full.min.js
+      cp $minMinCss $out/static/css/min.min.css
+
+      $nodejs/bin/node $websiteRoot/generate-html.js $out
       echo 'husl-colors.org\n' > $out/CNAME
     '';
   };
@@ -92,30 +105,60 @@ rec {
   huslJs = { targets } : pkgs.stdenv.mkDerivation rec {
     inherit haxe haxeSrc haxeTestSrc snapshotRev4;
     name = "husl-js";
-    builder = builtins.toFile "builder.sh" "
+    exportsJs = ./javascript/exports.js;
+    builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       $haxe/bin/haxe -cp $haxeSrc -cp $haxeTestSrc -main RunTests -resource $snapshotRev4@snapshot-rev4 --interp
-      $haxe/bin/haxe -cp $haxeSrc ${targets} -js $out -D js-classic -dce full
+      $haxe/bin/haxe -cp $haxeSrc ${targets} -js compiled.js -D js-classic -dce full
+
+      echo '(function() {' > $out
+      cat compiled.js >> $out
+      cat $exportsJs >> $out
+      echo '})();' >> $out
+    '';
+  };
+
+  huslJsTest = { jsFile } : pkgs.stdenv.mkDerivation rec {
+    inherit nodejs snapshotRev4 jsFile;
+    name = "husl-js-test";
+    testJs = ./javascript/test.js;
+    builder = builtins.toFile "builder.sh" "
+      source $stdenv/setup
+      echo $testJs $jsFile $snapshotRev4
+      $nodejs/bin/node $testJs $jsFile $snapshotRev4
+      touch $out
+    ";
+  };
+
+  test = pkgs.stdenv.mkDerivation rec {
+    inherit huslJsPublic;
+    name = "super-test";
+    huslJsPublicTest = huslJsTest { jsFile = huslJsPublic; };
+    builder = builtins.toFile "builder.sh" "
+      source $stdenv/setup
+      echo $huslJsPublicTest
+      touch $out
+    ";
+  };
+
+  huslJsNodePackage = { jsFile } : pkgs.stdenv.mkDerivation rec {
+    inherit jsFile;
+    name = "husl-js-node-package";
+    packageJson = ./javascript/package.json;
+    builder = builtins.toFile "builder.sh" "
+      source $stdenv/setup
+      mkdir $out
+      cp $jsFile $out/husl.js
+      cp $packageJson $out/package.json
     ";
   };
 
   huslJsPublic = huslJs { targets = "husl.Husl"; };
   huslJsFull = huslJs { targets = "husl.Husl husl.Geometry husl.ColorPicker"; };
 
-  huslJsModuleLegacy = pkgs.stdenv.mkDerivation rec {
-    inherit jre haxe closureCompiler haxeSrc haxeTestSrc nodejs snapshotRev4 huslJsPublic;
-    name = "closure";
-    apiPublic = ./javascript/api-public.js;
-    exports = ./javascript/exports.js;
-    builder = builtins.toFile "builder.sh" "
-      source $stdenv/setup
-      echo '(function() {\n' > $out
-      cat $huslJsPublic >> $out
-      cat $apiPublic >> $out
-      cat $exports >> $out
-      echo '\n})();\n' >> $out
-    ";
-  };
+  # Final artifacts
+  huslJsPublicNodePackage = huslJsNodePackage { jsFile = huslJsPublic; };
+  huslJsFullNodePackage = huslJsNodePackage { jsFile = huslJsFull; };
 
   compileJs = jsFile : pkgs.stdenv.mkDerivation rec {
     inherit jre closureCompiler jsFile;
@@ -127,34 +170,4 @@ rec {
     ";
   };
 
-  huslJsModuleLegacyDist = pkgs.stdenv.mkDerivation rec {
-    inherit nodejs snapshotRev4;
-    huslJsModuleLegacyMin = compileJs huslJsModuleLegacy;
-    name = "husl-js-legacy-dist";
-    testJs = ./javascript/test.js;
-    packageJson = ./javascript/package.json;
-    builder = builtins.toFile "builder.sh" "
-      source $stdenv/setup
-      mkdir $out
-      $nodejs/bin/node $testJs $huslJsModuleLegacyMin $snapshotRev4
-      cp $huslJsModuleLegacyMin $out/husl.min.js
-      cp $packageJson $out/package.json
-    ";
-  };
-
-  huslJsModuleFull = pkgs.stdenv.mkDerivation rec {
-    name = "husl-full-min-js";
-    inherit huslJsFull;
-    exports = ./javascript/exports.js;
-    builder = builtins.toFile "builder.sh" "
-      source $stdenv/setup
-
-      echo '(function() {\n' > $out
-      cat $huslJsFull >> $out
-      echo '\nvar exportObject = husl;\n' >> $out
-      cat $exports >> $out
-      echo '})();\n' >> $out
-    ";
-  };
 }
-

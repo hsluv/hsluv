@@ -1,20 +1,14 @@
-// TODO: Deprecated. Remove with the next major version
-// Export to jQuery
-if (typeof jQuery !== 'undefined') {
-    jQuery['husl'] = exportObject;
-}
-
 // CommonJS module system (including Node)
 if (typeof module !== 'undefined') {
-    module['exports'] = exportObject;
+    module['exports'] = husl;
 }
 
 // AMD module system
 if (typeof define !== 'undefined') {
-    define(exportObject);
+    define(husl);
 }
 
 // Export to browser
 if (typeof window !== 'undefined') {
-    window['HUSL'] = exportObject;
+    window['HUSL'] = husl;
 }

@@ -17,11 +17,11 @@ function manySamples(assertion) {
 function testConsistency(husl) {
     console.log('should consistently convert between HUSL and hex');
     manySamples(function (hex) {
-        assert.deepEqual(hex, husl.toHex.apply(this, husl.fromHex(hex)));
+        assert.deepEqual(hex, husl.Husl.huslToHex(husl.Husl.hexToHusl(hex)));
     });
     console.log('should consistently convert between HUSLp and hex');
     manySamples(function (hex) {
-        assert.deepEqual(hex, husl.p.toHex.apply(this, husl.p.fromHex(hex)));
+        assert.deepEqual(hex, husl.Husl.huslpToHex(husl.Husl.hexToHuslp(hex)));
     });
 }
 
@@ -35,13 +35,13 @@ function testRGBRange(husl) {
     while (H <= 360) {
         while (S <= 100) {
             while (L <= 100) {
-                var RGB = husl.toRGB(H, S, L);
+                var RGB = husl.Husl.huslToRgb([H, S, L]);
                 for (var i = 0; i < RGB.length; i++) {
                     channel = RGB[i];
                     assert(-rgbRangeTolerance <= channel && channel <= 1 + rgbRangeTolerance, 'HUSL: ' + [H, S, L] + ' -> ' + RGB);
                 }
 
-                RGB = husl.p.toRGB(H, S, L);
+                RGB = husl.Husl.huslpToRgb([H, S, L]);
                 for (var j = 0; j < RGB.length; j++) {
                     channel = RGB[j];
                     assert(-rgbRangeTolerance <= channel && channel <= 1 + rgbRangeTolerance, 'HUSLp: ' + [H, S, L] + ' -> ' + RGB);
@@ -65,8 +65,8 @@ function testSnapshot(husl, snapshot) {
     Object.keys(snapshot).map(function (hex) {
         stableSamples = snapshot[hex];
         currentSamples = {
-            'husl': husl.fromHex(hex),
-            'huslp': husl.p.fromHex(hex)
+            'husl': husl.Husl.hexToHusl(hex),
+            'huslp': husl.Husl.hexToHuslp(hex)
         };
 
         ['husl', 'huslp'].map(function (tag) {
@@ -80,16 +80,12 @@ function testSnapshot(husl, snapshot) {
     });
 }
 
-
-function testAll() {
+if (require.main === module) {
+    console.log(JSON.stringify(process.argv));
     var husl = require(process.argv[2]);
     var snapshot = require(process.argv[3]);
     testConsistency(husl);
     testRGBRange(husl);
     testSnapshot(husl, snapshot);
     console.log('All good!')
-}
-
-if (require.main === module) {
-    testAll();
 }
