@@ -405,10 +405,14 @@ class Hsluv {
     **/
     public static function rgbToHex(tuple:Array<Float>):String {
         var h:String = "#";
+        var chars = "0123456789abcdef";
 
         for (i in 0...tuple.length) {
             var chan:Float = tuple[i];
-            h += StringTools.hex(Math.round(chan * 255), 2).toLowerCase();
+            var c = Math.round(chan * 255);
+            var digit2 = c % 16;
+            var digit1 = Std.int((c - digit2) / 16);
+            h += chars.charAt(digit1) + chars.charAt(digit2);
         }
 
         return h;

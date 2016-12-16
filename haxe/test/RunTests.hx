@@ -5,5 +5,9 @@ class RunTests {
         var runner = new TestRunner();
         runner.add(new ColorConverterTest());
         runner.run();
+        var result = runner.result;
+        if (!result.success) {
+            Sys.exit(1);
+        }
     }
 }

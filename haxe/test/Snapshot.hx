@@ -7,7 +7,7 @@ import haxe.Json;
 import haxe.ds.StringMap;
 
 
-class Snapshot extends Hsluv {
+class Snapshot {
 
     static public function generateHexSamples () {
         var digits:String = "0123456789abcdef";
@@ -27,8 +27,6 @@ class Snapshot extends Hsluv {
     }
 
     static public function main () {
-        var digits:String = "0123456789abcdef";
-
         var ret:StringMap<StringMap<Array<Float>>> = new StringMap();
         var samples = Snapshot.generateHexSamples();
 

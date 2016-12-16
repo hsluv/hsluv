@@ -122,6 +122,15 @@ rec {
     '';
   };
 
+  snapshotJson = pkgs.stdenv.mkDerivation rec {
+    inherit haxe haxeSrc haxeTestSrc;
+    name = "hsluv-haxe-test";
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      $haxe/bin/haxe -cp $haxeSrc -cp $haxeTestSrc -main Snapshot --interp > $out
+    '';
+  };
+
   jsTest = jsFile : pkgs.stdenv.mkDerivation rec {
     inherit nodejs jsFile;
     name = "hsluv-js-test";
