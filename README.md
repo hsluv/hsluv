@@ -17,10 +17,11 @@ To run full test suite:
 nix-build -A test
 ```
 
-To build JavaScript version:
+To build JavaScript distributions (server and client):
 
 ```sh
-nix-build -A jsPublic
+nix-build -A jsPublicNodePackage
+nix-build -A jsPublicMin
 ```
 
 To build Haxe documentation:

@@ -27,7 +27,7 @@ r, g, and b channel.
 
 Takes a hex string and returns the HSLuv color as array that contains 
 the hue (0-360), saturation (0-100) and lightness (0-100) channel.
-_Note_: The result can have rounding errors. For example saturation can 
+_Note:_ The result can have rounding errors. For example saturation can 
 be 100.00000000000007
 
 **rgbToHsluv([red, green, blue])**

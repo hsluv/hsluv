@@ -73,7 +73,7 @@ rec {
       cp $jsFull $out/static/js/hsluv.full.js
 
       $nodejs/bin/node $websiteRoot/generate-html.js $out
-      echo 'hsluv.org' > $out/CNAME
+      echo 'www.hsluv.org' > $out/CNAME
     '';
   };
 
