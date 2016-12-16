@@ -10,14 +10,14 @@
         <p>
             Every implementation of HSL<sub>uv</sub> must provide the following four functions:
         </p>
-        <pre>hsluvToRgb(H, S, L) -> [R, G, B]
-rgbToHsluv(R, G, B) -> [H, S, L]
-hpluvToRgb(H, S, L) -> [R, G, B]
-rgbToHpluv(R, G, B) -> [H, S, L]</pre>
+        <pre>hsluvToRgb([H, S, L]) -> [R, G, B]
+hpluvToRgb([H, S, L]) -> [R, G, B]
+rgbToHsluv([R, G, B]) -> [H, S, L]
+rgbToHpluv([R, G, B]) -> [H, S, L]</pre>
         <p>
             These functions are implemented as a chain of color space transformations: RGB to
             <a href="https://en.wikipedia.org/wiki/CIE_1931_color_space">CIE&nbsp;XYZ</a> to
-            <a href="https://en.wikipedia.org/wiki/CIELUV">CIE LUV</a> to CIE&nbsp;LCH<sub>uv</sub>
+            <a href="https://en.wikipedia.org/wiki/CIELUV">CIELUV</a> to CIELUV&nbsp;LCh
             to HSL<sub>uv</sub> and HPL<sub>uv</sub>.
         </p>
         <p>
@@ -116,8 +116,8 @@ rgbToHpluv(R, G, B) -> [H, S, L]</pre>
                     </a>
                 </td>
                 <td>
-                    <a href="https://www.npmjs.com/package/husl">
-                        <img src="https://img.shields.io/npm/v/husl.svg"/>
+                    <a href="https://www.npmjs.com/package/hsluv">
+                        <img src="https://img.shields.io/npm/v/hsluv.svg"/>
                     </a>
                 </td>
             </tr>
@@ -239,12 +239,6 @@ rgbToHpluv(R, G, B) -> [H, S, L]</pre>
                     <a href="https://github.com/hsluv/husl-swift/releases/tag/v1.0.0">
                         <img src="https://img.shields.io/cocoapods/v/HUSLSwift.svg"/>
                     </a>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="3">
-                    <strong>Unfinished ports: <a
-                            href="https://github.com/hsluv/hsluv/tree/master/ports/c">C</a>.</strong>
                 </td>
             </tr>
         </table>

@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/hsluv/hsluv.svg?branch=master)](https://travis-ci.org/hsluv/hsluv)
-[![NPM package](https://img.shields.io/npm/v/husl.svg)](https://www.npmjs.com/package/husl)
+[![NPM package](https://img.shields.io/npm/v/hsluv.svg)](https://www.npmjs.com/package/hsluv)
 
 # HSLuv - Human-friendly HSL
 

@@ -1,4 +1,4 @@
-# HSLuv - Human-friendly HSL
+# HSL<sub>uv</sub> - Human-friendly HSL
 
 ## Installation
 
@@ -26,7 +26,7 @@ r, g, and b channel.
 **hexToHsluv(hex)**
 
 Takes a hex string and returns the HSLuv color as array that contains 
-the hue (0-360), saturation(0-100) and lightness(0-100) channel.
+the hue (0-360), saturation (0-100) and lightness (0-100) channel.
 _Note_: The result can have rounding errors. For example saturation can 
 be 100.00000000000007
 
@@ -39,5 +39,5 @@ Use **hpluvToHex**, **hpluvToRgb**, **hexToHpluv** and **rgbToHpluv** for
 the pastel variant (HPLuv). Note that HPLuv does not contain all the colors 
 of RGB, so converting arbitrary RGB to it may generate invalid HPLuv colors.
 
-HSLuv can also be used as a [Stylus](http://learnboost.github.com/stylus/) 
-plugin. See [here](https://github.com/hsluv/husl-stylus).
+Also available for [Stylus](http://stylus-lang.com/). See 
+[here](https://github.com/hsluv/husl-stylus).
