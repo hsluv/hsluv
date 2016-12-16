@@ -47,6 +47,8 @@ class Hsluv {
     private static var kappa:Float = 903.2962962;
     private static var epsilon:Float = 0.0088564516;
 
+    private static var hexChars:String = "0123456789abcdef";
+
     /**
     For a given lightness, return a list of 6 lines in slope-intercept
     form that represent the bounds in CIELUV, stepping over which will
@@ -405,14 +407,13 @@ class Hsluv {
     **/
     public static function rgbToHex(tuple:Array<Float>):String {
         var h:String = "#";
-        var chars = "0123456789abcdef";
 
-        for (i in 0...tuple.length) {
+        for (i in 0...3) {
             var chan:Float = tuple[i];
             var c = Math.round(chan * 255);
             var digit2 = c % 16;
             var digit1 = Std.int((c - digit2) / 16);
-            h += chars.charAt(digit1) + chars.charAt(digit2);
+            h += hexChars.charAt(digit1) + hexChars.charAt(digit2);
         }
 
         return h;
@@ -424,13 +425,15 @@ class Hsluv {
     * @return An array containing the color's RGB values.
     **/
     public static function hexToRgb(hex:String):Array<Float> {
-        // toUpperCase because some targets such as lua have hard time parsing hex code with various cases
-        hex = hex.toUpperCase();
-        return [
-            Std.parseInt("0x"+hex.substr(1, 2)) / 255.0,
-            Std.parseInt("0x"+hex.substr(3, 2)) / 255.0,
-            Std.parseInt("0x"+hex.substr(5, 2)) / 255.0,
-        ];
+        hex = hex.toLowerCase();
+        var ret = [];
+        for (i in 0...3) {
+            var digit1 = hexChars.indexOf(hex.charAt(i * 2 + 1));
+            var digit2 = hexChars.indexOf(hex.charAt(i * 2 + 2));
+            var n = digit1 * 16 + digit2;
+            ret.push(n / 255.0);
+        }
+        return ret;
     }
 
     /**
