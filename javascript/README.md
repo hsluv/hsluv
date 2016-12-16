@@ -40,4 +40,4 @@ the pastel variant (HPLuv). Note that HPLuv does not contain all the colors
 of RGB, so converting arbitrary RGB to it may generate invalid HPLuv colors.
 
 Also available for [Stylus](http://stylus-lang.com/). See 
-[here](https://github.com/hsluv/husl-stylus).
+[here](https://github.com/hsluv/hsluv-stylus).
