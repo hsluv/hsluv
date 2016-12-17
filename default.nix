@@ -1,8 +1,8 @@
 rec {
   pkgsOriginal = import <nixpkgs> {};
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/boronine/nixpkgs/archive/0a1278a6793bee02c1e48e7b424b2a038bcc1dd9.zip";
-    sha256 = "1xspxhs6fvcb53l647ab2s6yhxanmc5a405cijy9qj5fq93bp22y";
+    url = "https://github.com/NixOS/nixpkgs/archive/1beb9e6d1e3bbafa3c953903813b1526fb81c622.zip";
+    sha256 = "139b4q6q1nprg5k3n17p357qjl94r7dnzvafpnh6x6fg2s2m2zvb";
   };
   pkgs = import (pkgsSrc) {};
 
@@ -102,22 +102,13 @@ rec {
     exportsJs = ./javascript/exports.js;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      $haxe/bin/haxe -cp $haxeSrc ${targets} -js compiled.js -D js-classic -D js-unflatten
+      $haxe/bin/haxe -cp $haxeSrc ${targets} -js compiled.js -D js-classic
 
       echo '(function() {' > $out
-      cat compiled.js | sed '/global/d' >> $out
+      cat compiled.js >> $out
       cat $export >> $out
       cat $exportsJs >> $out
       echo '})();' >> $out
-    '';
-  };
-
-  haxePython = { targets } : pkgs.stdenv.mkDerivation rec {
-    inherit haxe haxeSrc;
-    name = "haxe-python";
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      $haxe/bin/haxe -cp $haxeSrc ${targets} -python $out
     '';
   };
 
@@ -186,8 +177,6 @@ rec {
     targets = "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker";
     export = ./javascript/api-full.js;
   };
-
-  pythonBuild = haxePython { targets = "hsluv.Hsluv"; };
 
   # Final artifacts
   jsPublicNodePackage = jsNodePackage jsPublic;
