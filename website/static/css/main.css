@@ -92,11 +92,9 @@ div.demo div {
 }
 
 #picker input {
-    padding-left: 5px;
-    padding-right: 5px;
+    padding: 0 5px;
     margin: 0;
     height: 22px;
-    box-sizing: border-box;
     background: transparent;
     color: #888;
     outline: none;
