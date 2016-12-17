@@ -1,12 +1,13 @@
 rec {
   pkgsOriginal = import <nixpkgs> {};
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/boronine/nixpkgs/archive/0a1278a6793bee02c1e48e7b424b2a038bcc1dd9.zip";
-    sha256 = "1xspxhs6fvcb53l647ab2s6yhxanmc5a405cijy9qj5fq93bp22y";
+    url = "https://github.com/boronine/nixpkgs/archive/2aa021a0b1981ca35fa3b29d5cced7f97b55c93b.zip";
+    sha256 = "1dmqwj45pn68g2d5ksys754gsissbangq1k7hzh7g1yri4f7p9zg";
   };
   pkgs = import (pkgsSrc) {};
 
   jre = pkgs.jre;
+  jdk = pkgs.jdk;
   haxe = pkgs.haxe;
   neko = pkgs.neko;
   nodejs = pkgs.nodejs;
@@ -18,6 +19,16 @@ rec {
   doxZip = pkgs.fetchurl {
     url = "https://github.com/HaxeFoundation/dox/archive/a4dd456418a4a540fe1d25a764927119bb892f72.zip";
     sha256 = "14p96nidbbv4afphsl7sy2qhzrs4mc7hf960wbbd4dp0cg7lij1s";
+  };
+
+  hxJavaZip = pkgs.fetchurl {
+    url = "https://github.com/HaxeFoundation/hxjava/archive/0c4b993facf0c8be193e91ec8e5317f5e7dbc217.zip";
+    sha256 = "14zsag9b7r0x88bzyi2q8mg9j1m3qrg7j3ihszlhiay1107qpbci";
+  };
+
+  hxCsZip = pkgs.fetchurl {
+    url = "https://github.com/HaxeFoundation/hxcs/archive/1ba4ea2ce022774769f6ded94b154d38714a8ddd.zip";
+    sha256 = "1k9ggkpwb0dan6a7r5dh5zqn3d9i5k902f4sc8clq2a87ax2zhk7";
   };
 
   pngJs = pkgs.fetchzip {
@@ -121,6 +132,46 @@ rec {
     '';
   };
 
+  haxeLua = { targets } : pkgs.stdenv.mkDerivation rec {
+    inherit haxe haxeSrc;
+    name = "haxe-lua";
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      $haxe/bin/haxe -cp $haxeSrc ${targets} -lua $out
+    '';
+  };
+
+  haxeJava = { targets } : pkgs.stdenv.mkDerivation rec {
+    inherit haxe neko haxeSrc hxJavaZip jdk;
+    name = "haxe-java";    
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      PATH=$haxe/bin:$neko/bin:$jdk/bin:$PATH
+      export HAXELIB_PATH=`pwd`
+
+
+      haxelib install $hxJavaZip
+
+      haxe -cp $haxeSrc ${targets} -java $out
+    '';
+  };
+
+  haxeCs = { targets } : pkgs.stdenv.mkDerivation rec {
+    inherit haxe haxeSrc hxCsZip;
+    name = "haxe-java";
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      PATH=$haxe/bin:$PATH
+      HOME=.
+      haxelib setup .
+      haxelib install $hxCsZip
+
+      mkdir $out
+
+      haxe -cp $haxeSrc ${targets} -cs $out
+    '';
+  };
+
   haxeTest = pkgs.stdenv.mkDerivation rec {
     inherit haxe haxeSrc haxeTestSrc snapshotRev4;
     name = "hsluv-haxe-test";
@@ -188,6 +239,9 @@ rec {
   };
 
   pythonBuild = haxePython { targets = "hsluv.Hsluv"; };
+  javaBuild = haxeJava { targets = "hsluv.Hsluv"; };
+  luaBuild = haxeLua { targets = "hsluv.Hsluv"; };
+  csBuild = haxeCs { targets = "hsluv.Hsluv"; };
 
   # Final artifacts
   jsPublicNodePackage = jsNodePackage jsPublic;
