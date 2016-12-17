@@ -9,47 +9,70 @@ The reference implementation is [written in Haxe](https://github.com/hsluv/hsluv
 
 ## Building
 
-Requirements: [Nix package manage](http://nixos.org/nix/).
+Requirements: [Nix package manage](http://nixos.org/nix/). If you want to build without Nix you 
+will require GNU Make, Haxe 3 and JDK 7+. See `default.nix` for command line instructions.
 
 To run full test suite:
 
-```sh
+```
 nix-build -A test
 ```
 
 To build JavaScript distributions (server and client):
 
-```sh
+```
 nix-build -A jsPublicNodePackage
 nix-build -A jsPublicMin
 ```
 
 To build Haxe documentation:
 
-```sh
+```
 nix-build -A docs
 ```
 
 To build website:
 
-```sh
+```
 nix-build -A website
 ```
 
 To build website and start localhost server:
 
-```sh
+```
 (nix-build -A website && cd result && python3 -m http.server)
 ```
 
 To deploy website (after building):
 
-```sh
+```
 surge --project ./result
 ```
 
-If you want to build without Nix you will require GNU Make, Haxe 3 and JDK 7+.
-See `default.nix` for command line instructions.
+## Testing
+
+The snapshot file is stored for regression testing. If a backwards-incompatible change is made,
+a new snapshot file can be generated as follows:
+
+```
+nix-build -A snapshotJson
+```
+
+The format of the file is as follows:
+
+```
+{
+  "#000000": {
+    rgb: [ 0, 0, 0 ],
+    xyz: [ 0, 0, 0 ],
+    luv: [ 0, 0, 0 ],
+    lch: [ 0, 0, 0 ],
+    hsluv: [ 0, 0, 0 ],
+    hpluv: [ 0, 0, 0 ]
+  },
+  ...
+}
+```
 
 ## Versioning
 

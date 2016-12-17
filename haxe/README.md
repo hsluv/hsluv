@@ -77,40 +77,17 @@ haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@s
 haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -cs bin/cs -cmd mono bin/cs/RunTests.exe
 # C# Windows
 haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -cs bin/cs -cmd bin/cs/RunTests.exe
-#  Java
+# Java
 haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -java bin/java -cmd java -jar bin/java/RunTests.jar
-#  PHP
+# PHP
 haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -php bin/php -cmd php bin/php/index.php
-#  NodeJS
+# NodeJS
 haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -js bin/js/RunTests.js -cmd node bin/js/RunTests.js
-#  Python
+# Python
 haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -python bin/python/RunTests.py -cmd python bin/python/RunTests.py
-#  Lua
+# Lua
 haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -lua bin/lua/RunTests.lua -cmd lua bin/lua/RunTests.lua
 # And so on...
-```
-
-The snapshot file is stored for regression testing. If a backwards-incompatible change is made,
-a new snapshot file can be generated as follows:
-
-```sh
-haxe -cp src -cp test -main Snapshot --interp > new-snapshot.json
-```
-
-The format of the file is as follows:
-
-```
-{
-  "#000000": {
-    rgb: [ 0, 0, 0 ],
-    xyz: [ 0, 0, 0 ],
-    luv: [ 0, 0, 0 ],
-    lch: [ 0, 0, 0 ],
-    hsluv: [ 0, 0, 0 ],
-    hpluv: [ 0, 0, 0 ]
-  },
-  ...
-}
 ```
 
 # Notes

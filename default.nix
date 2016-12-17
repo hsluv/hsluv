@@ -7,13 +7,14 @@ rec {
   pkgs = import (pkgsSrc) {};
 
   jre = pkgs.jre;
+  zip = pkgs.zip;
   haxe = pkgs.haxe;
   neko = pkgs.neko;
   nodejs = pkgs.nodejs;
   haxeSrc = ./haxe/src;
   haxeTestSrc = ./haxe/test;
-  closureCompiler = pkgs.closurecompiler;
   snapshotRev4 = ./snapshots/snapshot-rev4.json;
+  closureCompiler = pkgs.closurecompiler;
 
   doxZip = pkgs.fetchurl {
     url = "https://github.com/HaxeFoundation/dox/archive/a4dd456418a4a540fe1d25a764927119bb892f72.zip";
@@ -79,10 +80,7 @@ rec {
 
   docs = pkgs.stdenv.mkDerivation rec {
     name = "docs";
-    inherit neko;
-    inherit haxe;
-    inherit haxeSrc;
-    inherit doxZip;
+    inherit neko haxe haxeSrc doxZip;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       PATH=$haxe/bin:$neko/bin:$PATH
@@ -93,6 +91,18 @@ rec {
       haxelib install $doxZip
       haxe -cp $haxeSrc/hsluv/Hsluv.hx -D doc-gen --macro 'include("hsluv")' --no-output -xml hsluv.xml
       haxelib run dox -i hsluv.xml -o $out
+    '';
+  };
+
+  haxelibZip = pkgs.stdenv.mkDerivation rec {
+    name = "haxelib";
+    inherit zip haxe;
+    haxeRoot = ./haxe;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      mkdir $out
+      (cd $haxeRoot && $zip/bin/zip -r $out/hsluv.zip .)
+      echo "$haxe/bin/haxelib submit hsluv.zip" > $out/submit.sh
     '';
   };
 
