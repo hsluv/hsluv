@@ -54,7 +54,19 @@ rec {
       source $stdenv/setup
       export NODE_PATH=$nodeModules:$NODE_PATH
       mkdir $out
-      $nodejs/bin/node $generateImagesJs $out
+      $nodejs/bin/node $generateImagesJs --website $out
+    '';
+  };
+
+  avatar = pkgs.stdenv.mkDerivation rec {
+    name = "hsluv-avatar";
+    inherit nodejs nodeModules;
+    generateImagesJs = ./website/generate-images.js;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      export NODE_PATH=$nodeModules:$NODE_PATH
+      mkdir $out
+      $nodejs/bin/node $generateImagesJs --avatar $out/avatar.png
     '';
   };
 

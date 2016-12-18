@@ -158,12 +158,6 @@ function demoHpluvChroma(x, y) {
     return chromaDemo(rgb);
 }
 
-
-
-
-// Generate larger picture, e.g. for GitHub
-// makeImage('dist/github.png', luvSquare, 200, 200);
-
 function makeDir(path) {
     if (!fs.existsSync(path)) {
         console.log('creating directory', path);
@@ -197,6 +191,11 @@ function generateImages(targetDir) {
 }
 
 if (require.main === module) {
-    var targetDir = process.argv[2];
-    generateImages(targetDir);
+    var type = process.argv[2];
+    var target = process.argv[3];
+    if (type === '--website') {
+        generateImages(target);
+    } else if (type === '--avatar') {
+        makeImage(target, luvSquare, 200, 200);
+    }
 }
