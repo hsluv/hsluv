@@ -1,13 +1,14 @@
 rec {
   pkgsOriginal = import <nixpkgs> {};
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/1beb9e6d1e3bbafa3c953903813b1526fb81c622.zip";
-    sha256 = "139b4q6q1nprg5k3n17p357qjl94r7dnzvafpnh6x6fg2s2m2zvb";
+    url = "https://github.com/NixOS/nixpkgs/archive/29ce1d9e5ac201462c0ae26eacf9ca9127d05767.zip";
+    sha256 = "1fwh3l771jbdxvlv40qv1js0xvwm661h52q9s84fyi7bf21ayjpa";
   };
   pkgs = import (pkgsSrc) {};
 
   jre = pkgs.jre;
   zip = pkgs.zip;
+  git = pkgs.git;
   haxe = pkgs.haxe;
   neko = pkgs.neko;
   nodejs = pkgs.nodejs;
@@ -15,6 +16,12 @@ rec {
   haxeTestSrc = ./haxe/test;
   snapshotRev4 = ./snapshots/snapshot-rev4.json;
   closureCompiler = pkgs.closurecompiler;
+
+  # Latest
+  luaSrc = pkgs.fetchzip {
+    url = "https://github.com/hsluv/hsluv-lua/archive/406d9d531d764224651aca6e8ee29fdc3f769596.zip";
+    sha256 = "1xqz8z32h53qg4vf0wm24g6p1as5rmvb0izh5ym0h8wsf4sbj4pa";
+  };
 
   doxZip = pkgs.fetchurl {
     url = "https://github.com/HaxeFoundation/dox/archive/a4dd456418a4a540fe1d25a764927119bb892f72.zip";
@@ -29,6 +36,18 @@ rec {
   mustacheJs = pkgs.fetchzip {
     url = "https://github.com/janl/mustache.js/archive/v2.3.0.zip";
     sha256 = "09gx8ra0m52bm0zdfbwb151b5ngvv7bq1367pizsgmh5r4sqigzk";
+  };
+
+  luaRock = pkgs.stdenv.mkDerivation rec {
+    name = "lua-rock";
+    inherit luaSrc git;
+    luarocks = pkgs.luarocks;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      PATH=$git/bin:$PATH
+      $luarocks/bin/luarocks pack $luaSrc/hsluv-0.1-0.rockspec
+      ls
+    '';
   };
 
   nodeModules = pkgs.stdenv.mkDerivation rec {
