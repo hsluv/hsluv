@@ -1,9 +1,5 @@
 rec {
   pkgsOriginal = import <nixpkgs> {};
-  pkgsSrcAlt = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/1beb9e6d1e3bbafa3c953903813b1526fb81c622.zip";
-    sha256 = "139b4q6q1nprg5k3n17p357qjl94r7dnzvafpnh6x6fg2s2m2zvb";
-  };
   pkgsSrc = pkgsOriginal.fetchzip {
     url = "https://github.com/NixOS/nixpkgs/archive/ebe19f5db0d9df4d86cd2012b44dd4249062d891.zip";
     sha256 = "0vg6snrrwgih0iwdqv8jhv89isc9wzf5jalsfpsg5y0l9nqcbq0b";
@@ -15,6 +11,7 @@ rec {
   haxe = pkgs.haxe;
   neko = pkgs.neko;
   nodejs = pkgs.nodejs;
+  luarocks = pkgs.luarocks;
   python3 = pkgs.python3;
   wheel = pkgs.python3Packages.wheel;
   twine = pkgs.python3Packages.twine;
@@ -25,10 +22,16 @@ rec {
   snapshotRev4 = ./snapshots/snapshot-rev4.json;
   closureCompiler = pkgs.closurecompiler;
 
-  # v0.0.1
+  # v0.0.2
   pythonSrc = pkgs.fetchzip {
     url = "https://github.com/hsluv/hsluv-python/archive/287439082df640fe469a1af5b683bcd7a14c4b54.zip";
     sha256 = "18528f20s9r54inh0gczxsjsg6jhckms5f900c8ryaankjbkzmd4";
+  };
+
+  # v0.1-0
+  luaSrc = pkgs.fetchzip {
+    url = "https://github.com/hsluv/hsluv-lua/archive/406d9d531d764224651aca6e8ee29fdc3f769596.zip";
+    sha256 = "1xqz8z32h53qg4vf0wm24g6p1as5rmvb0izh5ym0h8wsf4sbj4pa";
   };
 
   pythonDist = pkgs.stdenv.mkDerivation rec {
@@ -45,6 +48,8 @@ rec {
       cp dist/* $out
     '';
   };
+
+
 
   doxZip = pkgs.fetchurl {
     url = "https://github.com/HaxeFoundation/dox/archive/a4dd456418a4a540fe1d25a764927119bb892f72.zip";
