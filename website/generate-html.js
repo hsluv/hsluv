@@ -34,6 +34,10 @@ function generateHtml(targetDir) {
             page: 'syntax',
             title: 'Random Syntax Highlighting Color Schemes',
             bodyClass: 'dark'
+        },
+        {
+            page: 'credits',
+            title: 'Credits'
         }
     ];
 

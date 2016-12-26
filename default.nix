@@ -11,6 +11,7 @@ rec {
   haxe = pkgs.haxe;
   neko = pkgs.neko;
   nodejs = pkgs.nodejs;
+  python3 = pkgs.python3;
   awscli = pkgs.python3Packages.awscli;
   openssl = pkgs.openssl;
   haxeSrc = ./haxe/src;

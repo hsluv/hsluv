@@ -40,13 +40,7 @@ nix-build -A website
 To build website and start localhost server:
 
 ```
-(nix-build -A website && cd result && python3 -m http.server)
-```
-
-To deploy website (after building):
-
-```
-./scripts/publish-website.sh
+./scripts/serve-website.sh
 ```
 
 ## Testing
