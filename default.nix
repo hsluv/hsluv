@@ -11,6 +11,8 @@ rec {
   haxe = pkgs.haxe;
   neko = pkgs.neko;
   nodejs = pkgs.nodejs;
+  awscli = pkgs.python3Packages.awscli;
+  openssl = pkgs.openssl;
   haxeSrc = ./haxe/src;
   haxeTestSrc = ./haxe/test;
   snapshotRev4 = ./snapshots/snapshot-rev4.json;
@@ -114,7 +116,6 @@ rec {
       source $stdenv/setup
       mkdir $out
       (cd $haxeRoot && $zip/bin/zip -r $out/hsluv.zip .)
-      echo "$haxe/bin/haxelib submit hsluv.zip" > $out/submit.sh
     '';
   };
 
