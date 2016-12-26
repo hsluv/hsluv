@@ -1,8 +1,12 @@
 rec {
   pkgsOriginal = import <nixpkgs> {};
-  pkgsSrc = pkgsOriginal.fetchzip {
+  pkgsSrcAlt = pkgsOriginal.fetchzip {
     url = "https://github.com/NixOS/nixpkgs/archive/1beb9e6d1e3bbafa3c953903813b1526fb81c622.zip";
     sha256 = "139b4q6q1nprg5k3n17p357qjl94r7dnzvafpnh6x6fg2s2m2zvb";
+  };
+  pkgsSrc = pkgsOriginal.fetchzip {
+    url = "https://github.com/NixOS/nixpkgs/archive/ebe19f5db0d9df4d86cd2012b44dd4249062d891.zip";
+    sha256 = "0vg6snrrwgih0iwdqv8jhv89isc9wzf5jalsfpsg5y0l9nqcbq0b";
   };
   pkgs = import (pkgsSrc) {};
 
@@ -12,12 +16,35 @@ rec {
   neko = pkgs.neko;
   nodejs = pkgs.nodejs;
   python3 = pkgs.python3;
+  wheel = pkgs.python3Packages.wheel;
+  twine = pkgs.python3Packages.twine;
   awscli = pkgs.python3Packages.awscli;
   openssl = pkgs.openssl;
   haxeSrc = ./haxe/src;
   haxeTestSrc = ./haxe/test;
   snapshotRev4 = ./snapshots/snapshot-rev4.json;
   closureCompiler = pkgs.closurecompiler;
+
+  # v0.0.1
+  pythonSrc = pkgs.fetchzip {
+    url = "https://github.com/hsluv/hsluv-python/archive/287439082df640fe469a1af5b683bcd7a14c4b54.zip";
+    sha256 = "18528f20s9r54inh0gczxsjsg6jhckms5f900c8ryaankjbkzmd4";
+  };
+
+  pythonDist = pkgs.stdenv.mkDerivation rec {
+    name = "python-dist";
+    inherit python3 pythonSrc wheel;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      export PATH=$python3/bin:$PATH
+      export PYTHONPATH=$PYTHONPATH:$wheel/lib/python3.5/site-packages
+      export SOURCE_DATE_EPOCH=315532800
+      cp -R --no-preserve=mode,ownership $pythonSrc/* .
+      python setup.py sdist bdist_wheel
+      mkdir $out
+      cp dist/* $out
+    '';
+  };
 
   doxZip = pkgs.fetchurl {
     url = "https://github.com/HaxeFoundation/dox/archive/a4dd456418a4a540fe1d25a764927119bb892f72.zip";

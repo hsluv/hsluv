@@ -19,11 +19,7 @@ HOME=${tmpDir}
 echo -e "${NPM_USER}\n${NPM_PASS}\n${NPM_EMAIL}\n" | npm adduser
 
 echo "Publishing ..."
-#npm publish ${tmpDir}
-
-npm unpublish hsluv@0.0.2-alpha3
-npm unpublish hsluv@0.0.2-alpha2
-npm unpublish hsluv@0.0.2-alpha1
+npm publish ${tmpDir}
 
 echo "Cleaning up"
 rm -rf ${tmpDir}
