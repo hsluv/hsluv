@@ -34,6 +34,12 @@ rec {
     sha256 = "1xqz8z32h53qg4vf0wm24g6p1as5rmvb0izh5ym0h8wsf4sbj4pa";
   };
 
+  # 1.0.0
+  sassSrc = pkgs.fetchzip {
+    url = "https://github.com/hsluv/hsluv-sass/archive/da6c6435376c5d0f8d5829212023efe31965e8c6.zip";
+    sha256 = "1ambxi06gs51k2r5dw34mwlb82mx40z1qqx4zxhrqaggip45wq0x";
+  };
+
   pythonDist = pkgs.stdenv.mkDerivation rec {
     name = "python-dist";
     inherit python3 pythonSrc wheel;
