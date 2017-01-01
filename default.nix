@@ -10,12 +10,14 @@ rec {
   zip = pkgs.zip;
   haxe = pkgs.haxe;
   neko = pkgs.neko;
+  mono = pkgs.mono;
   nodejs = pkgs.nodejs;
   luarocks = pkgs.luarocks;
   python3 = pkgs.python3;
   wheel = pkgs.python3Packages.wheel;
   twine = pkgs.python3Packages.twine;
   awscli = pkgs.python3Packages.awscli;
+  nuget = pkgs.dotnetPackages.Nuget;
   openssl = pkgs.openssl;
   haxeSrc = ./haxe/src;
   haxeTestSrc = ./haxe/test;
@@ -38,6 +40,26 @@ rec {
   sassSrc = pkgs.fetchzip {
     url = "https://github.com/hsluv/hsluv-sass/archive/da6c6435376c5d0f8d5829212023efe31965e8c6.zip";
     sha256 = "1ambxi06gs51k2r5dw34mwlb82mx40z1qqx4zxhrqaggip45wq0x";
+  };
+
+  # 1.0.2
+  csharpSrc = pkgs.fetchzip {
+    url = "https://github.com/hsluv/hsluv-csharp/archive/ad9e0cc28853eb8d7c8722217727022a9dfb4a04.zip";
+    sha256 = "180wf3bfjjliixbdpswmm3ni70drj7ik4myf5pj1s8ma2vbanm31";
+  };
+
+  csharpDist = pkgs.stdenv.mkDerivation rec {
+    name = "csharp-dist";
+    inherit mono nuget csharpSrc;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      export PATH=$mono/bin:$nuget/bin:$PATH
+      cp -R --no-preserve=mode,ownership $csharpSrc/* .
+      mcs -target:library Hsluv/Hsluv.cs
+      nuget pack Hsluv/Hsluv.nuspec
+      mkdir $out
+      cp *.nupkg $out
+    '';
   };
 
   pythonDist = pkgs.stdenv.mkDerivation rec {
