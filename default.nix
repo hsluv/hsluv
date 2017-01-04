@@ -14,6 +14,7 @@ rec {
   nodejs = pkgs.nodejs;
   luarocks = pkgs.luarocks;
   python3 = pkgs.python3;
+  maven = pkgs.maven;
   wheel = pkgs.python3Packages.wheel;
   twine = pkgs.python3Packages.twine;
   awscli = pkgs.python3Packages.awscli;
@@ -46,6 +47,12 @@ rec {
   csharpSrc = pkgs.fetchzip {
     url = "https://github.com/hsluv/hsluv-csharp/archive/ad9e0cc28853eb8d7c8722217727022a9dfb4a04.zip";
     sha256 = "180wf3bfjjliixbdpswmm3ni70drj7ik4myf5pj1s8ma2vbanm31";
+  };
+
+  # 0.1
+  javaSrc = pkgs.fetchzip {
+    url = "https://github.com/hsluv/hsluv-java/archive/94db2e028d6fb8336b518a067f30dd30c9f9a340.zip";
+    sha256 = "1sn3sib1hzm0p6h8ayz9dmdq4jflpdy3fpiixzbq1wg4mvqqxn7s";
   };
 
   csharpDist = pkgs.stdenv.mkDerivation rec {
