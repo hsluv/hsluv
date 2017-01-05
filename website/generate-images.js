@@ -102,7 +102,7 @@ function demoHsluvChroma(x, y) {
 }
 
 function demoCielchuvChroma(x, y) {
-    var lch = [50, 200 - y * 200, x * 360];
+    var lch = [50, y * 200, x * 360];
     var S = hsluv.Hsluv.lchToHsluv(lch)[1];
     var rgb;
     if (S > 100) {
@@ -114,7 +114,7 @@ function demoCielchuvChroma(x, y) {
 }
 
 function demoCielchuv(x, y) {
-    var lch = [50, 200 - y * 200, x * 360];
+    var lch = [50, y * 200, x * 360];
     var S = hsluv.Hsluv.lchToHsluv(lch)[1];
     if (S > 100) {
         return [0, 0, 0];
@@ -124,18 +124,18 @@ function demoCielchuv(x, y) {
 }
 
 function demoHsl(x, y) {
-    return hslToRgb(x, 1 - y, 0.5);
+    return hslToRgb(x, y, 0.5);
 }
 
 function demoHslLightness(x, y) {
-    var rgb = hslToRgb(x, 1 - y, 0.5);
+    var rgb = hslToRgb(x, y, 0.5);
     var lch = hsluv.Hsluv.rgbToLch(rgb);
     var l = lch[0] / 100;
     return [l, l, l];
 }
 
 function demoCielchuvLightness(x, y) {
-    var lch = [50, 200 - y * 200, x * 360];
+    var lch = [50, y * 200, x * 360];
     var S = hsluv.Hsluv.lchToHsluv(lch)[1];
     if (S > 100) {
         return [0, 0, 0];
@@ -149,7 +149,7 @@ function demoHsluvLightness() {
 }
 
 function demoHslChroma(x, y) {
-    var rgb = hslToRgb(x, 1 - y, 0.5);
+    var rgb = hslToRgb(x, y, 0.5);
     return chromaDemo(rgb);
 }
 
