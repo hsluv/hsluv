@@ -72,29 +72,7 @@ The format of the file is as follows:
 
 See `/scripts` for automated deployments.
 
-Credentials are stored in the repo in an encrypted form. The secrets can be decrypted by
-anyone who possesses a private key corresponding to one of the public keys in `secrets/public`.
-
-To decrypt (overwriting `/secrets.txt`):
-
-```
-./scripts/secrets.sh --decrypt ~/.ssh/id_rsa
-```
-
-To generate PEM file from public key:
-
-```
-ssh-keygen -f ~/.ssh/id_rsa.pub -e -m PKCS8 > myusername.pem
-```
-
-After updating `secrets.txt` or adding a PEM file to `secrets/public`, secrets need to be
-re-encrypted. To encrypt secrets:
-
-```
-./scripts/secrets.sh --encrypt
-```
-
-Don't forget to commit re-encrypted secrets after running the command above.
+You will need access to our shared credentials.
 
 ## Versioning
 

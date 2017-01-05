@@ -12,6 +12,7 @@ rec {
   neko = pkgs.neko;
   mono = pkgs.mono;
   nodejs = pkgs.nodejs;
+  gnupg = pkgs.gnupg;
   luarocks = pkgs.luarocks;
   python3 = pkgs.python3;
   maven = pkgs.maven;
@@ -51,8 +52,8 @@ rec {
 
   # 0.1
   javaSrc = pkgs.fetchzip {
-    url = "https://github.com/hsluv/hsluv-java/archive/94db2e028d6fb8336b518a067f30dd30c9f9a340.zip";
-    sha256 = "1sn3sib1hzm0p6h8ayz9dmdq4jflpdy3fpiixzbq1wg4mvqqxn7s";
+    url = "https://github.com/hsluv/hsluv-java/archive/120c049bc904c754584457c349060b1066426509.zip";
+    sha256 = "0m3ddskmi9kd8smzbkpz3qrvhrlnfsbn1871i3g0b30cms43g1zh";
   };
 
   csharpDist = pkgs.stdenv.mkDerivation rec {
