@@ -9,10 +9,10 @@ shared public keys.
 To decrypt secrets (overwriting `/secrets.txt`):
 
 ```
-./scripts/secrets.sh --decrypt ~/.ssh/myprivatekey
+./scripts/secrets.sh --decrypt ~/.ssh/myprivatekey ./secrets/symmetric/myusername.enc.txt
 ```
 
-After updating `secrets.txt` or adding a new PEM file to `secrets/public`, secrets need to be
+After updating `/secrets.txt` or adding a new PEM file to `/secrets/public`, secrets need to be
 re-encrypted. To encrypt secrets:
 
 ```

@@ -21,8 +21,8 @@ else
 fi
 
 secretsTxt="${root}/secrets.txt"
-symmetricEnc="${root}/secrets/symmetric.enc.txt"
 secretsEnc="${root}/secrets/secrets.enc.txt"
+symmetric="${root}/secrets/symmetric"
 
 command="$1"
 if [ "${command}" = "--encrypt" ];
@@ -30,11 +30,17 @@ then
     echo "Generating symmetric key  ..."
     symmetric=`openssl rand -hex 32`
 
-    echo "Encrypting symmetric key  ..."
-    echo "${symmetric}" \
-        | openssl rsautl -encrypt -inkey ${root}/secrets/public/boronine.pem -pubin \
-        | openssl enc -base64 \
-        > ${symmetricEnc}
+    rm ${root}/secrets/symmetric/*
+
+    for keyFile in ${root}/secrets/public/*
+    do
+        keyName="$(basename ${keyFile} .pem)"
+        echo "Encrypting symmetric key with ${keyName}.pem ..."
+        echo "${symmetric}" \
+            | openssl rsautl -encrypt -inkey ${keyFile} -pubin \
+            | openssl enc -base64 \
+            > ${root}/secrets/symmetric/${keyName}.enc.txt
+    done
 
     echo "Encrypting secrets.txt    ..."
     cat ${secretsTxt} \
@@ -42,14 +48,14 @@ then
         | openssl enc -base64 \
         > ${secretsEnc}
 
-    echo "Symmetric key:  ${symmetricEnc}"
     echo "Secrets:        ${secretsEnc}"
 elif [ "${command}" = "--decrypt" ];
 then
     privateKey="$2"
-    if [ -f "${privateKey}" ];
+    symmetricEnc="$3"
+    if [ -f "${privateKey}" -a -f "${symmetricEnc}" ];
     then
-        echo "Decrypting symmetric key ..."
+        echo "Decrypting symmetric key from ${symmetricEnc} ..."
         symmetric=$(cat ${symmetricEnc} \
             | openssl enc -base64 -d \
             | openssl rsautl -inkey ${privateKey} -decrypt)
@@ -60,7 +66,7 @@ then
             > ${secretsTxt}
 
     else
-        echo "ERROR: Missing or invalid PRIVATE_KEY"
+        echo "ERROR: Missing or invalid PRIVATE_KEY and/or SYMMETRIC_ENC"
         exit 1
     fi
 
