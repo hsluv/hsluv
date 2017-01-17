@@ -18,7 +18,7 @@ To run full test suite:
 nix-build -A test
 ```
 
-To build JavaScript distributions (server and client):
+To build JavaScript distributions (Node.js and browser):
 
 ```
 nix-build -A jsPublicNodePackage
