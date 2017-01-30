@@ -15,6 +15,7 @@ rec {
   gnupg = pkgs.gnupg;
   luarocks = pkgs.luarocks;
   python3 = pkgs.python3;
+  ruby = pkgs.ruby;
   maven = pkgs.maven;
   wheel = pkgs.python3Packages.wheel;
   twine = pkgs.python3Packages.twine;
@@ -54,6 +55,12 @@ rec {
   javaSrc = pkgs.fetchzip {
     url = "https://github.com/hsluv/hsluv-java/archive/120c049bc904c754584457c349060b1066426509.zip";
     sha256 = "0m3ddskmi9kd8smzbkpz3qrvhrlnfsbn1871i3g0b30cms43g1zh";
+  };
+
+  # 1.0.0
+  rubySrc = pkgs.fetchzip {
+    url = "https://github.com/hsluv/hsluv-ruby/archive/263f7e4aa6b1390bb7a49e8555e301af78341f11.zip";
+    sha256 = "13wsrq61zg0z3pxd6qc3gxn5d3p83fqrjy8bjqnyzxbvxll4yknz";
   };
 
   csharpDist = pkgs.stdenv.mkDerivation rec {
