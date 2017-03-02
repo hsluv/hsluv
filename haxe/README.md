@@ -74,19 +74,19 @@ haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@s
 # CPP Windows
 haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -cpp bin/cpp -cmd bin/cpp/RunTests.exe
 # C# Linux
-haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -cs bin/cs -cmd mono bin/cs/RunTests.exe
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -cs bin/cs -cmd "mono bin/cs/bin/RunTests.exe"
 # C# Windows
 haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -cs bin/cs -cmd bin/cs/RunTests.exe
 # Java
-haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -java bin/java -cmd java -jar bin/java/RunTests.jar
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -java bin/java -cmd "java -jar bin/java/RunTests.jar"
 # PHP
-haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -php bin/php -cmd php bin/php/index.php
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -php bin/php -cmd "php bin/php/index.php"
 # NodeJS
-haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -js bin/js/RunTests.js -cmd node bin/js/RunTests.js
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -js bin/js/RunTests.js -cmd "node bin/js/RunTests.js"
 # Python
-haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -python bin/python/RunTests.py -cmd python bin/python/RunTests.py
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -python bin/python/RunTests.py -cmd "python bin/python/RunTests.py"
 # Lua
-haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -lua bin/lua/RunTests.lua -cmd lua bin/lua/RunTests.lua
+haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@snapshot-rev4 -lua bin/lua/RunTests.lua -cmd "lua bin/lua/RunTests.lua"
 # And so on...
 ```
 
