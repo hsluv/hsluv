@@ -93,7 +93,7 @@ haxe -cp src -cp test -main RunTests -resource ../snapshots/snapshot-rev4.json@s
 # Notes
 
 This code work on some targets, but here are some tests that couldn't pass on my computer:
-- PHP : PHP7 parseInt function doesn't convert hexadecimal values anymore.
+- ~~PHP : PHP7 parseInt function doesn't convert hexadecimal values anymore.~~ Fixed since Haxe 3.4.0. Check [this issue](https://github.com/HaxeFoundation/haxe/issues/5521) for more information.
 
 Tests to do:
 - SWF
