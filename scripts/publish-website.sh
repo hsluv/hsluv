@@ -12,4 +12,4 @@ echo "Building website"
 build=`nix-build -A website --no-out-link ${default}`
 
 echo "Syncing website"
-aws s3 sync ${build} s3://www.hsluv.org
+aws s3 cp --recursive ${build} s3://www.hsluv.org
