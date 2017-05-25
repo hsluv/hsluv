@@ -1,10 +1,10 @@
 rec {
+  pkgs = import (pkgsSrc) {};
   pkgsOriginal = import <nixpkgs> {};
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/ebe19f5db0d9df4d86cd2012b44dd4249062d891.zip";
-    sha256 = "0vg6snrrwgih0iwdqv8jhv89isc9wzf5jalsfpsg5y0l9nqcbq0b";
+    url = "https://github.com/NixOS/nixpkgs/archive/dc8c798e5db19534e0a9549b7b2c4e76ccf6b8c3.zip";
+    sha256 = "0272pnng388da5rpdkallc28nxjs5198hfp0ww9j33bl2ghvvai8";
   };
-  pkgs = import (pkgsSrc) {};
 
   jre = pkgs.jre;
   zip = pkgs.zip;
@@ -18,7 +18,6 @@ rec {
   ruby = pkgs.ruby;
   maven = pkgs.maven;
   wheel = pkgs.python3Packages.wheel;
-  twine = pkgs.python3Packages.twine;
   awscli = pkgs.python3Packages.awscli;
   nuget = pkgs.dotnetPackages.Nuget;
   openssl = pkgs.openssl;
@@ -201,7 +200,7 @@ rec {
     exportsJs = ./javascript/exports.js;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      $haxe/bin/haxe -cp $haxeSrc ${targets} -js compiled.js -D js-classic
+      $haxe/bin/haxe -cp $haxeSrc ${targets} -js compiled.js -D js-classic -D js-unflatten
 
       echo '(function() {' > $out
       cat compiled.js >> $out
@@ -286,7 +285,7 @@ rec {
     name = "hsluv-js";
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
-      $jre/bin/java -jar $closureCompiler/share/java/compiler.jar \\
+      $closureCompiler/bin/closure-compiler \\
          --js_output_file=$out --compilation_level ADVANCED $jsFile
     ";
   };
