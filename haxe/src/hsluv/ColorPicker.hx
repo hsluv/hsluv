@@ -1,21 +1,21 @@
 package hsluv;
+import haxe.Log;
+import js.Browser;
 import hsluv.Hsluv;
 import hsluv.Geometry;
 
-import haxe.Log;
-
 
 typedef PickerGeometry = {
-    var lines : Array<Line>;
+    var lines:Array<Line>;
     // Ordered such that 1st vertex is interection between first and
     // second line, 2nd vertex between second and third line etc.
-    var vertices : Array<Point>;
+    var vertices:Array<Point>;
     // Angles from origin to corresponding vertex
-    var angles : Array<Angle>;
+    var angles:Array<Angle>;
     // Smallest circle with center at origin such that polygon fits inside
-    var outerCircleRadius : Float;
+    var outerCircleRadius:Float;
     // Largest circle with center at origin such that it fits inside polygon
-    var innerCircleRadius : Float;
+    var innerCircleRadius:Float;
 }
 
 class ColorPicker {
@@ -27,18 +27,18 @@ class ColorPicker {
         var outerCircleRadius = 0.0;
 
         // Find the line closest to origin
-        var closestindex2 = null;
+        var closestIndex2 = null;
         var closestLineDistance = null;
 
         for (i in 0...numLines) {
             var d = Geometry.distanceLineFromOrigin(lines[i]);
             if (closestLineDistance == null || d < closestLineDistance) {
                 closestLineDistance = d;
-                closestindex2 = i;
+                closestIndex2 = i;
             }
         }
 
-        var closestLine = lines[closestindex2];
+        var closestLine = lines[closestIndex2];
         var perpendicularLine = {slope: 0 - (1 / closestLine.slope), intercept: 0.0};
         var intersectionPoint = Geometry.intersectLineLine(closestLine, perpendicularLine);
         var startingAngle = Geometry.angleFromOrigin(intersectionPoint);
@@ -57,13 +57,13 @@ class ColorPicker {
                     line1: i1,
                     line2: i2,
                     intersectionPoint: intersectionPoint,
-                    intersectionPointAngle: intersectionPointAngle, 
+                    intersectionPointAngle: intersectionPointAngle,
                     relativeAngle: Geometry.normalizeAngle(intersectionPointAngle - startingAngle)
                 });
             }
         }
 
-        intersections.sort(function (a, b) { 
+        intersections.sort(function(a, b) {
             if (a.relativeAngle > b.relativeAngle) {
                 return 1;
             } else {
@@ -75,23 +75,26 @@ class ColorPicker {
         var orderedVertices = [];
         var orderedAngles = [];
 
-        var currentindex2;
-        var nextindex2;
+        var nextIndex2;
         var currentIntersection;
         var intersectionPointDistance;
 
-        var currentindex2 = closestindex2;
+        var currentIndex2 = closestIndex2;
+        var d = [];
+
         for (j in 0...intersections.length) {
             currentIntersection = intersections[j];
-            nextindex2 = null;
-            if (currentIntersection.line1 == currentindex2) {
-                nextindex2 = currentIntersection.line2;
-            } else if (currentIntersection.line2 == currentindex2) {
-                nextindex2 = currentIntersection.line1;
+            nextIndex2 = null;
+            if (currentIntersection.line1 == currentIndex2) {
+                nextIndex2 = currentIntersection.line2;
+            } else if (currentIntersection.line2 == currentIndex2) {
+                nextIndex2 = currentIntersection.line1;
             }
-            if (nextindex2 != null) {
-                currentindex2 = nextindex2;
-                orderedLines.push(lines[nextindex2]);
+            if (nextIndex2 != null) {
+                currentIndex2 = nextIndex2;
+
+                d.push(currentIndex2);
+                orderedLines.push(lines[nextIndex2]);
                 orderedVertices.push(currentIntersection.intersectionPoint);
                 orderedAngles.push(currentIntersection.intersectionPointAngle);
 
@@ -101,6 +104,8 @@ class ColorPicker {
                 }
             }
         }
+
+        Browser.window.console.log(d);
 
         return {
             lines: orderedLines,
@@ -140,8 +145,8 @@ class ColorPicker {
 
         var bound1 = geometry.vertices[index1];
         var bound2 = geometry.vertices[index2];
-        var upperBound;
-        var lowerBound;
+        var upperBound:Point;
+        var lowerBound:Point;
 
         if (bound1.x > bound2.x) {
             upperBound = bound1;

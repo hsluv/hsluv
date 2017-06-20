@@ -24,19 +24,19 @@ Source: https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 
 class Hsluv {
 
-    private static var m = 
-        [
-            [3.240969941904521, -1.537383177570093, -0.498610760293],
-            [-0.96924363628087, 1.87596750150772, 0.041555057407175],
-            [0.055630079696993, -0.20397695888897, 1.056971514242878],
-        ];
+    private static var m =
+    [
+        [3.240969941904521, -1.537383177570093, -0.498610760293],
+        [-0.96924363628087, 1.87596750150772, 0.041555057407175],
+        [0.055630079696993, -0.20397695888897, 1.056971514242878]
+    ];
 
     private static var minv =
-        [
-            [0.41239079926595, 0.35758433938387, 0.18048078840183],
-            [0.21263900587151, 0.71516867876775, 0.072192315360733],
-            [0.019330818715591, 0.11919477979462, 0.95053215224966],
-        ];
+    [
+        [0.41239079926595, 0.35758433938387, 0.18048078840183],
+        [0.21263900587151, 0.71516867876775, 0.072192315360733],
+        [0.019330818715591, 0.11919477979462, 0.95053215224966]
+    ];
 
     private static var refY:Float = 1.0;
 
@@ -151,7 +151,7 @@ class Hsluv {
         return [
             fromLinear(dotProduct(m[0], tuple)),
             fromLinear(dotProduct(m[1], tuple)),
-            fromLinear(dotProduct(m[2], tuple)),
+            fromLinear(dotProduct(m[2], tuple))
         ];
     }
 
@@ -162,16 +162,16 @@ class Hsluv {
     **/
     public static function rgbToXyz(tuple:Array<Float>):Array<Float> {
         var rgbl:Array<Float> =
-                [
-                    toLinear(tuple[0]),
-                    toLinear(tuple[1]),
-                    toLinear(tuple[2]),
-                ];
+        [
+            toLinear(tuple[0]),
+            toLinear(tuple[1]),
+            toLinear(tuple[2])
+        ];
 
         return [
             dotProduct(minv[0], rgbl),
             dotProduct(minv[1], rgbl),
-            dotProduct(minv[2], rgbl),
+            dotProduct(minv[2], rgbl)
         ];
     }
 
