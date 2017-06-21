@@ -6,93 +6,63 @@
 
 /* References:
 https://gist.github.com/baskerville/8297428
-http://www.brucelindbloom.com/ */
- 
-/* The following values are taken directly from matrix.wxm */
+http://www.brucelindbloom.com/
+http://entropymine.com/imageworsener/srgbformula/ */
 
-refX: 3127/3290;
-refY: 1;
-refZ: 3583/3290;
+load("./cieluv.mac");
+/* [wxMaxima: input   end   ] */
 
-M_RGB_XYZ: matrix(
-    [506752/1228815, 87881/245763,  12673/70218],
-    [87098/409605, 175762/245763,  12673/175545],
-    [7918/409605, 87881/737289, 1001167/1053270]);
-M_XYZ_RGB: invert(M_RGB_XYZ);
+/* [wxMaxima: input   start ] */
+/* Below we will be solving an equation that makes use of the XYZ to RGB
+transformation. This transformation is done in two steps: 
 
-/* Note that the standard defines these constants as decimals
-and is incorrect. We are using the correct non-standard values.
-See: http://www.brucelindbloom.com/index.html?LContinuity.html */
-epsilon: (6 / 29) ^ 3;
-kappa: (29 / 3) ^ 3;
-refU: (4 * refX) / (refX + (15 * refY) + (3 * refZ));
-refV: (9 * refY) / (refX + (15 * refY) + (3 * refZ));
+    1. Taking a dot product of the XYZ triple and the corresponding row 
+       in the M_XYZ_RGB matrix
 
-/* Not used, see linearRGBChannelFromLUV */
+    2. Applying the function fromLinear to the result (gamma correction)
+
+Step #2 is problematic because fromLinear contains a conditional expression.
+Luckily we can omit the invocation of fromLinear because we will only be 
+equating its return value with 0 and 1, the two cases where the function
+does nothing. Proof:
+*/
+
 fromLinear(c):= if (c<=0.0031308)
     then 12.92 * c
     else 1.055 * c ^ (1 / 2.4) - 0.055;
+
+fromLinear(1);
+fromLinear(0);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-f_inv(t) := if (t ^ 3 > epsilon) 
-    then t ^ 3
-    else (116 * t - 16) / kappa;
+/* Given L, U, RGB channel (represented by matrix values: m1, m2, m3) and 
+limit t (0 or 1), return the V value that will push the given RGB channel 
+outside of the sRGB gamut. */
+
+solve(LUVtoXYZ(L, U, V) . [m1, m2, m3] = t, V)[1];
+
+/* When you think of L, m1, m2, m3 and t as constants, the solution becomes 
+a line equation with x axis represented by U and y axis represented by V. 
+For example, given L=50, crossing this line will push the red channel below 0: */
+
+solve(LUVtoXYZ(50, U, V) . M_XYZ_RGB[1] = 0, V)[1];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-/* Returns the value of a linear sRGB channel specified by its matrix 
-values. Note that this is not the final sRGB value since gamma correction 
-is not applied, however, the value happens to be correct in two cases: 
-0 and 1. (Solve fromLinear above to see for yourself). As it happens, the 
-only use for this function is to solve it for 0 and 1, which means 
-fromLinear won't be necessary.
-*/
+/* Represent the above equation as a function for plotting purposes */
 
-linearRGBChannelFromLUV(L, U, V, m1, m2, m3) := block(
-    [varY, varU, varV, Y, X, Z],
-    varY : f_inv((L + 16) / 116),
-    varU : U / (13 * L) + refU,
-    varV : V / (13 * L) + refV,
-    Y    : varY * refY,
-    X    : 0 - (9 * Y * varU) / ((varU - 4) * varV - varU * varV),
-    Z    : (9 * Y - (15 * varV * Y) - (varV * X)) / (3 * varV),
-    [X, Y, Z] . [m1, m2, m3]
-);
-/* [wxMaxima: input   end   ] */
+boundLine(L, U, row, t) := rhs(solve(LUVtoXYZ(L, U, V) . row = t, V)[1]);
 
-/* [wxMaxima: input   start ] */
-/* Given L, U, RGB channel and limit t (0 or 1), return the V value
-that will push the CIE LUV color outside the sRGB gamut for the given
-channel and the given limit. */
+plotL : 50;
 
-solve(linearRGBChannelFromLUV(L, U, V, m1, m2, m3) = t, V);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-/* Bounding function generator */
-
-bound(L, m1, m2, m3, t) := solve(linearRGBChannelFromLUV(L, x, y, m1, m2, m3) = t, y)[1];
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-/* Generate bounding function that draws a line on CIE LUV space, stepping
-outside of which will push the red RGB value below 0 */
-
-bound(50, M_XYZ_RGB[1][1], M_XYZ_RGB[1][2], M_XYZ_RGB[1][3], 0);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-block(
-    [L],
-    L: 50,
-    plot2d([
-        rhs(bound(L, M_XYZ_RGB[1][1], M_XYZ_RGB[1][2], M_XYZ_RGB[1][3], 0)),
-        rhs(bound(L, M_XYZ_RGB[1][1], M_XYZ_RGB[1][2], M_XYZ_RGB[1][3], 1)),
-        rhs(bound(L, M_XYZ_RGB[2][1], M_XYZ_RGB[2][2], M_XYZ_RGB[2][3], 0)),
-        rhs(bound(L, M_XYZ_RGB[2][1], M_XYZ_RGB[2][2], M_XYZ_RGB[2][3], 1)),
-        rhs(bound(L, M_XYZ_RGB[3][1], M_XYZ_RGB[3][2], M_XYZ_RGB[3][3], 0)),
-        rhs(bound(L, M_XYZ_RGB[3][1], M_XYZ_RGB[3][2], M_XYZ_RGB[3][3], 1))
+plot2d([
+        boundLine(50, x, M_XYZ_RGB[1], 0),
+        boundLine(50, x, M_XYZ_RGB[1], 1),
+        boundLine(50, x, M_XYZ_RGB[2], 0),
+        boundLine(50, x, M_XYZ_RGB[2], 1),
+        boundLine(50, x, M_XYZ_RGB[3], 0),
+        boundLine(50, x, M_XYZ_RGB[3], 1)
     ], [x,-400,400], [y,-400,400], [
         legend,
         "red = 0",
@@ -107,21 +77,7 @@ block(
     ], [
         ylabel,
         "chroma"
-    ])
-);
-/* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: input   start ] */
-fpprec: 17;
-bfloat(M_XYZ_RGB);
-bfloat(M_RGB_XYZ);
-bfloat(refX);
-bfloat(refY);
-bfloat(refZ);
-bfloat(refU);
-bfloat(refV);
-bfloat(kappa);
-bfloat(epsilon);
+    ]);
 /* [wxMaxima: input   end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */

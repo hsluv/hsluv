@@ -1,7 +1,3 @@
-/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 15.04.0 ] */
-
-/* [wxMaxima: input   start ] */
 /* Authors: Alexei Boronine, Bastien Dejean */
 
 /* Matrices generated with the following algorithm:                 */
@@ -38,16 +34,43 @@ M_S: invert(M_P) . [X_w, Y_w, Z_w];
 M_RGB_XYZ: M_P * transpose(addcol(M_S, M_S, M_S));
 M_XYZ_RGB: invert(M_RGB_XYZ);
 
-fpprec: 16;
-bfloat(M_RGB_XYZ);
-bfloat(M_XYZ_RGB);
-
 /* XYZ tristimulus values for D65, used as reference white point here:
 http://www.brucelindbloom.com/index.html?Eqn_xyY_to_XYZ.html */
 
-xyY_to_XYZ(rat(0.3127), rat(0.3290), 1);
+[refX, refY, refZ] : xyY_to_XYZ(rat(0.3127), rat(0.3290), 1);
 
-/* [wxMaxima: input   end   ] */
+/* Note that the standard defines these constants as decimals
+and is incorrect. We are using the correct non-standard values.
+See: http://www.brucelindbloom.com/index.html?LContinuity.html */
 
-/* Maxima can't load/batch files which end with a comment! */
-"Created with wxMaxima"$
+epsilon: (6 / 29) ^ 3;
+kappa: (29 / 3) ^ 3;
+refU: (4 * refX) / (refX + (15 * refY) + (3 * refZ));
+refV: (9 * refY) / (refX + (15 * refY) + (3 * refZ));
+
+LtoY(L) :=
+    if (L > 8)
+    then refY * ((L + 16) / 116) ^ 3
+    else refY * L / kappa;
+
+LUVtoXYZ(L, U, V) := block(
+    [varY, varU, varV, Y, X, Z],
+    varY : LtoY(L),
+    varU : U / (13 * L) + refU,
+    varV : V / (13 * L) + refV,
+    Y    : varY * refY,
+    X    : 0 - (9 * Y * varU) / ((varU - 4) * varV - varU * varV),
+    Z    : (9 * Y - (15 * varV * Y) - (varV * X)) / (3 * varV),
+    [X, Y, Z]
+);
+
+fpprec: 17;
+bfloat(M_XYZ_RGB);
+bfloat(M_RGB_XYZ);
+bfloat(refX);
+bfloat(refY);
+bfloat(refZ);
+bfloat(refU);
+bfloat(refV);
+bfloat(kappa);
+bfloat(epsilon);
