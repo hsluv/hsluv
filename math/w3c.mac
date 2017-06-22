@@ -1,0 +1,79 @@
+batchload("./cie.mac");
+
+/* Functions defined by the W3C standard.
+
+https://www.w3.org/TR/WCAG20-TECHS/G18.html#G18-procedure */
+
+/* This function is almost identical to the one used by HSLuv except for
+the cutoff point which is 0.03928 rather than 0.04045. The following
+article explains why HSLuv's cutoff is better:
+
+http://entropymine.com/imageworsener/srgbformula/ */
+
+sRGB_to_linear_W3C(c) :=
+    if (c <= 0.03928)
+    then c / 12.92
+    else ((c + 0.055) / 1.055) ^ 2.4;
+
+/* Let's calculate the maximum difference between the outputs of HSLuv
+and W3C version of sRGB_to_linear. In other words, maximum err(c) for
+all c in [0, 1]:
+
+err(c) := abs(sRGB_to_linear_W3C(c) - sRGB_to_linear(c));
+
+Because Maxima doesn't handle conditional expressions well, we will have
+to break up the function into 3 based on the value of c:
+
+err1 --- c <= 0.03928
+err2 --- c > 0.03928, c <= 0.04045
+err3 --- c > 0.04045
+
+*/
+
+err1(c) := c / 12.92 - c / 12.92;
+err2(c) := ((c + 0.055) / 1.055) ^ 2.4 - c / 12.92;
+err3(c) := ((c + 0.055) / 1.055) ^ 2.4 - ((c + 0.055) / 1.055) ^ 2.4;
+
+/* Clearly we can see that err1 and err3 will always return 0, so we only
+need to find the maximum for err2. To do this we take a derivative: */
+
+solve(diff(err2(c), c) = 0, c);
+
+/* This returns 7 solutions, one of which does not contain imaginary numbers.
+We copy this solution below: */
+
+maximum_c : -(11*3361579541^(5/7)-200*123275150^(5/7))/(200*3361579541^(5/7));
+maximum_err : abs(err2(maximumC));
+bfloat(maximum_err);
+
+/* In decimal form, maximum_err is 0.00000075548127360700832
+
+In the next step, we compare W3C and HSLuv's linear RGB to Y (XYZ) functions:
+*/
+
+linear_to_Y_W3C(R, G, B) := 0.2126 * R + 0.7152 * G + 0.0722 * B;
+linear_to_Y_HSLuv(R, G, B) := [R, G, B] . M_XYZ_RGB[2];
+
+/* The difference between these functions comes from the difference in the
+coefficients. */
+
+errR : abs(0.2126 - M_RGB_XYZ[2][1]);
+errG : abs(0.7152 - M_RGB_XYZ[2][2]);
+errB : abs(0.0722 - M_RGB_XYZ[2][3]);
+
+/* To maximize this difference, let's:
+
+ 1. Assume that the sign for the error in each coefficient is positive
+ 2. Take the maximum values for R, G and B: 1, 1 and 1
+ 3. Assume maximum error in sRGB_to_linear
+
+*/
+
+maximum_err_RGB_to_Y : errR * (1 + maximum_err)
+                     + errG * (1 + maximum_err)
+                     + errB * (1 + maximum_err);
+
+bfloat(maximum_err_RGB_to_Y);
+
+/* We have now established an upper bound on the error in the sRGB to Y
+transformation, in decimal form it is 0.000078011743020715079 */
