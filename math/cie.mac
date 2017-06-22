@@ -53,6 +53,11 @@ L_to_Y(L) :=
     then ref_Y * ((L + 16) / 116) ^ 3
     else ref_Y * L / kappa;
 
+Y_to_L(Y) :=
+    if (Y <= epsilon)
+    then (Y / ref_Y) * kappa
+    else 116 * (Y / ref_Y) ^ (1 / 3) - 16;
+
 LUV_to_XYZ(L, U, V) := block(
     [var_Y, var_U, var_V, Y, X, Z],
     var_Y : L_to_Y(L),
