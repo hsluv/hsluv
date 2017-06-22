@@ -1,6 +1,4 @@
 package hsluv;
-import haxe.Log;
-import js.Browser;
 import hsluv.Hsluv;
 import hsluv.Geometry;
 
@@ -104,8 +102,6 @@ class ColorPicker {
                 }
             }
         }
-
-        Browser.window.console.log(d);
 
         return {
             lines: orderedLines,

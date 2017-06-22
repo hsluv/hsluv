@@ -272,7 +272,7 @@ rec {
     export = ./javascript/api-public.js;
   };
   jsFull = haxeJs {
-    targets = "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker";
+    targets = "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker hsluv.Contrast";
     export = ./javascript/api-full.js;
   };
 

@@ -181,7 +181,7 @@ class Hsluv {
     illuminant D65, so Yn (see refY in Maxima file) equals 1. The formula is
     simplified accordingly.
     */
-    private static function yToL(Y:Float):Float {
+    public static function yToL(Y:Float):Float {
         if (Y <= epsilon) {
             return (Y / refY) * kappa;
         } else {
@@ -189,7 +189,7 @@ class Hsluv {
         }
     }
 
-    private static function lToY(L:Float):Float {
+    public static function lToY(L:Float):Float {
         if (L <= 8) {
             return refY * L / kappa;
         } else {
