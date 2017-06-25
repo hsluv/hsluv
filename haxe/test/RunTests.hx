@@ -7,7 +7,9 @@ class RunTests {
         runner.run();
         var result = runner.result;
         if (!result.success) {
-            Sys.exit(1);
+            #if sys
+                Sys.exit(1);
+            #end
         }
     }
 }

@@ -26,12 +26,12 @@ class Snapshot {
         return ret;
     }
 
-    static public function main () {
+    static public function generateSnapshot () {
         var ret:StringMap<StringMap<Array<Float>>> = new StringMap();
         var samples = Snapshot.generateHexSamples();
 
         for (hex in samples) {
-            
+
             var rgb = Hsluv.hexToRgb(hex);
             var xyz = Hsluv.rgbToXyz(rgb);
             var luv = Hsluv.xyzToLuv(xyz);
@@ -48,6 +48,14 @@ class Snapshot {
             ret.set(hex, sample);
         }
 
-        Sys.stdout().writeString(Json.stringify(ret));
+        return ret;
     }
+
+    #if sys
+        static public function main () {
+            var snapshot = Snapshot.generateSnapshot();
+            Sys.stdout().writeString(Json.stringify(snapshot));
+        }
+    #end
+
 }
