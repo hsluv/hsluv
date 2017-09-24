@@ -2,8 +2,8 @@ rec {
   pkgs = import (pkgsSrc) {};
   pkgsOriginal = import <nixpkgs> {};
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/dc8c798e5db19534e0a9549b7b2c4e76ccf6b8c3.zip";
-    sha256 = "0272pnng388da5rpdkallc28nxjs5198hfp0ww9j33bl2ghvvai8";
+    url = "https://github.com/NixOS/nixpkgs/archive/a44bbc72e6b3d7c3e9619e5c74de6b6261a8e4c8.zip";
+    sha256 = "1p67601l1qblka8v8w2qfiivvns55jd3wdvwvpvcdbhhs9fbl13w";
   };
 
   jre = pkgs.jre;
