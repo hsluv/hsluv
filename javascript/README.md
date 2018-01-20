@@ -12,6 +12,10 @@ Server-side: ``npm install hsluv``.
 
 ## Usage
 
+Most functions take tuples, ie: Javascript arrays with three elements.  Make sure you are using
+`func([a,b,c])` and not `func(a,b,c)`. If you are getting NaN for output then this is probably
+the problem.
+
 **hsluvToHex([hue, saturation, lightness])**
 
 *hue* is a number between 0 and 360, *saturation* and *lightness* are 
