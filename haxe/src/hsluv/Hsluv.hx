@@ -80,12 +80,13 @@ class Hsluv {
         return result;
     }
 
-    /**
-    For given lightness, returns the maximum chroma. Keeping the chroma value
-    below this number will ensure that for any hue, the color is within the RGB
-    gamut.
-    */
+
     public static function maxSafeChromaForL(L:Float):Float {
+        /**
+        For given lightness, returns the maximum chroma. Keeping the chroma value
+        below this number will ensure that for any hue, the color is within the RGB
+        gamut.
+        */
         var bounds:Array<Line> = getBounds(L);
         // var min:Float = Float.MAX_VALUE;
         var min:Float = 1.7976931348623157e+308;

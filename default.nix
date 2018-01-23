@@ -210,6 +210,16 @@ rec {
     '';
   };
 
+  haxePython = pkgs.stdenv.mkDerivation rec {
+    inherit haxe haxeSrc;
+    name = "hsluv-python";
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      mkdir $out
+      $haxe/bin/haxe -cp $haxeSrc hsluv.Hsluv -python $out/hsluv.py
+    '';
+  };
+
   haxeTest = pkgs.stdenv.mkDerivation rec {
     inherit haxe haxeSrc haxeTestSrc snapshotRev4;
     name = "hsluv-haxe-test";
