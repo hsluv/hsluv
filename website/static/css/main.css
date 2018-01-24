@@ -19,12 +19,6 @@ body.dark {
     color: #666;
 }
 
-pre {
-    font-family: Menlo, Monaco, Consolas, monospace;
-    font-size: 14px;
-    padding: 10px 20px;
-}
-
 sub {
     font-size: 0.7em;
     line-height: 0;

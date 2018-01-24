@@ -31,9 +31,8 @@ function generateHtml(targetDir) {
             title: 'Math'
         },
         {
-            page: 'syntax',
-            title: 'Random Syntax Highlighting Color Schemes',
-            bodyClass: 'dark'
+            page: 'examples',
+            title: 'Usage examples'
         },
         {
             page: 'credits',
