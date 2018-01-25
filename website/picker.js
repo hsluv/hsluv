@@ -377,7 +377,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     elInputHex.addEventListener('input', function () {
-        console.log('input', this);
         if (stringIsValidHex(elInputHex.value)) {
             let hsl = hsluv.Hsluv.hexToHsluv(elInputHex.value);
             H = hsl[0];
