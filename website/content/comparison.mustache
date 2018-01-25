@@ -172,81 +172,28 @@
     </div>
 </div>
 <div class="row">
-    <div class="col c8">
-        <p>Let's try to generate some random background colors:</p>
-        <pre>function randomHue() {
-  return Math.floor(Math.random() * 360);
-}
-$(...).css('background-color', HSL.toHex(randomHue(), 90, 60));
-$(...).css('background-color', hslToHex(randomHue(), 90, 60));</pre>
-    </div>
-    <div class="col c2">
-        <div class="demo" id="demo-hsluv">
-            <button class="btn btn-sm">Test HSL<sub>uv</sub></button>
-            <div>Lightness: 60%</div>
-            <div>Lightness: 60%</div>
-            <div>Lightness: 60%</div>
-            <div>Lightness: 60%</div>
-            <div>Lightness: 60%</div>
-            <div>Lightness: 60%</div>
+    {{#demoColorBars}}
+        <div class="col c2">
+            <div class="demo" id="rainbow-hsluv">
+                <h3>HSL<sub>uv</sub></h3>
+                {{#hsluvColors}}
+                    <div style="background-color:{{.}}">Lightness: 60%</div>
+                {{/hsluvColors}}
+            </div>
         </div>
-    </div>
-    <div class="col c2">
-        <div class="demo" id="demo-hsl">
-            <button class="btn btn-sm">Test HSL</button>
-            <div>Lightness: 60%</div>
-            <div>Lightness: 60%</div>
-            <div>Lightness: 60%</div>
-            <div>Lightness: 60%</div>
-            <div>Lightness: 60%</div>
-            <div>Lightness: 60%</div>
+        <div class="col c2">
+            <div class="demo" id="rainbow-hsl">
+                <h3>HSL</h3>
+                {{#hslColors}}
+                    <div style="background-color:{{.}}">Lightness: 60%</div>
+                {{/hslColors}}
+            </div>
         </div>
-    </div>
-</div>
-
-
-<div class="row">
+    {{/demoColorBars}}
     <div class="col c8">
-        <p>
-            HSL<sub>uv</sub>'s uniform hue means random colors will be truly random.
-            Iterating over colors will also produce better results.
+        <p style="margin:100px">
+            This demo should illustrate the uniformity of HSL<sub>uv</sub>'s hue and the consistency
+            of contrast when generating colors with HSL<sub>uv</sub>.
         </p>
-        <pre>$('#rainbow-hsluv div').each(function(index) {
-  $(this).css('background-color', HSL.toHex(index * 36, 90, 60));
-});
-
-$('#rainbow-hsl div').each(function(index) {
-  $(this).css('background-color', hslToHex(index * 36, 90, 60));
-});</pre>
-    </div>
-    <div class="col c2">
-        <div class="demo" id="rainbow-hsluv">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-    </div>
-    <div class="col c2">
-        <div class="demo" id="rainbow-hsl">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
     </div>
 </div>
-<script src="/static/js/hsluv.full.js"></script>
-<script src="/static/js/demos.js"></script>

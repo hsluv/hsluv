@@ -91,8 +91,6 @@ rec {
     '';
   };
 
-
-
   doxZip = pkgs.fetchurl {
     url = "https://github.com/HaxeFoundation/dox/archive/a4dd456418a4a540fe1d25a764927119bb892f72.zip";
     sha256 = "14p96nidbbv4afphsl7sy2qhzrs4mc7hf960wbbd4dp0cg7lij1s";
@@ -147,22 +145,35 @@ rec {
     '';
   };
 
+  pickerJs = pkgs.stdenv.mkDerivation rec {
+    name = "picker-js";
+    hsluvJsFull = haxeJsCompile "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker hsluv.Contrast";
+    pickerJs = ./website/picker.js;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      echo '(function() {' > $out
+      cat $hsluvJsFull >> $out
+      cat $pickerJs >> $out
+      echo '})();' >> $out
+    '';
+  };
+
   website = pkgs.stdenv.mkDerivation rec {
     name = "hsluv-website";
-    inherit nodejs nodeModules jsFull websiteDemoImages;
+    inherit nodejs nodeModules websiteDemoImages;
     src = ./website;
-    websiteRoot = ./website;
+    pickerJsCompiled = compileJs pickerJs;
+    buildInputs = [nodejs];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       export NODE_PATH=$nodeModules:$NODE_PATH
 
       mkdir $out
-      cp -R --no-preserve=mode,ownership $websiteRoot/static $out/static
+      cp -R --no-preserve=mode,ownership $src/static $out/static
       cp -R --no-preserve=mode,ownership $websiteDemoImages/* $out
+      cp $pickerJsCompiled $out/static/picker.min.js
 
-      cp $jsFull $out/static/js/hsluv.full.js
-
-      $nodejs/bin/node $websiteRoot/generate-html.js $out
+      node $src/generate-html.js $out
       echo 'www.hsluv.org' > $out/CNAME
     '';
   };
@@ -194,16 +205,25 @@ rec {
     '';
   };
 
-  haxeJs = { targets, export } : pkgs.stdenv.mkDerivation rec {
-    inherit haxe haxeSrc export;
-    name = "hsluv-js";
-    exportsJs = ./javascript/exports.js;
+  haxeJsCompile = targets : pkgs.stdenv.mkDerivation rec {
+    inherit haxe haxeSrc;
+    name = "hsluv-js-compile";
+    buildInputs = [haxe];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      $haxe/bin/haxe -cp $haxeSrc ${targets} -js compiled.js -D js-classic -D js-unflatten
+      haxe -cp $haxeSrc ${targets} -js $out -D js-classic -D js-unflatten
+    '';
+  };
 
+  haxeJs = { targets, export } : pkgs.stdenv.mkDerivation rec {
+    inherit export;
+    name = "hsluv-js";
+    exportsJs = ./javascript/exports.js;
+    compiledJs = haxeJsCompile targets;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
       echo '(function() {' > $out
-      cat compiled.js >> $out
+      cat $compiledJs >> $out
       cat $export >> $out
       cat $exportsJs >> $out
       echo '})();' >> $out
@@ -293,11 +313,11 @@ rec {
   compileJs = jsFile : pkgs.stdenv.mkDerivation rec {
     inherit jre closureCompiler jsFile;
     name = "hsluv-js";
-    builder = builtins.toFile "builder.sh" "
+    buildInputs = [closureCompiler];
+    builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      $closureCompiler/bin/closure-compiler \\
-         --js_output_file=$out --compilation_level ADVANCED $jsFile
-    ";
+      closure-compiler --js_output_file=$out --compilation_level ADVANCED $jsFile
+    '';
   };
 
   jsPublicMin = compileJs jsPublic;

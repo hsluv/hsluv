@@ -1,13 +1,13 @@
 package hsluv;
 
 typedef Point = {
-    var x : Float;
-    var y : Float;
+    var x:Float;
+    var y:Float;
 }
 
 typedef Line = {
-  var slope : Float;
-  var intercept : Float;
+    var slope:Float;
+    var intercept:Float;
 }
 
 // All angles in radians
