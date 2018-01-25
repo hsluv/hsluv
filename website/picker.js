@@ -349,11 +349,6 @@ document.addEventListener('DOMContentLoaded', function () {
         sliderL.setBackground(lightnessColors);
     }
 
-    function updateHexText() {
-        const hex = hsluv.Hsluv.hsluvToHex([H, S, L]);
-        elInputHex.setAttribute('value', hex);
-    }
-
     function redrawAfterUpdatingVariables(changeH, changeS, changeL, triggeredBySym) {
         if (changeL) {
             contrasting = L > 70 ? '#1b1b1b' : '#ffffff';
@@ -361,9 +356,10 @@ document.addEventListener('DOMContentLoaded', function () {
             scale = outerCircleRadiusPixel / pickerGeometry.outerCircleRadius;
         }
         redrawForeground();
-        elSwatch.style.backgroundColor = hsluv.Hsluv.hsluvToHex([H, S, L]);
+        const hex = hsluv.Hsluv.hsluvToHex([H, S, L]);
+        elSwatch.style.backgroundColor = hex;
         if (triggeredBySym !== symHexText)
-            updateHexText();
+            elInputHex.value = hex;
         if (changeL)
             redrawCanvas();
         if (changeH && triggeredBySym !== symSliderHue)
@@ -373,16 +369,17 @@ document.addEventListener('DOMContentLoaded', function () {
         if (changeL && triggeredBySym !== symSliderLightness)
             sliderL.setVal(L / 100);
         if (changeH && triggeredBySym !== symSliderHueCounterText)
-            elCounterHue.setAttribute('value', H.toFixed(1));
+            elCounterHue.value = H.toFixed(1);
         if (changeS && triggeredBySym !== symSliderSaturationCounterText)
-            elCounterSaturation.setAttribute('value', S.toFixed(1));
+            elCounterSaturation.value = S.toFixed(1);
         if (changeL && triggeredBySym !== symSliderLightnessCounterText)
-            elCounterLightness.setAttribute('value', L.toFixed(1));
+            elCounterLightness.value = L.toFixed(1);
     }
 
     elInputHex.addEventListener('input', function () {
-        if (stringIsValidHex(this.value)) {
-            let hsl = hsluv.Hsluv.hexToHsluv(this.value);
+        console.log('input', this);
+        if (stringIsValidHex(elInputHex.value)) {
+            let hsl = hsluv.Hsluv.hexToHsluv(elInputHex.value);
             H = hsl[0];
             S = hsl[1];
             L = hsl[2];

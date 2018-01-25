@@ -2,8 +2,8 @@ rec {
   pkgs = import (pkgsSrc) {};
   pkgsOriginal = import <nixpkgs> {};
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/a44bbc72e6b3d7c3e9619e5c74de6b6261a8e4c8.zip";
-    sha256 = "1p67601l1qblka8v8w2qfiivvns55jd3wdvwvpvcdbhhs9fbl13w";
+    url = "https://github.com/NixOS/nixpkgs/archive/866717d75b64cb07cab16d0357edfd00cf339c20.zip";
+    sha256 = "0ikz6m801gfmgzd4q0la5pcivl46yiviad5gvz0qba0pa7wc8g0g";
   };
 
   jre = pkgs.jre;
@@ -158,11 +158,12 @@ rec {
     '';
   };
 
+  pickerJsMin = compileJs pickerJs;
+
   website = pkgs.stdenv.mkDerivation rec {
     name = "hsluv-website";
-    inherit nodejs nodeModules websiteDemoImages;
+    inherit nodejs nodeModules websiteDemoImages pickerJsMin;
     src = ./website;
-    pickerJsCompiled = compileJs pickerJs;
     buildInputs = [nodejs];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
@@ -171,7 +172,7 @@ rec {
       mkdir $out
       cp -R --no-preserve=mode,ownership $src/static $out/static
       cp -R --no-preserve=mode,ownership $websiteDemoImages/* $out
-      cp $pickerJsCompiled $out/static/picker.min.js
+      cp $pickerJsMin $out/static/picker.min.js
 
       node $src/generate-html.js $out
       echo 'www.hsluv.org' > $out/CNAME
