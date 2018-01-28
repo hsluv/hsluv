@@ -14,10 +14,8 @@ rec {
   nodejs = pkgs.nodejs;
   gnupg = pkgs.gnupg;
   luarocks = pkgs.luarocks;
-  python3 = pkgs.python3;
   ruby = pkgs.ruby;
   maven = pkgs.maven;
-  wheel = pkgs.python3Packages.wheel;
   awscli = pkgs.python3Packages.awscli;
   nuget = pkgs.dotnetPackages.Nuget;
   openssl = pkgs.openssl;
@@ -25,6 +23,8 @@ rec {
   haxeTestSrc = ./haxe/test;
   snapshotRev4 = ./snapshots/snapshot-rev4.json;
   closureCompiler = pkgs.closurecompiler;
+
+  python = pkgs.python36.withPackages (ps: with ps; [ setuptools wheel ]);
 
   # v0.0.2
   pythonSrc = pkgs.fetchzip {
@@ -78,11 +78,10 @@ rec {
 
   pythonDist = pkgs.stdenv.mkDerivation rec {
     name = "python-dist";
-    inherit python3 pythonSrc wheel;
+    inherit python pythonSrc;
+    buildInputs = [python];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      export PATH=$python3/bin:$PATH
-      export PYTHONPATH=$PYTHONPATH:$wheel/lib/python3.5/site-packages
       export SOURCE_DATE_EPOCH=315532800
       cp -R --no-preserve=mode,ownership $pythonSrc/* .
       python setup.py sdist bdist_wheel
@@ -109,9 +108,9 @@ rec {
   nodeModules = pkgs.stdenv.mkDerivation rec {
     name = "node-modules";
     inherit nodejs pngJs mustacheJs jsFullNodePackage;
+    buildInputs = [nodejs];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      PATH=$nodejs/bin:$PATH
       HOME=.
       npm install $pngJs
       npm install $mustacheJs
@@ -125,11 +124,12 @@ rec {
     name = "hsluv-website-demo-images";
     inherit nodejs nodeModules;
     generateImagesJs = ./website/generate-images.js;
+    buildInputs = [nodejs];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       export NODE_PATH=$nodeModules:$NODE_PATH
       mkdir $out
-      $nodejs/bin/node $generateImagesJs --website $out
+      node $generateImagesJs --website $out
     '';
   };
 
@@ -137,17 +137,18 @@ rec {
     name = "hsluv-avatar";
     inherit nodejs nodeModules;
     generateImagesJs = ./website/generate-images.js;
+    buildInputs = [nodejs];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       export NODE_PATH=$nodeModules:$NODE_PATH
       mkdir $out
-      $nodejs/bin/node $generateImagesJs --avatar $out/avatar.png
+      node $generateImagesJs --avatar $out/avatar.png
     '';
   };
 
   pickerJs = pkgs.stdenv.mkDerivation rec {
     name = "picker-js";
-    hsluvJsFull = haxeJsCompile "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker hsluv.Contrast";
+    hsluvJsFull = haxeJsCompile "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker";
     pickerJs = ./website/picker.js;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
@@ -179,30 +180,32 @@ rec {
     '';
   };
 
+  # haxelib causes segmentation fault
   docs = pkgs.stdenv.mkDerivation rec {
     name = "docs";
     inherit neko haxe haxeSrc doxZip;
+    buildInputs = [neko haxe];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      PATH=$haxe/bin:$neko/bin:$PATH
-      HOME=.
+      export HOME=.
       mkdir $out
 
-      haxelib setup .
-      haxelib install $doxZip
-      haxe -cp $haxeSrc/hsluv/Hsluv.hx -D doc-gen --macro 'include("hsluv")' --no-output -xml hsluv.xml
-      haxelib run dox -i hsluv.xml -o $out
+      # haxelib setup .
+      # haxelib install $doxZip
+      # haxe -cp $haxeSrc/hsluv/Hsluv.hx -D doc-gen --macro 'include("hsluv")' --no-output -xml hsluv.xml
+      # haxelib run dox -i hsluv.xml -o $out
     '';
   };
 
   haxelibZip = pkgs.stdenv.mkDerivation rec {
     name = "haxelib";
-    inherit zip haxe;
+    inherit zip;
     haxeRoot = ./haxe;
+    buildInputs = [zip];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       mkdir $out
-      (cd $haxeRoot && $zip/bin/zip -r $out/hsluv.zip .)
+      (cd $haxeRoot && zip -r $out/hsluv.zip .)
     '';
   };
 
@@ -213,6 +216,16 @@ rec {
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       haxe -cp $haxeSrc ${targets} -js $out -D js-classic -D js-unflatten
+    '';
+  };
+
+  haxePyCompile = targets : pkgs.stdenv.mkDerivation rec {
+    inherit haxe haxeSrc;
+    name = "hsluv-python";
+    buildInputs = [haxe];
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      haxe -cp $haxeSrc ${targets} -python $out
     '';
   };
 
@@ -231,22 +244,13 @@ rec {
     '';
   };
 
-  haxePython = pkgs.stdenv.mkDerivation rec {
-    inherit haxe haxeSrc;
-    name = "hsluv-python";
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      mkdir $out
-      $haxe/bin/haxe -cp $haxeSrc hsluv.Hsluv -python $out/hsluv.py
-    '';
-  };
-
   haxeTest = pkgs.stdenv.mkDerivation rec {
     inherit haxe haxeSrc haxeTestSrc snapshotRev4;
     name = "hsluv-haxe-test";
+    buildInputs = [haxe];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      $haxe/bin/haxe -cp $haxeSrc -cp $haxeTestSrc -main RunTests -resource $snapshotRev4@snapshot-rev4 --interp
+      haxe -cp $haxeSrc -cp $haxeTestSrc -main RunTests -resource $snapshotRev4@snapshot-rev4 --interp
       touch $out
     '';
   };
@@ -254,9 +258,10 @@ rec {
   snapshotJson = pkgs.stdenv.mkDerivation rec {
     inherit haxe haxeSrc haxeTestSrc;
     name = "hsluv-haxe-test";
+    buildInputs = [haxe];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      $haxe/bin/haxe -cp $haxeSrc -cp $haxeTestSrc -main Snapshot --interp > $out
+      haxe -cp $haxeSrc -cp $haxeTestSrc -main Snapshot --interp > $out
     '';
   };
 
@@ -264,10 +269,11 @@ rec {
     inherit nodejs jsFile;
     name = "hsluv-js-test";
     testJs = ./javascript/test.js;
+    buildInputs = [nodejs];
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
       echo $testJs $jsFile
-      $nodejs/bin/node $testJs $jsFile $snapshotRev4
+      node $testJs $jsFile $snapshotRev4
       touch $out
     ";
   };
