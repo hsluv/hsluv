@@ -1,19 +1,13 @@
-var assert = require('assert');
-
-function testPublicApi(hsluv) {
-    var samples = ['#000000', '#ffffff', '#f19fb7'];
-    samples.forEach(function(hexOrig) {
+if (require.main === module) {
+    const assert = require('assert');
+    const samples = ['#000000', '#ffffff', '#f19fb7'];
+    for (let hexOrig of samples) {
         console.log('testing:', hexOrig);
-        var hsluvTuple = hsluv.hexToHsluv(hexOrig);
-        var hpluvTuple = hsluv.hexToHpluv(hexOrig);
-        var hex1 = hsluv.hsluvToHex(hsluvTuple);
-        var hex2 = hsluv.hpluvToHex(hpluvTuple);
+        const hsluvTuple = hsluv.hexToHsluv(hexOrig);
+        const hpluvTuple = hsluv.hexToHpluv(hexOrig);
+        const hex1 = hsluv.hsluvToHex(hsluvTuple);
+        const hex2 = hsluv.hpluvToHex(hpluvTuple);
         assert(hexOrig === hex1);
         assert(hexOrig === hex2);
-    });
-}
-
-if (require.main === module) {
-    var hsluv = require(process.argv[2]);
-    testPublicApi(hsluv);
+    }
 }

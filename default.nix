@@ -107,14 +107,14 @@ rec {
 
   nodeModules = pkgs.stdenv.mkDerivation rec {
     name = "node-modules";
-    inherit nodejs pngJs mustacheJs jsFullNodePackage;
+    inherit nodejs pngJs mustacheJs nodePackageInternal;
     buildInputs = [nodejs];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       HOME=.
       npm install $pngJs
       npm install $mustacheJs
-      npm install $jsFullNodePackage
+      npm install $nodePackageInternal
       mkdir $out
       cp -R node_modules/* $out
     '';
@@ -152,14 +152,10 @@ rec {
     pickerJs = ./website/picker.js;
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      echo '(function() {' > $out
       cat $hsluvJsFull >> $out
       cat $pickerJs >> $out
-      echo '})();' >> $out
     '';
   };
-
-  pickerJsMin = compileJs pickerJs;
 
   website = pkgs.stdenv.mkDerivation rec {
     name = "hsluv-website";
@@ -229,21 +225,6 @@ rec {
     '';
   };
 
-  haxeJs = { targets, export } : pkgs.stdenv.mkDerivation rec {
-    inherit export;
-    name = "hsluv-js";
-    exportsJs = ./javascript/exports.js;
-    compiledJs = haxeJsCompile targets;
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      echo '(function() {' > $out
-      cat $compiledJs >> $out
-      cat $export >> $out
-      cat $exportsJs >> $out
-      echo '})();' >> $out
-    '';
-  };
-
   haxeTest = pkgs.stdenv.mkDerivation rec {
     inherit haxe haxeSrc haxeTestSrc snapshotRev4;
     name = "hsluv-haxe-test";
@@ -265,68 +246,85 @@ rec {
     '';
   };
 
-  jsTest = jsFile : pkgs.stdenv.mkDerivation rec {
-    inherit nodejs jsFile;
-    name = "hsluv-js-test";
+  testBrowserJs = pkgs.stdenv.mkDerivation rec {
+    inherit nodejs browserDist;
+    name = "test-browser-js";
     testJs = ./javascript/test.js;
     buildInputs = [nodejs];
-    builder = builtins.toFile "builder.sh" "
+    builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      echo $testJs $jsFile
-      node $testJs $jsFile $snapshotRev4
+      echo "const window = {};" > ./test.js
+      cat $browserDist >> ./test.js
+      echo "const hsluv = window.hsluv;" >> ./test.js
+      cat $testJs >> ./test.js
+      node ./test.js
       touch $out
-    ";
+    '';
   };
 
   test = pkgs.stdenv.mkDerivation rec {
-    inherit jsPublic haxeTest;
+    inherit browserDist haxeTest testBrowserJs;
     name = "super-test";
-    jsPublicTest = jsTest jsPublic;
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
-      echo $jsPublicTest
+      echo $testBrowserJs
       echo $haxeTest
       touch $out
     ";
   };
 
-  jsNodePackage = jsFile : pkgs.stdenv.mkDerivation rec {
-    inherit jsFile;
-    name = "hsluv-js-node-package";
+  makeNodePackage = { jsFile, exportFile } : pkgs.stdenv.mkDerivation rec {
+    inherit jsFile exportFile;
+    name = "js-node-package";
     packageJson = ./javascript/package.json;
     readme = ./javascript/README.md;
-    builder = builtins.toFile "builder.sh" "
+    builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       mkdir $out
-      cp $jsFile $out/hsluv.js
-      cp $packageJson $out/package.json
-      cp $readme $out/README.md
-    ";
+      cat $jsFile > $out/hsluv.js
+      cat $exportFile >> $out/hsluv.js
+      echo -e "\nmodule.exports = root;" >> $out/hsluv.js
+      install $packageJson $out/package.json
+      install $readme $out/README.md
+    '';
   };
 
-  jsPublic = haxeJs {
-    targets = "hsluv.Hsluv";
+  makeBrowserModule = jsFile : pkgs.stdenv.mkDerivation rec {
+    inherit jsFile;
+    name = "js-browser-module";
     export = ./javascript/api-public.js;
-  };
-  jsFull = haxeJs {
-    targets = "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker hsluv.Contrast";
-    export = ./javascript/api-full.js;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      cat $jsFile > $out
+      cat $export >> $out
+      echo -e "\nwindow['hsluv'] = root;" >> $out
+    '';
   };
 
-  # Final artifacts
-  jsPublicNodePackage = jsNodePackage jsPublic;
-  jsFullNodePackage = jsNodePackage jsFull;
-
-  compileJs = jsFile : pkgs.stdenv.mkDerivation rec {
+  minifyJs = jsFile : pkgs.stdenv.mkDerivation rec {
     inherit jre closureCompiler jsFile;
     name = "hsluv-js";
     buildInputs = [closureCompiler];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      closure-compiler --js_output_file=$out --compilation_level ADVANCED $jsFile
+      closure-compiler --output_wrapper "(function() {%output%})();" \
+                       --js_output_file=$out \
+                       --compilation_level ADVANCED $jsFile
     '';
   };
 
-  jsPublicMin = compileJs jsPublic;
+  # Internal use
+  nodePackageInternal = makeNodePackage {
+    jsFile = haxeJsCompile "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker hsluv.Contrast";
+    exportFile = ./javascript/api-full.js;
+  };
+  pickerJsMin = minifyJs pickerJs;
+
+  # Public releases
+  nodePackageDist = makeNodePackage {
+    jsFile = haxeJsCompile "hsluv.Hsluv";
+    exportFile = ./javascript/api-public.js;
+  };
+  browserDist = minifyJs (makeBrowserModule (haxeJsCompile "hsluv.Hsluv"));
 
 }
