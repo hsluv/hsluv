@@ -80,19 +80,17 @@ class Hsluv {
         return result;
     }
 
-
+    /**
+    For given lightness, returns the maximum chroma. Keeping the chroma value
+    below this number will ensure that for any hue, the color is within the RGB
+    gamut.
+    */
     public static function maxSafeChromaForL(L:Float):Float {
-        /**
-        For given lightness, returns the maximum chroma. Keeping the chroma value
-        below this number will ensure that for any hue, the color is within the RGB
-        gamut.
-        */
         var bounds:Array<Line> = getBounds(L);
-        // var min:Float = Float.MAX_VALUE;
-        var min:Float = 1.7976931348623157e+308;
+        var min:Float = Math.POSITIVE_INFINITY;
 
-        for (i in 0...2) {
-            var length:Float = Geometry.distanceLineFromOrigin(bounds[i]);
+        for (bound in bounds) {
+            var length:Float = Geometry.distanceLineFromOrigin(bound);
             min = Math.min(min, length);
         }
 
@@ -101,10 +99,8 @@ class Hsluv {
 
     public static function maxChromaForLH(L:Float, H:Float) {
         var hrad:Float = H / 360 * Math.PI * 2;
-
         var bounds:Array<Line> = getBounds(L);
-        // var min:Float = Float.MAX_VALUE;
-        var min:Float = 1.7976931348623157e+308;
+        var min:Float = Math.POSITIVE_INFINITY;
 
         for (bound in bounds) {
             var length:Float = Geometry.lengthOfRayUntilIntersect(hrad, bound);
@@ -274,9 +270,7 @@ class Hsluv {
             H = 0;
         } else {
             var Hrad:Float = Math.atan2(V, U);
-
-            // pi to more digits than they provide it in the stdlib
-            H = (Hrad * 180.0) / 3.1415926535897932;
+            H = (Hrad * 180.0) / Math.PI;
 
             if (H < 0) {
                 H = 360 + H;
