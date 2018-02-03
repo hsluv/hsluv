@@ -79,8 +79,6 @@ sRGB_to_linear(c) :=
     then ((c + 0.055) / 1.055) ^ 2.4
     else c / 12.92;
 
-
-fpprec: 17;
 bfloat(M_XYZ_RGB);
 bfloat(M_RGB_XYZ);
 bfloat(ref_X);

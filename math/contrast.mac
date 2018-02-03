@@ -1,8 +1,4 @@
-/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 15.04.0 ] */
-
-/* [wxMaxima: input   start ] */
-/* Authors: Alexei Boronine 
+/* Authors: Alexei Boronine
 
 This module provides the functions for generating colors with a given
 contrast ratio as specified by W3C: 
@@ -16,38 +12,28 @@ will be using HSLuv's relative luminance below.
 load("./w3c.mac");
 
 W3C_contrast_ratio(YL, YD) := (YL + 0.05) / (YD + 0.05);
-/* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
 /* Assuming the darker color to be black, what is the minimum relative
 luminance of the lighter color so that they satisfy the given contrast
 ratio? */
 
 solve(W3C_contrast_ratio(YL, 0) = r, YL);
-/* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
 /* Copy the above solution into a function: */
 
 lighter_min_Y(r) := (r - 1) / 20;
-/* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
 /* We use the above function to find the minimum relative luminance for
 the lighter color. We use the result to generate a color. Now we need to
 find the maximum relative luminance for the darker color, given the 
 relative luminance of the lighter color. */
 
 solve(W3C_contrast_ratio(YL, YD) = r, YD);
-/* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
 /* Copy the solution above into a function: */
 
 darker_max_Y(r, YL) := (20 * YL - r + 1) / (20 * r);
-/* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
 /* Let's test these functions.
 
 W3C recommends a contrast ratio of 4.5:1 for text:
@@ -58,9 +44,7 @@ https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast
 r : 4.5 / 1;
 lminY : lighter_min_Y(r);
 lminL : Y_to_L(lmY);
-/* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
 /* So the minimum lightness for the lighter of the two colors
 is 48.88395864072102 if we want to satisfy the 4.5:1 contrast
 ratio. Let's say we pick the color #7195b1 with lightness 60
@@ -72,9 +56,7 @@ YL : L_to_Y(60);
 
 dmaxY : darker_max_Y(r, YL);
 dmaxL : Y_to_L(dmaxY);
-/* [wxMaxima: input   end   ] */
 
-/* [wxMaxima: input   start ] */
 /* So the maximum lightness for the darker of the two colors
 is 17.27673952415704. Let's pick the color #1c291a with lightness
 15 to be our darker color.
@@ -84,10 +66,3 @@ contrast ratio of 4.8:1, above the minimum 4.5 as expected.
 http://webaim.org/resources/contrastchecker/
 
 */
-
-1;
-/* [wxMaxima: input   end   ] */
-
-
-/* Maxima can't load/batch files which end with a comment! */
-"Created with wxMaxima"$

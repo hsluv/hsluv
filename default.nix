@@ -16,8 +16,9 @@ rec {
   luarocks = pkgs.luarocks;
   ruby = pkgs.ruby;
   maven = pkgs.maven;
-  awscli = pkgs.python3Packages.awscli;
+  awscli = pkgs.awscli;
   nuget = pkgs.dotnetPackages.Nuget;
+  maxima = pkgs.maxima;
   openssl = pkgs.openssl;
   haxeSrc = ./haxe/src;
   haxeTestSrc = ./haxe/test;
@@ -62,14 +63,32 @@ rec {
     sha256 = "13wsrq61zg0z3pxd6qc3gxn5d3p83fqrjy8bjqnyzxbvxll4yknz";
   };
 
+  maximaOutput = pkgs.stdenv.mkDerivation rec {
+    name = "maxima-build";
+    inherit maxima;
+    buildInputs = [maxima];
+    mathSrc = ./math;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      install $mathSrc/* .
+      mkdir $out
+      maxima --quiet --init-mac=init.mac -b cie.mac > $out/cie.txt
+      maxima --quiet --init-mac=init.mac -b hsluv.mac > $out/hsluv.txt
+      maxima --quiet --init-mac=init.mac -b contrast.mac > $out/contrast.txt
+    '';
+  };
+
+  # Errors out: Access to the path "/var/empty/.config" is denied
   csharpDist = pkgs.stdenv.mkDerivation rec {
     name = "csharp-dist";
     inherit mono nuget csharpSrc;
+    buildInputs = [mono nuget];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      export PATH=$mono/bin:$nuget/bin:$PATH
       cp -R --no-preserve=mode,ownership $csharpSrc/* .
       mcs -target:library Hsluv/Hsluv.cs
+      # mkdir -p ./.config/NuGet
+      # echo "<?xml version="1.0" encoding="utf-8"?><configuration></configuration>" > ./.config/NuGet/NuGet.Config
       nuget pack Hsluv/Hsluv.nuspec
       mkdir $out
       cp *.nupkg $out

@@ -5,12 +5,19 @@
 
 [Explanation, demo, ports etc.](http://www.hsluv.org)
 
-The reference implementation is [written in Haxe](https://github.com/hsluv/hsluv/tree/master/haxe).
+The reference implementation is [written in Haxe](https://github.com/hsluv/hsluv/tree/master/haxe). 
 
 ## Building
 
-Requirements: [Nix package manage](http://nixos.org/nix/). If you want to build without Nix you 
-will require GNU Make, Haxe 3 and JDK 7+. See `default.nix` for command line instructions.
+Requirements: [Nix package manage](http://nixos.org/nix/). If you want to build without Nix,
+see `default.nix` for dependencies and command line instructions.
+
+The necessary mathematical equations are solved in [Maxima](http://maxima.sourceforge.net/). 
+See `/math` directory for the equations and run the following to verify the solutions:
+
+```
+nix-build -A maximaOutput
+```
 
 To run full test suite:
 
@@ -21,14 +28,8 @@ nix-build -A test
 To build JavaScript distributions (Node.js and browser):
 
 ```
-nix-build -A jsPublicNodePackage
-nix-build -A jsPublicMin
-```
-
-To build Haxe documentation:
-
-```
-nix-build -A docs
+nix-build -A nodePackageDist
+nix-build -A browserDist
 ```
 
 To build website:

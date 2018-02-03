@@ -1,0 +1,40 @@
+/* Authors: Alexei Boronine, Bastien Dejean
+
+References:
+
+https://gist.github.com/baskerville/8297428
+http://www.brucelindbloom.com/
+http://entropymine.com/imageworsener/srgbformula/ */
+
+ratprint: false;
+
+load("./cie.mac");
+
+/* Below we will be solving an equation that makes use of the XYZ to RGB
+transformation. This transformation is done in two steps:
+
+    1. Taking a dot product of the XYZ triple and the corresponding row
+       in the M_XYZ_RGB matrix
+
+    2. Applying the function linear_to_sRGB to the result (gamma correction)
+
+Step #2 is problematic because linear_to_sRGB contains a conditional expression.
+Luckily we can omit the invocation of linear_to_sRGB because we will only be
+equating its return value with 0 and 1, the two cases where the function
+does nothing. Proof:
+*/
+
+linear_to_sRGB(1);
+linear_to_sRGB(0);
+
+/* Given L, U, RGB channel (represented by matrix values: m1, m2, m3) and
+limit t (0 or 1), return the V value that will push the given RGB channel
+outside of the sRGB gamut. */
+
+solve(LUV_to_XYZ(L, U, V) . [m1, m2, m3] = t, V)[1];
+
+/* When you think of L, m1, m2, m3 and t as constants, the solution becomes
+a line equation with x axis represented by U and y axis represented by V.
+For example, given L=50, crossing this line will push the red channel below 0: */
+
+solve(LUV_to_XYZ(50, U, V) . M_XYZ_RGB[1] = 0, V)[1];

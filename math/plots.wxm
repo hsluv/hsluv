@@ -1,0 +1,40 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 15.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+load("./hsluv.mac");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+bound_line(L, U, row, t) := rhs(solve(LUV_to_XYZ(L, U, V) . row = t, V)[1]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+plotL : 50;
+
+plot2d([
+        bound_line(50, x, M_XYZ_RGB[1], 0),
+        bound_line(50, x, M_XYZ_RGB[1], 1),
+        bound_line(50, x, M_XYZ_RGB[2], 0),
+        bound_line(50, x, M_XYZ_RGB[2], 1),
+        bound_line(50, x, M_XYZ_RGB[3], 0),
+        bound_line(50, x, M_XYZ_RGB[3], 1)
+    ], [x,-400,400], [y,-400,400], [
+        legend,
+        "red = 0",
+        "red = 1",
+        "green = 0",
+        "green = 1",
+        "blue = 0",
+        "blue = 1"
+    ], [
+        xlabel,
+        "hue"
+    ], [
+        ylabel,
+        "chroma"
+    ]);
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
