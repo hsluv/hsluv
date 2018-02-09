@@ -2,7 +2,7 @@
   "name": "hsluv",
   "description": "Human-friendly HSL",
   "keywords": ["color", "color space", "CIE", "RGB", "HSL", "HSLuv", "HPLuv"],
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Alexei Boronine <alexei@boronine.com>",
   "license": "MIT",
   "main": "hsluv.js",

@@ -25,7 +25,7 @@ rec {
   snapshotRev4 = ./snapshots/snapshot-rev4.json;
   closureCompiler = pkgs.closurecompiler;
 
-  python = pkgs.python36.withPackages (ps: with ps; [ setuptools wheel ]);
+  python = pkgs.python36.withPackages (ps: with ps; [ setuptools wheel twine ]);
 
   # v0.0.2
   pythonSrc = pkgs.fetchzip {
@@ -108,6 +108,24 @@ rec {
       cp dist/* $out
     '';
   };
+
+  pythonUploader = pkgs.writeShellScriptBin "publish-pypi.sh" ''
+    ${python}/bin/twine upload --username $PYPI_USERNAME --password $PYPI_PASSWORD ${pythonDist}/*
+  '';
+
+  nodeUploader = pkgs.writeShellScriptBin "publish-npm.sh" ''
+    echo "Generating .npmrc ..."
+    # npm adduser creates .npmrc file in HOME
+    TEMP_HOME=`mktemp -d`
+    HOME="$TEMP_HOME"
+    echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL\n" | ${nodejs}/bin/npm adduser
+
+    echo "Publishing ..."
+    ${nodejs}/bin/npm publish ${nodePackageDist}
+
+    echo "Cleaning up"
+    rm -rf "$TEMP_HOME"
+  '';
 
   doxZip = pkgs.fetchurl {
     url = "https://github.com/HaxeFoundation/dox/archive/a4dd456418a4a540fe1d25a764927119bb892f72.zip";
@@ -281,13 +299,29 @@ rec {
     '';
   };
 
+  testNodePackage = pkgs.stdenv.mkDerivation rec {
+    inherit nodejs nodePackageDist;
+    name = "test-node-js";
+    testJs = ./javascript/test.js;
+    buildInputs = [nodejs];
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      NODE_PATH=$nodePackageDist:$NODE_PATH
+      echo "const hsluv = require('hsluv');" > ./test.js
+      cat $testJs >> ./test.js
+      node ./test.js
+      touch $out
+    '';
+  };
+
   test = pkgs.stdenv.mkDerivation rec {
-    inherit browserDist haxeTest testBrowserJs;
+    inherit browserDist haxeTest testBrowserJs testNodePackage;
     name = "super-test";
     builder = builtins.toFile "builder.sh" "
       source $stdenv/setup
       echo $testBrowserJs
       echo $haxeTest
+      echo $testNodePackage
       touch $out
     ";
   };
@@ -321,7 +355,7 @@ rec {
   };
 
   minifyJs = jsFile : pkgs.stdenv.mkDerivation rec {
-    inherit jre closureCompiler jsFile;
+    inherit closureCompiler jsFile;
     name = "hsluv-js";
     buildInputs = [closureCompiler];
     builder = builtins.toFile "builder.sh" ''
