@@ -41,7 +41,7 @@ nix-build -A website
 To build website and start localhost server:
 
 ```
-./scripts/serve-website.sh
+./run.sh server
 ```
 
 ## Testing
@@ -71,9 +71,18 @@ The format of the file is as follows:
 
 ## Deploying
 
-See `/scripts` for automated deployments.
+For publishing packages and website you will need access to our shared credentials.
 
-You will need access to our shared credentials.
+```bash
+./run.sh publishPypi
+./run.sh publishNpmJs
+./run.sh publishNpmSass
+./run.sh publishLua
+./run.sh publishWebsite
+./run.sh publishRuby
+./run.sh publishNuget
+./scripts/publish-maven.sh
+```
 
 ## Versioning
 

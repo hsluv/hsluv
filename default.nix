@@ -63,6 +63,18 @@ rec {
     sha256 = "13wsrq61zg0z3pxd6qc3gxn5d3p83fqrjy8bjqnyzxbvxll4yknz";
   };
 
+  rubyDist = pkgs.stdenv.mkDerivation rec {
+    name = "ruby-dist";
+    inherit ruby rubySrc;
+    buildInputs = [ruby];
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      mkdir $out
+      cd $out
+      gem build $rubySrc/hsluv.gemspec
+    '';
+  };
+
   maximaOutput = pkgs.stdenv.mkDerivation rec {
     name = "maxima-build";
     inherit maxima;
@@ -108,24 +120,6 @@ rec {
       cp dist/* $out
     '';
   };
-
-  pythonUploader = pkgs.writeShellScriptBin "publish-pypi.sh" ''
-    ${python}/bin/twine upload --username $PYPI_USERNAME --password $PYPI_PASSWORD ${pythonDist}/*
-  '';
-
-  nodeUploader = pkgs.writeShellScriptBin "publish-npm.sh" ''
-    echo "Generating .npmrc ..."
-    # npm adduser creates .npmrc file in HOME
-    TEMP_HOME=`mktemp -d`
-    HOME="$TEMP_HOME"
-    echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL\n" | ${nodejs}/bin/npm adduser
-
-    echo "Publishing ..."
-    ${nodejs}/bin/npm publish ${nodePackageDist}
-
-    echo "Cleaning up"
-    rm -rf "$TEMP_HOME"
-  '';
 
   doxZip = pkgs.fetchurl {
     url = "https://github.com/HaxeFoundation/dox/archive/a4dd456418a4a540fe1d25a764927119bb892f72.zip";
@@ -238,7 +232,8 @@ rec {
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       mkdir $out
-      (cd $haxeRoot && zip -r $out/hsluv.zip .)
+      cd $haxeRoot
+      zip -r $out/hsluv.zip .
     '';
   };
 
@@ -262,6 +257,133 @@ rec {
     '';
   };
 
+  snapshotJson = pkgs.stdenv.mkDerivation rec {
+    inherit haxe haxeSrc haxeTestSrc;
+    name = "hsluv-haxe-test";
+    buildInputs = [haxe];
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      haxe -cp $haxeSrc -cp $haxeTestSrc -main Snapshot --interp > $out
+    '';
+  };
+
+  makeNodePackage = { jsFile, exportFile } : pkgs.stdenv.mkDerivation rec {
+    inherit jsFile exportFile;
+    name = "js-node-package";
+    packageJson = ./javascript/package.json;
+    readme = ./javascript/README.md;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      mkdir $out
+      cat $jsFile > $out/hsluv.js
+      cat $exportFile >> $out/hsluv.js
+      echo -e "\nmodule.exports = root;" >> $out/hsluv.js
+      install $packageJson $out/package.json
+      install $readme $out/README.md
+    '';
+  };
+
+  makeBrowserModule = jsFile : pkgs.stdenv.mkDerivation rec {
+    inherit jsFile;
+    name = "js-browser-module";
+    export = ./javascript/api-public.js;
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      cat $jsFile > $out
+      cat $export >> $out
+      echo -e "\nwindow['hsluv'] = root;" >> $out
+    '';
+  };
+
+  minifyJs = jsFile : pkgs.stdenv.mkDerivation rec {
+    inherit closureCompiler jsFile;
+    name = "hsluv-js";
+    buildInputs = [closureCompiler];
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      closure-compiler --output_wrapper "(function() {%output%})();" \
+                       --js_output_file=$out \
+                       --compilation_level ADVANCED $jsFile
+    '';
+  };
+
+  # ------------------------------------------------------------------------------------------
+  # JavaScript distributions
+
+  # Internal use
+  nodePackageInternal = makeNodePackage {
+    jsFile = haxeJsCompile "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker hsluv.Contrast";
+    exportFile = ./javascript/api-full.js;
+  };
+  pickerJsMin = minifyJs pickerJs;
+
+  # Public releases
+  nodePackageDist = makeNodePackage {
+    jsFile = haxeJsCompile "hsluv.Hsluv";
+    exportFile = ./javascript/api-public.js;
+  };
+  browserDist = minifyJs (makeBrowserModule (haxeJsCompile "hsluv.Hsluv"));
+
+  # ------------------------------------------------------------------------------------------
+  # Scripts
+
+  publishPypi = pkgs.writeShellScriptBin "run.sh" ''
+    ${python}/bin/twine upload --username $PYPI_USERNAME --password $PYPI_PASSWORD ${pythonDist}/*
+  '';
+
+  publishNpmPackage = package: pkgs.writeShellScriptBin "run.sh" ''
+    echo "Generating .npmrc ..."
+    # npm adduser creates .npmrc file in HOME
+    TEMP_HOME=`mktemp -d`
+    HOME="$TEMP_HOME"
+    echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL\n" | ${nodejs}/bin/npm adduser
+
+    echo "Publishing ..."
+    ${nodejs}/bin/npm publish ${package}
+
+    echo "Cleaning up"
+    rm -rf "$TEMP_HOME"
+  '';
+
+  publishNpmJs = publishNpmPackage nodePackageDist;
+
+  publishNpmSass = publishNpmPackage sassSrc;
+
+  publishLua = pkgs.writeShellScriptBin "run.sh" ''
+    export LUA_PATH="${luaSrc}/?.lua"
+    ${luarocks}/bin/luarocks upload ${luaSrc}/*.rockspec --api-key=$LUAROCKS_API_KEY
+  '';
+
+  publishRuby = pkgs.writeShellScriptBin "run.sh" ''
+    # It used to be possible to pipe in credentials as follows, but it no longer works
+    # echo -e "$RUBYGEMS_EMAIL\n$RUBYGEMS_PASSWORD\n" |
+    ${ruby}/bin/gem push ${rubyDist}/hsluv-1.0.0.gem
+  '';
+
+  # Segmentation fault
+  publishHaxe = pkgs.writeShellScriptBin "run.sh" ''
+    ${haxe}/bin/haxelib submit ${haxelibZip}/hsluv.zip
+  '';
+
+  # Fails to build
+  publishNuget = pkgs.writeShellScriptBin "run.sh" ''
+      # Nuget fails with absolute path: https://github.com/NuGet/Home/issues/2167
+      dist=$(${python}/bin/python3 -c "import os.path; print(os.path.relpath('${csharpDist}'))")
+      ${nuget}/bin/nuget push -ApiKey "$NUGET_API_KEY" /"$dist"/*.nupkg
+  '';
+
+  publishWebsite = pkgs.writeShellScriptBin "run.sh" ''
+    ${awscli}/bin/aws s3 cp --recursive ${website} s3://www.hsluv.org
+  '';
+
+  server = pkgs.writeShellScriptBin "run.sh" ''
+    cd ${website}
+    ${python}/bin/python -m http.server
+  '';
+
+  # ------------------------------------------------------------------------------------------
+  # Tests
+
   haxeTest = pkgs.stdenv.mkDerivation rec {
     inherit haxe haxeSrc haxeTestSrc snapshotRev4;
     name = "hsluv-haxe-test";
@@ -270,16 +392,6 @@ rec {
       source $stdenv/setup
       haxe -cp $haxeSrc -cp $haxeTestSrc -main RunTests -resource $snapshotRev4@snapshot-rev4 --interp
       touch $out
-    '';
-  };
-
-  snapshotJson = pkgs.stdenv.mkDerivation rec {
-    inherit haxe haxeSrc haxeTestSrc;
-    name = "hsluv-haxe-test";
-    buildInputs = [haxe];
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      haxe -cp $haxeSrc -cp $haxeTestSrc -main Snapshot --interp > $out
     '';
   };
 
@@ -325,59 +437,4 @@ rec {
       touch $out
     ";
   };
-
-  makeNodePackage = { jsFile, exportFile } : pkgs.stdenv.mkDerivation rec {
-    inherit jsFile exportFile;
-    name = "js-node-package";
-    packageJson = ./javascript/package.json;
-    readme = ./javascript/README.md;
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      mkdir $out
-      cat $jsFile > $out/hsluv.js
-      cat $exportFile >> $out/hsluv.js
-      echo -e "\nmodule.exports = root;" >> $out/hsluv.js
-      install $packageJson $out/package.json
-      install $readme $out/README.md
-    '';
-  };
-
-  makeBrowserModule = jsFile : pkgs.stdenv.mkDerivation rec {
-    inherit jsFile;
-    name = "js-browser-module";
-    export = ./javascript/api-public.js;
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      cat $jsFile > $out
-      cat $export >> $out
-      echo -e "\nwindow['hsluv'] = root;" >> $out
-    '';
-  };
-
-  minifyJs = jsFile : pkgs.stdenv.mkDerivation rec {
-    inherit closureCompiler jsFile;
-    name = "hsluv-js";
-    buildInputs = [closureCompiler];
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      closure-compiler --output_wrapper "(function() {%output%})();" \
-                       --js_output_file=$out \
-                       --compilation_level ADVANCED $jsFile
-    '';
-  };
-
-  # Internal use
-  nodePackageInternal = makeNodePackage {
-    jsFile = haxeJsCompile "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker hsluv.Contrast";
-    exportFile = ./javascript/api-full.js;
-  };
-  pickerJsMin = minifyJs pickerJs;
-
-  # Public releases
-  nodePackageDist = makeNodePackage {
-    jsFile = haxeJsCompile "hsluv.Hsluv";
-    exportFile = ./javascript/api-public.js;
-  };
-  browserDist = minifyJs (makeBrowserModule (haxeJsCompile "hsluv.Hsluv"));
-
 }
