@@ -327,19 +327,19 @@ rec {
   # ------------------------------------------------------------------------------------------
   # Scripts
 
-  publishPypi = pkgs.writeShellScriptBin "run.sh" ''
+  publishPypi = pkgs.writeShellScriptBin "script.sh" ''
     ${python}/bin/twine upload --username $PYPI_USERNAME --password $PYPI_PASSWORD ${pythonDist}/*
   '';
 
-  publishNpmPackage = package: pkgs.writeShellScriptBin "run.sh" ''
+  publishNpmPackage = package: pkgs.writeShellScriptBin "script.sh" ''
     echo "Generating .npmrc ..."
     # npm adduser creates .npmrc file in HOME
     TEMP_HOME=`mktemp -d`
     HOME="$TEMP_HOME"
-    echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL\n" | ${nodejs}/bin/npm adduser
+    echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL\n" | ${pkgs.nodejs}/bin/npm adduser
 
     echo "Publishing ..."
-    ${nodejs}/bin/npm publish ${package}
+    ${pkgs.nodejs}/bin/npm publish ${package}
 
     echo "Cleaning up"
     rm -rf "$TEMP_HOME"
@@ -349,34 +349,34 @@ rec {
 
   publishNpmSass = publishNpmPackage sassSrc;
 
-  publishLua = pkgs.writeShellScriptBin "run.sh" ''
+  publishLua = pkgs.writeShellScriptBin "script.sh" ''
     export LUA_PATH="${luaSrc}/?.lua"
     ${luarocks}/bin/luarocks upload ${luaSrc}/*.rockspec --api-key=$LUAROCKS_API_KEY
   '';
 
-  publishRuby = pkgs.writeShellScriptBin "run.sh" ''
+  publishRuby = pkgs.writeShellScriptBin "script.sh" ''
     # It used to be possible to pipe in credentials as follows, but it no longer works
     # echo -e "$RUBYGEMS_EMAIL\n$RUBYGEMS_PASSWORD\n" |
     ${ruby}/bin/gem push ${rubyDist}/hsluv-1.0.0.gem
   '';
 
   # Segmentation fault
-  publishHaxe = pkgs.writeShellScriptBin "run.sh" ''
+  publishHaxe = pkgs.writeShellScriptBin "script.sh" ''
     ${haxe}/bin/haxelib submit ${haxelibZip}/hsluv.zip
   '';
 
   # Fails to build
-  publishNuget = pkgs.writeShellScriptBin "run.sh" ''
+  publishNuget = pkgs.writeShellScriptBin "script.sh" ''
       # Nuget fails with absolute path: https://github.com/NuGet/Home/issues/2167
       dist=$(${python}/bin/python3 -c "import os.path; print(os.path.relpath('${csharpDist}'))")
       ${nuget}/bin/nuget push -ApiKey "$NUGET_API_KEY" /"$dist"/*.nupkg
   '';
 
-  publishWebsite = pkgs.writeShellScriptBin "run.sh" ''
+  publishWebsite = pkgs.writeShellScriptBin "script.sh" ''
     ${awscli}/bin/aws s3 cp --recursive ${website} s3://www.hsluv.org
   '';
 
-  server = pkgs.writeShellScriptBin "run.sh" ''
+  server = pkgs.writeShellScriptBin "script.sh" ''
     cd ${website}
     ${python}/bin/python -m http.server
   '';
