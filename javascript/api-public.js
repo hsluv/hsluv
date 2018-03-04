@@ -7,12 +7,16 @@ var root = {
     "hexToHsluv": hsluv.Hsluv.hexToHsluv,
     "hpluvToHex": hsluv.Hsluv.hpluvToHex,
     "hexToHpluv": hsluv.Hsluv.hexToHpluv,
+    "lchToHpluv": hsluv.Hsluv.lchToHpluv,
+    "hpluvToLch": hsluv.Hsluv.hpluvToLch,
+    "lchToHsluv": hsluv.Hsluv.lchToHsluv,
+    "hsluvToLch": hsluv.Hsluv.hsluvToLch,
     "lchToLuv": hsluv.Hsluv.lchToLuv,
+    "luvToLch": hsluv.Hsluv.luvToLch,
+    "xyzToLuv": hsluv.Hsluv.xyzToLuv,
     "luvToXyz": hsluv.Hsluv.luvToXyz,
     "xyzToRgb": hsluv.Hsluv.xyzToRgb,
+    "rgbToXyz": hsluv.Hsluv.rgbToXyz,
     "lchToRgb": hsluv.Hsluv.lchToRgb,
-    "hpluvToLch": hsluv.Hsluv.hpluvToLch,
-    "lchToHpluv": hsluv.Hsluv.lchToHpluv,
-    "lchToHsluv": hsluv.Hsluv.lchToHsluv,
-    "hsluvToLch": hsluv.Hsluv.hsluvToLch
+    "rgbToLch": hsluv.Hsluv.rgbToLch
 };
