@@ -6,6 +6,7 @@
   "author": "Alexei Boronine <alexei@boronine.com>",
   "license": "MIT",
   "main": "hsluv.js",
+  "types": "hsluv.d.ts",
   "files": ["hsluv.js"],
   "repository": {
     "type" : "git",
