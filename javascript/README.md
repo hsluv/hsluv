@@ -43,5 +43,9 @@ Use **hpluvToHex**, **hpluvToRgb**, **hexToHpluv** and **rgbToHpluv** for
 the pastel variant (HPLuv). Note that HPLuv does not contain all the colors 
 of RGB, so converting arbitrary RGB to it may generate invalid HPLuv colors.
 
-Also available for [Stylus](http://stylus-lang.com/). See 
+For advance use cases, additional functions are avalible:
+
+**lchToLuv**, **luvToXyz**, **xyzToRgb**, **lchToRgb**, **hpluvToLch**, **lchToHpluv**, **lchToHsluv**, **hsluvToLch**
+
+Also available for [Stylus](http://stylus-lang.com/). See
 [here](https://github.com/hsluv/hsluv-stylus).
