@@ -2,8 +2,7 @@
 
 ## Installation
 
-Client-side: download the latest hsluv.min.js from the
-[releases page](https://github.com/hsluv/hsluv/releases).
+Client-side: download [the latest hsluv.min.js](https://github.com/hsluv/hsluv/tree/master/javascript/dist).
 
 Once this module is loaded in the browser, you can access it via the
 global ``window.hsluv``.
@@ -59,3 +58,13 @@ For advance use cases, additional functions are avalible:
 
 Also available for [Stylus](http://stylus-lang.com/). See
 [here](https://github.com/hsluv/hsluv-stylus).
+
+## Changelog
+
+### 0.0.2
+
+- Improve packaging and minification.
+
+### 0.0.1
+
+- Initial release under the name HSLuv. Old releases can be found [here](https://www.npmjs.com/package/husl).
