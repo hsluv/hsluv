@@ -85,52 +85,48 @@ div.demo div {
     margin: auto;
 }
 
-#picker input {
-    padding: 0 5px;
+#picker td.cell-input {
+    width: 80px;
+    padding-right: 20px;
+}
+
+#picker td.cell-input input {
     margin: 0;
     height: 22px;
     background: transparent;
     color: #888;
     outline: none;
-    border: 1px solid #555;
+    border: 1px solid #333;
     border-radius: 0;
+    text-align: right;
+    width: 100%;
+    padding: 0 5px;
+}
+
+#picker td.cell-input.cell-input-hex input {
+    font-family: monospace;
+    border-color: #555;
 }
 
 #picker table {
     margin-top: 20px;
-    width: 400px;
+    width: 100%;
 }
 
-#picker table th, td {
+#picker table td {
     padding: 5px 5px;
+    vertical-align: top;
     border: none;
 }
 
-#picker table th {
-    font-weight: normal;
+#picker table td.picker-label {
     color: #eeeeee;
-    width: 15px;
-}
-
-#picker table td:nth-child(3) {
-    width: 50px;
-}
-
-#picker table td:nth-child(4) {
-    width: 100px;
-}
-
-#picker table td.counter-cell input {
-    width: 50px;
-    border-color: #333;
-}
-
-#picker table .hex {
-    width: 100px;
+    width: 30px;
+    line-height: 22px;
 }
 
 #picker table .swatch {
-    height: 54px;
+    height: 100px;
 }
 
 #picker .explanation-text {
@@ -139,10 +135,9 @@ div.demo div {
 }
 
 .range-slider {
-    height: 20px;
+    height: 22px;
     display: block;
     position: relative;
-    width: 100%;
 }
 
 .range-slider-handle {
@@ -151,7 +146,7 @@ div.demo div {
     width: 6px;
     top: -2px;
     left: -5px;
-    height: 20px;
+    height: 100%;
     cursor: default;
     border: 2px solid #fff;
     touch-action: pan-y;

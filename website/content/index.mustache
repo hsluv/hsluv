@@ -7,39 +7,34 @@
             </div>
             <table>
                 <tr id="control-h">
-                    <th>H</th>
-                    <td>
-                        <div class="range-slider"></div>
-                    </td>
-                    <td class="counter-cell">
+                    <td class="cell-input">
                         <input type="number" min="0" max="360" step="any" class="counter counter-hue" tabindex="1"/>
                     </td>
-                    <td rowspan="2">
-                        <div class="swatch"></div>
-                    </td>
+                    <td><div class="range-slider"></div></td>
+                    <td class="picker-label">H</td>
                 </tr>
                 <tr id="control-s">
-                    <th>S</th>
-                    <td>
-                        <div class="range-slider"></div>
-                    </td>
-                    <td class="counter-cell">
+                    <td class="cell-input">
                         <input type="number" step="any" min="0" max="100" class="counter counter-saturation"
                                tabindex="2"/>
                     </td>
+                    <td><div class="range-slider"></div></td>
+                    <td class="picker-label">S</td>
                 </tr>
                 <tr id="control-l">
-                    <th>L</th>
-                    <td>
-                        <div class="range-slider"></div>
-                    </td>
-                    <td class="counter-cell">
+                    <td class="cell-input">
                         <input type="number" step="any" min="0" max="100" class="counter counter-lightness"
                                tabindex="3"/>
                     </td>
-                    <td>
-                        <input class="hex" pattern="#?[0-9a-fA-F]{6}" tabindex="4"/>
+                    <td><div class="range-slider"></div></td>
+                    <td class="picker-label">L</td>
+                </tr>
+                <tr>
+                    <td class="cell-input cell-input-hex">
+                        <input class="input-hex" pattern="#?[0-9a-fA-F]{6}" tabindex="4"/>
                     </td>
+                    <td><div class="swatch"></div></td>
+                    <td></td>
                 </tr>
             </table>
         </div>

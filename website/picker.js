@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const elSliderL = elControlL.getElementsByClassName('range-slider')[0];
     const elSliderS = elControlS.getElementsByClassName('range-slider')[0];
     const elSliderH = elControlH.getElementsByClassName('range-slider')[0];
-    const elInputHex = picker.getElementsByClassName('hex')[0];
+    const elInputHex = picker.getElementsByClassName('input-hex')[0];
     const elCounterHue = picker.getElementsByClassName('counter-hue')[0];
     const elCounterSaturation = picker.getElementsByClassName('counter-saturation')[0];
     const elCounterLightness = picker.getElementsByClassName('counter-lightness')[0];
