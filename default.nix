@@ -2,8 +2,8 @@ rec {
   pkgs = import (pkgsSrc) {};
   pkgsOriginal = import <nixpkgs> {};
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/866717d75b64cb07cab16d0357edfd00cf339c20.zip";
-    sha256 = "0ikz6m801gfmgzd4q0la5pcivl46yiviad5gvz0qba0pa7wc8g0g";
+    url = "https://github.com/NixOS/nixpkgs/archive/f52505fac8c82716872a616c501ad9eff188f97f.zip";
+    sha256 = "0q2m2qhyga9yq29yz90ywgjbn9hdahs7i8wwlq7b55rdbyiwa5dy";
   };
 
   jre = pkgs.jre;
@@ -33,10 +33,10 @@ rec {
     sha256 = "18528f20s9r54inh0gczxsjsg6jhckms5f900c8ryaankjbkzmd4";
   };
 
-  # v0.1-0
+  # v0.1-1
   luaSrc = pkgs.fetchzip {
-    url = "https://github.com/hsluv/hsluv-lua/archive/406d9d531d764224651aca6e8ee29fdc3f769596.zip";
-    sha256 = "1xqz8z32h53qg4vf0wm24g6p1as5rmvb0izh5ym0h8wsf4sbj4pa";
+    url = "https://github.com/hsluv/hsluv-lua/archive/ff1bcf087b2b352ed5903d6d407b5e394b7a0496.zip";
+    sha256 = "1nqnyrym0vyf8fal6gj4nxk7pxpl2jyg5536dax0zg2nkdkzahms";
   };
 
   # 1.0.0
