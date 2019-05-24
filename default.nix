@@ -1,9 +1,12 @@
 rec {
   pkgs = import (pkgsSrc) {};
   pkgsOriginal = import <nixpkgs> {};
+
+  # There is an issue with latest Haxe https://github.com/HaxeFoundation/haxe/issues/6866
+  # We have to use parent of this commit: https://github.com/NixOS/nixpkgs/commit/c727e7e7d60e687be7d8def95fce5cd02cb5293b
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/f52505fac8c82716872a616c501ad9eff188f97f.zip";
-    sha256 = "0q2m2qhyga9yq29yz90ywgjbn9hdahs7i8wwlq7b55rdbyiwa5dy";
+    url = "https://github.com/NixOS/nixpkgs/archive/3ab38ef086947822fbe2cffea071e1c508811990.zip";
+    sha256 = "004x04v07xdp444ilb4sjxprnsjy4g2ji7fq8sydjyf9gvn6b85f";
   };
 
   jre = pkgs.jre;
