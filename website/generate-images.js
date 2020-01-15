@@ -55,9 +55,9 @@ function makeImage(file, func, width, height) {
 }
 
 function chromaDemo(rgb) {
-    const lch = hsluv.Hsluv.rgbToLch(rgb);
+    const lch = hsluv.rgbToLch(rgb);
     const C = lch[1] * 0.8;
-    return hsluv.Hsluv.lchToRgb([50, C, 10]);
+    return hsluv.lchToRgb([50, C, 10]);
 }
 
 // Rounds number to a given number of decimal places
@@ -85,41 +85,41 @@ function luvSquare(x, y) {
     const u = umin + x * (umax - umin);
     const v = vmin + y * (vmax - vmin);
 
-    return hsluv.Hsluv.xyzToRgb(hsluv.Hsluv.luvToXyz([50, u, v]));
+    return hsluv.xyzToRgb(hsluv.luvToXyz([50, u, v]));
 }
 
 function demoHsluv(x, y) {
-    return hsluv.Hsluv.hsluvToRgb([x * 360, y * 100, 50]);
+    return hsluv.hsluvToRgb([x * 360, y * 100, 50]);
 }
 
 function demoHpluv(x, y) {
-    return hsluv.Hsluv.hpluvToRgb([x * 360, y * 100, 50]);
+    return hsluv.hpluvToRgb([x * 360, y * 100, 50]);
 }
 
 function demoHsluvChroma(x, y) {
-    const rgb = hsluv.Hsluv.hsluvToRgb([x * 360, y * 100, 50]);
+    const rgb = hsluv.hsluvToRgb([x * 360, y * 100, 50]);
     return chromaDemo(rgb);
 }
 
 function demoCielchuvChroma(x, y) {
     const lch = [50, y * 200, x * 360];
-    const S = hsluv.Hsluv.lchToHsluv(lch)[1];
+    const S = hsluv.lchToHsluv(lch)[1];
     let rgb;
     if (S > 100) {
         rgb = [0, 0, 0];
     } else {
-        rgb = hsluv.Hsluv.lchToRgb(lch);
+        rgb = hsluv.lchToRgb(lch);
     }
     return chromaDemo(rgb);
 }
 
 function demoCielchuv(x, y) {
     const lch = [50, y * 200, x * 360];
-    const S = hsluv.Hsluv.lchToHsluv(lch)[1];
+    const S = hsluv.lchToHsluv(lch)[1];
     if (S > 100) {
         return [0, 0, 0];
     } else {
-        return hsluv.Hsluv.lchToRgb(lch);
+        return hsluv.lchToRgb(lch);
     }
 }
 
@@ -129,14 +129,14 @@ function demoHsl(x, y) {
 
 function demoHslLightness(x, y) {
     const rgb = hslToRgb(x, y, 0.5);
-    const lch = hsluv.Hsluv.rgbToLch(rgb);
+    const lch = hsluv.rgbToLch(rgb);
     const l = lch[0] / 100;
     return [l, l, l];
 }
 
 function demoCielchuvLightness(x, y) {
     const lch = [50, y * 200, x * 360];
-    const S = hsluv.Hsluv.lchToHsluv(lch)[1];
+    const S = hsluv.lchToHsluv(lch)[1];
     if (S > 100) {
         return [0, 0, 0];
     } else {
@@ -154,7 +154,7 @@ function demoHslChroma(x, y) {
 }
 
 function demoHpluvChroma(x, y) {
-    const rgb = hsluv.Hsluv.hpluvToRgb([x * 360, y * 100, 50]);
+    const rgb = hsluv.hpluvToRgb([x * 360, y * 100, 50]);
     return chromaDemo(rgb);
 }
 

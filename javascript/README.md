@@ -61,6 +61,10 @@ Also available for [Stylus](http://stylus-lang.com/). See
 
 ## Changelog
 
+### 0.1.0
+
+- Provide Typescript definitions in the NPM package.
+
 ### 0.0.3
 
 - Expose intermediate functions in the public API.
