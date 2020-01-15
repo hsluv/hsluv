@@ -41,7 +41,7 @@ function demoColorBars() {
     for (let i = 0; i < numBars; i++) {
         let hue = 360 * i / numBars;
         let hslColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        let hsluvColor = hsluv.Hsluv.hsluvToHex([hue, saturation, lightness]);
+        let hsluvColor = hsluv.hsluvToHex([hue, saturation, lightness]);
         hslColors.push(hslColor);
         hsluvColors.push(hsluvColor);
     }
