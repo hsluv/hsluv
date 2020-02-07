@@ -1,4 +1,4 @@
-# HSL<sub>uv</sub> - Human-friendly HSL
+# HSLuv - Human-friendly HSL
 
 ## Installation
 

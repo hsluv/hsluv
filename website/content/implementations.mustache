@@ -8,7 +8,7 @@
         </p>
         <h2>Porting</h2>
         <p>
-            Every implementation of HSL<sub>uv</sub> must provide the following four functions:
+            Every implementation of HSLuv must provide the following four functions:
         </p>
         <pre>hsluvToRgb([H, S, L]) -> [R, G, B]
 hpluvToRgb([H, S, L]) -> [R, G, B]
@@ -18,13 +18,13 @@ rgbToHpluv([R, G, B]) -> [H, S, L]</pre>
             These functions are implemented as a chain of color space transformations: RGB to
             <a href="https://en.wikipedia.org/wiki/CIE_1931_color_space">CIE&nbsp;XYZ</a> to
             <a href="https://en.wikipedia.org/wiki/CIELUV">CIELUV</a> to CIELUV&nbsp;LCh
-            to HSL<sub>uv</sub> and HPL<sub>uv</sub>.
+            to HSLuv and HPLuv.
         </p>
         <p>
-            If you want to port HSL<sub>uv</sub> to a different language or finish one of the started ports, you should
+            If you want to port HSLuv to a different language or finish one of the started ports, you should
             test your implementation against a JSON snapshot of the color space generated from the reference
             implementation. The snapshots are <a href="https://github.com/hsluv/hsluv/tree/master/snapshots">
-            stored in the repo</a>. Apart from corresponding RGB and HSL<sub>uv</sub> values, the snapshots also provide
+            stored in the repo</a>. Apart from corresponding RGB and HSLuv values, the snapshots also provide
             all the intermediate values in the chain of transformations. As such, they can be a useful tool
             for debugging.
         </p>

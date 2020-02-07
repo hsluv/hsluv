@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col c6">
-        <h1>HSL<sub>uv</sub> vs. HSL</h1>
+        <h1>HSLuv vs. HSL</h1>
     </div>
     <div class="col c6">
         <table class="table">
@@ -9,8 +9,8 @@
                 <th></th>
                 <th class="text-center">HSL</th>
                 <th class="text-center">CIELUV&nbsp;LCh</th>
-                <th class="text-center">HSL<sub>uv</sub></th>
-                <th class="text-center">HPL<sub>uv</sub></th>
+                <th class="text-center">HSLuv</th>
+                <th class="text-center">HPLuv</th>
             </tr>
             </thead>
             <tbody>
@@ -79,10 +79,10 @@
     <div class="col c3">
         <figure>
             <img src="/images/hsluv.png"/>
-            <figcaption>HSL<sub>uv</sub></figcaption>
+            <figcaption>HSLuv</figcaption>
         </figure>
         <p>
-            HSL<sub>uv</sub> preserves the lightness and hue components of CIELUV&nbsp;LCh
+            HSLuv preserves the lightness and hue components of CIELUV&nbsp;LCh
             and stretches its chroma so that every color has
             the same range, defined as a percentage.
         </p>
@@ -90,10 +90,10 @@
     <div class="col c3">
         <figure>
             <img src="/images/hpluv.png"/>
-            <figcaption>HPL<sub>uv</sub></figcaption>
+            <figcaption>HPLuv</figcaption>
         </figure>
         <p>
-            HPL<sub>uv</sub> takes as many colors as it can from CIELUV&nbsp;LCh without distorting
+            HPLuv takes as many colors as it can from CIELUV&nbsp;LCh without distorting
             the chroma. As you can see, the resulting color space is smooth, but only pastel colors
             can be included.
         </p>
@@ -121,18 +121,18 @@
     <div class="col c3">
         <figure>
             <img src="/images/hsluv-chroma.png"/>
-            <figcaption>HSL<sub>uv</sub></figcaption>
+            <figcaption>HSLuv</figcaption>
         </figure>
         <p>
-            Both HSL and HSL<sub>uv</sub> have a distorted chroma
-            map, this is a trade-off of their convenient shape. Admittedly, HSL<sub>uv</sub>'s
+            Both HSL and HSLuv have a distorted chroma
+            map, this is a trade-off of their convenient shape. Admittedly, HSLuv's
             chroma has more sudden shifts.
         </p>
     </div>
     <div class="col c3">
         <figure>
             <img src="/images/hpluv-chroma.png"/>
-            <figcaption>HPL<sub>uv</sub></figcaption>
+            <figcaption>HPLuv</figcaption>
         </figure>
     </div>
 </div>
@@ -157,17 +157,17 @@
     <div class="col c3">
         <figure>
             <img src="/images/hsluv-lightness.png"/>
-            <figcaption>HSL<sub>uv</sub></figcaption>
+            <figcaption>HSLuv</figcaption>
         </figure>
         <p>
             For this demo I am using CIE's definition of lightness. Both CIELUV&nbsp;LCh
-            and HSL<sub>uv</sub> use this component, so their picture is an even gray.
+            and HSLuv use this component, so their picture is an even gray.
         </p>
     </div>
     <div class="col c3">
         <figure>
             <img src="/images/hpluv-lightness.png"/>
-            <figcaption>HPL<sub>uv</sub></figcaption>
+            <figcaption>HPLuv</figcaption>
         </figure>
     </div>
 </div>
@@ -175,7 +175,7 @@
     {{#demoColorBars}}
         <div class="col c2">
             <div class="demo" id="rainbow-hsluv">
-                <h3>HSL<sub>uv</sub></h3>
+                <h3>HSLuv</h3>
                 {{#hsluvColors}}
                     <div style="background-color:{{.}}">Lightness: 60%</div>
                 {{/hsluvColors}}
@@ -192,8 +192,8 @@
     {{/demoColorBars}}
     <div class="col c8">
         <p style="margin:100px">
-            This demo should illustrate the uniformity of HSL<sub>uv</sub>'s hue and the consistency
-            of contrast when generating colors with HSL<sub>uv</sub>.
+            This demo should illustrate the uniformity of HSLuv's hue and the consistency
+            of contrast when generating colors with HSLuv.
         </p>
     </div>
 </div>
