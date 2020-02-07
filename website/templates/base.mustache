@@ -1,11 +1,13 @@
 <!doctype html>
-
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>{{{ title }}} - Human-friendly HSL</title>
     <meta name="description" content="HSLuv - An alternative to HSL for programmatic color generation">
     <meta name="author" content="Alexei Boronine">
-    <meta name="viewport" content="width=device-width, maximum-scale=1">
+    <meta name="viewport" content="width=device-width">
+    <link rel="preload" href="/static/css/min.min.css" as="style">
+    <link rel="preload" href="/static/css/main.css" as="style">
     <link rel="stylesheet" href="/static/css/min.min.css">
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="shortcut icon" href="/favicon.png"/>
@@ -19,11 +21,10 @@
 </head>
 
 <body class="{{ bodyClass }}">
-<div id="header">
+<nav id="header">
     <nav class="container" role="navigation">
         <div class="github-button">
-            <iframe src="http://ghbtns.com/github-btn.html?user=hsluv&amp;repo=hsluv&amp;type=watch&amp;count=true"
-                    allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
+            <iframe src="https://ghbtns.com/github-btn.html?user=hsluv&repo=hsluv&type=star&count=true" frameborder="0" scrolling="0" width="100px" height="20px" title="Star on GitHub"></iframe>
         </div>
         <a class="logo" href="/">HSLuv</a>
         <a href="/comparison/">Comparison</a>
@@ -32,15 +33,16 @@
         <a href="/examples/">Examples</a>
         <a href="/credits/">Credits</a>
     </nav>
-</div>
+</nav>
 
-<div class="container">
+<main class="container">
     {{{ content }}}
     <div class="row">
         <footer class="col c12">
             © Copyright 2020 by <a href="http://www.boronine.com">Alexei Boronine</a>.
         </footer>
     </div>
-</div>
+</main>
 
 </body>
+</html>

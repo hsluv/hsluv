@@ -8,30 +8,28 @@
             <table>
                 <tr id="control-h">
                     <td class="cell-input">
-                        <input type="number" min="0" max="360" step="any" class="counter counter-hue" tabindex="1"/>
+                        <input type="number" min="0" max="360" step="any" class="counter counter-hue" tabindex="0"/>
                     </td>
                     <td><div class="range-slider"></div></td>
                     <td class="picker-label">H</td>
                 </tr>
                 <tr id="control-s">
                     <td class="cell-input">
-                        <input type="number" step="any" min="0" max="100" class="counter counter-saturation"
-                               tabindex="2"/>
+                        <input type="number" step="any" min="0" max="100" class="counter counter-saturation"/>
                     </td>
                     <td><div class="range-slider"></div></td>
                     <td class="picker-label">S</td>
                 </tr>
                 <tr id="control-l">
                     <td class="cell-input">
-                        <input type="number" step="any" min="0" max="100" class="counter counter-lightness"
-                               tabindex="3"/>
+                        <input type="number" step="any" min="0" max="100" class="counter counter-lightness"/>
                     </td>
                     <td><div class="range-slider"></div></td>
                     <td class="picker-label">L</td>
                 </tr>
                 <tr>
                     <td class="cell-input cell-input-hex">
-                        <input class="input-hex" pattern="#?[0-9a-fA-F]{6}" tabindex="4"/>
+                        <input class="input-hex" pattern="#?[0-9a-fA-F]{6}"/>
                     </td>
                     <td><div class="swatch"></div></td>
                     <td></td>
@@ -58,4 +56,4 @@
     </div>
 </div>
 
-<script src="/static/picker.min.js"></script>
+<script src="/static/picker.min.js" defer></script>

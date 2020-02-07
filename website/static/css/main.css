@@ -16,7 +16,11 @@ footer {
 
 body.dark {
     background-color: #1b1b1b;
-    color: #666;
+    color: #999;
+}
+
+body.dark a {
+    color: #5af;
 }
 
 sub {
