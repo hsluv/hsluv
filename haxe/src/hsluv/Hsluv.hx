@@ -60,7 +60,7 @@ class Hsluv {
         var sub1:Float = Math.pow(L + 16, 3) / 1560896;
         var sub2:Float = sub1 > epsilon ? sub1 : L / kappa;
 
-        for (c in 0...3) {
+        for (c in 0...2) {
             var m1:Float = m[c][0];
             var m2:Float = m[c][1];
             var m3:Float = m[c][2];
