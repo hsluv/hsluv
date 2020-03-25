@@ -13,8 +13,14 @@ const height = size;
 const width = size;
 
 
-function stringIsValidHex(string) {
-    return string.match(/#?[0-9a-f]{6}/i);
+function tryParseStringAsHex(string) {
+    const match = string.match(/^\s*#?([0-9a-f]{6})\s*$/i);
+    if (match) {
+        const matchedHexDigits = match[1];
+        return '#' + matchedHexDigits;
+    } else {
+        return null;
+    }
 }
 
 function stringIsNumberWithinRange(string, min, max) {
@@ -377,8 +383,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     elInputHex.addEventListener('input', function () {
-        if (stringIsValidHex(elInputHex.value)) {
-            let hsl = hsluv.Hsluv.hexToHsluv(elInputHex.value);
+        const valueAsHex = tryParseStringAsHex(elInputHex.value);
+        if (valueAsHex !== null) {
+            const hsl = hsluv.Hsluv.hexToHsluv(valueAsHex);
             H = hsl[0];
             S = hsl[1];
             L = hsl[2];
