@@ -2,11 +2,11 @@ rec {
   pkgs = import (pkgsSrc) {};
   pkgsOriginal = import <nixpkgs> {};
 
-  # There is an issue with latest Haxe https://github.com/HaxeFoundation/haxe/issues/6866
-  # We have to use parent of this commit: https://github.com/NixOS/nixpkgs/commit/c727e7e7d60e687be7d8def95fce5cd02cb5293b
+  # Known issue on MacOS https://github.com/HaxeFoundation/haxe/issues/6866
+  # Because Nix is broken on Catalina we are giving up on MacOS for the time being and waiting for official support
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/3ab38ef086947822fbe2cffea071e1c508811990.zip";
-    sha256 = "004x04v07xdp444ilb4sjxprnsjy4g2ji7fq8sydjyf9gvn6b85f";
+    url = "https://github.com/NixOS/nixpkgs/archive/c7363c2b97e0e4eb127e6a32b3207cc00eac3409.zip";
+    sha256 = "1cn175ghzg5nzchxzcmdbwj6143q0q7am1gqdpypjdbcdkpghrqp";
   };
 
   jre = pkgs.jre;
@@ -28,12 +28,12 @@ rec {
   snapshotRev4 = ./snapshots/snapshot-rev4.json;
   closureCompiler = pkgs.closurecompiler;
 
-  python = pkgs.python36.withPackages (ps: with ps; [ setuptools wheel twine ]);
+  python = pkgs.python37.withPackages (ps: with ps; [ setuptools wheel twine ]);
 
-  # v0.0.2
+  # v5.0.0
   pythonSrc = pkgs.fetchzip {
-    url = "https://github.com/hsluv/hsluv-python/archive/287439082df640fe469a1af5b683bcd7a14c4b54.zip";
-    sha256 = "18528f20s9r54inh0gczxsjsg6jhckms5f900c8ryaankjbkzmd4";
+    url = "https://github.com/hsluv/hsluv-python/archive/b212507759ea44963f791a3bd37f7854064ac48c.zip";
+    sha256 = "0g7spbs9z878bkdjq6xyizdjfspacfihfarll34m90ghzzr319hp";
   };
 
   # v0.1-1
