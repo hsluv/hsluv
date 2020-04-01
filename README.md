@@ -3,7 +3,7 @@
 
 # HSLuv - Human-friendly HSL
 
-[Explanation, demo, ports etc.](http://www.hsluv.org)
+[Explanation, demo, ports etc.](https://www.hsluv.org)
 
 The reference implementation is [written in Haxe](https://github.com/hsluv/hsluv/tree/master/haxe). 
 

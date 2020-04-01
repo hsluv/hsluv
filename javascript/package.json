@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type" : "git",
-    "url" : "http://github.com/hsluv/hsluv.git"
+    "url" : "https://github.com/hsluv/hsluv.git"
   },
-  "homepage": "http://www.hsluv.org"
+  "homepage": "https://www.hsluv.org"
 }

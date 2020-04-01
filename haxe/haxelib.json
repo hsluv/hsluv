@@ -1,6 +1,6 @@
 {
   "name": "hsluv",
-  "url" : "http://www.hsluv.org/",
+  "url" : "https://www.hsluv.org/",
   "license": "MIT",
   "tags": ["cross", "color"],
   "description": "Human-friendly HSL.",
