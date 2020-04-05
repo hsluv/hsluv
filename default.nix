@@ -5,8 +5,8 @@ rec {
   # Known issue on MacOS https://github.com/HaxeFoundation/haxe/issues/6866
   # Because Nix is broken on Catalina we are giving up on MacOS for the time being and waiting for official support
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/c7363c2b97e0e4eb127e6a32b3207cc00eac3409.zip";
-    sha256 = "1cn175ghzg5nzchxzcmdbwj6143q0q7am1gqdpypjdbcdkpghrqp";
+    url = "https://github.com/NixOS/nixpkgs/archive/3ab38ef086947822fbe2cffea071e1c508811990.zip";
+    sha256 = "004x04v07xdp444ilb4sjxprnsjy4g2ji7fq8sydjyf9gvn6b85f";
   };
 
   jre = pkgs.jre;
