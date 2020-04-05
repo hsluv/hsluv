@@ -1,0 +1,19 @@
+# Copyright (C) 2020 Sebastian Pipping <sebastian@pipping.org>
+# Licensed under the MIT license
+
+name: Build and test using Docker
+
+on:
+- pull_request
+- push
+
+jobs:
+  build_and_test:
+    name: Build and test using Docker
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build Docker image
+        run: |-
+          docker build .
