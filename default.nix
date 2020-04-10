@@ -28,7 +28,7 @@ rec {
   snapshotRev4 = ./snapshots/snapshot-rev4.json;
   closureCompiler = pkgs.closurecompiler;
 
-  python = pkgs.python37.withPackages (ps: with ps; [ setuptools wheel twine ]);
+  python = pkgs.python36.withPackages (ps: with ps; [ setuptools wheel twine ]);
 
   # v5.0.0
   pythonSrc = pkgs.fetchzip {

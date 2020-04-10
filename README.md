@@ -7,41 +7,49 @@
 
 The reference implementation is [written in Haxe](https://github.com/hsluv/hsluv/tree/master/haxe). 
 
-## Building
+## Build system
 
-Requirements: [Nix package manage](http://nixos.org/nix/). If you want to build without Nix,
+HSLuv uses [Nix package manager](http://nixos.org/nix/). If you want to build without Nix,
 see `default.nix` for dependencies and command line instructions.
+
+Linux, Windows 10 (WSL), macOS 10.14 and earlier:
+ - Install [Nix](http://nixos.org/nix/)
+ - Use: `./run.sh <COMMAND> <TARGET>`
+
+Linux, macOS:
+ - Install [Docker](https://www.docker.com/)
+ - Use: `HSLUV_RUNTIME=docker ./run.sh <COMMAND> <TARGET>`
 
 The necessary mathematical equations are solved in [Maxima](http://maxima.sourceforge.net/). 
 See `/math` directory for the equations and run the following to verify the solutions:
 
 ```
-nix-build -A maximaOutput
+./run.sh build maximaOutput
 ```
 
 To run full test suite:
 
 ```
-nix-build -A test
+./run.sh build test
 ```
 
 To build JavaScript distributions (Node.js and browser):
 
 ```
-nix-build -A nodePackageDist
-nix-build -A browserDist
+./run.sh build nodePackageDist
+./run.sh build browserDist
 ```
 
 To build website:
 
 ```
-nix-build -A website
+./run.sh build website
 ```
 
 To build website and start localhost server:
 
 ```
-./run.sh server
+./run.sh run server
 ```
 
 ## Testing
@@ -50,7 +58,7 @@ The snapshot file is stored for regression testing. If a backwards-incompatible 
 a new snapshot file can be generated as follows:
 
 ```
-nix-build -A snapshotJson
+./run.sh build snapshotJson
 ```
 
 The format of the file is as follows:
@@ -74,13 +82,13 @@ The format of the file is as follows:
 For publishing packages and website you will need access to our shared credentials.
 
 ```bash
-./run.sh publishPypi
-./run.sh publishNpmJs
-./run.sh publishNpmSass
-./run.sh publishLua
-./run.sh publishWebsite
-./run.sh publishRuby
-./run.sh publishNuget
+./run.sh run publishPypi
+./run.sh run publishNpmJs
+./run.sh run publishNpmSass
+./run.sh run publishLua
+./run.sh run publishWebsite
+./run.sh run publishRuby
+./run.sh run publishNuget
 ./scripts/publish-maven.sh
 ```
 

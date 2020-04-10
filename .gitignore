@@ -2,6 +2,7 @@ node_modules
 npm-debug.log
 /.idea
 /result
+/result_docker
 /secrets.txt
 *.iml
 .vscode
