@@ -19,9 +19,7 @@ if [ "$HSLUV_RUNTIME" == "docker" ]; then
     sudo rm -rf result_docker
     docker run -it --mount src="$PWD",target=/home/nix/hsluv,type=bind hsluv bash -c "nix-build -A $NIX_TARGET && cp -R -L result result_docker"
     echo "Built: $PWD/result_docker"
-  fi
-
-  if [ "$COMMAND" == "run" ]; then
+  elif [ "$COMMAND" == "run" ]; then
     docker build -t hsluv .
     docker run -it -p 8000:8000 --mount src="$PWD",target=/home/nix/hsluv,type=bind hsluv bash -c "./run.sh run $NIX_TARGET"
   fi
@@ -29,9 +27,7 @@ else
   # Native Nix runtime
   if [ "$COMMAND" == "build" ]; then
     nix-build -A "$NIX_TARGET"
-  fi
-
-  if [ "$COMMAND" == "run" ]; then
+  elif [ "$COMMAND" == "run" ]; then
     # This is a special Nix target that outputs a bash script
     nix-build -A "$NIX_TARGET"
     exec "result/bin/script.sh"
