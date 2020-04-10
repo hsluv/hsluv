@@ -14,13 +14,11 @@ if [ "$HSLUV_RUNTIME" == "docker" ]; then
   docker build -t hsluv .
 
   if [ "$COMMAND" == "build" ]; then
-    docker build -t hsluv .
     echo "Deleting $PWD/result_docker"
     sudo rm -rf result_docker
     docker run -it --mount src="$PWD",target=/home/nix/hsluv,type=bind hsluv bash -c "nix-build -A $NIX_TARGET && cp -R -L result result_docker"
     echo "Built: $PWD/result_docker"
   elif [ "$COMMAND" == "run" ]; then
-    docker build -t hsluv .
     docker run -it -p 8000:8000 --mount src="$PWD",target=/home/nix/hsluv,type=bind hsluv bash -c "./run.sh run $NIX_TARGET"
   fi
 else
