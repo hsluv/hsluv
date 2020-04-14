@@ -4,7 +4,7 @@
 #  ./run.sh run TARGET
 
 set -e
-source "secrets.txt"
+test -f "secrets.txt" && source "secrets.txt"
 
 COMMAND=$1
 NIX_TARGET=$2
