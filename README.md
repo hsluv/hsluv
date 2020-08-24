@@ -12,11 +12,11 @@ The reference implementation is [written in Haxe](https://github.com/hsluv/hsluv
 HSLuv uses [Nix package manager](http://nixos.org/nix/). If you want to build without Nix,
 see `default.nix` for dependencies and command line instructions.
 
-Linux, Windows 10 (WSL), macOS 10.14 and earlier:
+Linux, Windows 10 (WSL), macOS:
  - Install [Nix](http://nixos.org/nix/)
  - Use: `./run.sh <COMMAND> <TARGET>`
 
-Linux, macOS:
+A Docker wrapper is available for Windows 10 (native), or anyone who finds it more convenient:
  - Install [Docker](https://www.docker.com/)
  - Use: `HSLUV_RUNTIME=docker ./run.sh <COMMAND> <TARGET>`
 
