@@ -13,7 +13,7 @@ HSLuv uses [Nix package manager](http://nixos.org/nix/). If you want to build wi
 see `default.nix` for dependencies and command line instructions.
 
 Linux, Windows 10 (WSL), macOS:
- - Install [Nix](http://nixos.org/nix/)
+ - Install [Nix](https://nixos.org/download.html)
  - Use: `./run.sh <COMMAND> <TARGET>`
 
 A Docker wrapper is available for Windows 10 (native), or anyone who finds it more convenient:
