@@ -2,16 +2,16 @@ rec {
   pkgs = import (pkgsSrc) {};
   pkgsOriginal = import <nixpkgs> {};
 
-  # Known issue on MacOS https://github.com/HaxeFoundation/haxe/issues/6866
-  # Because Nix is broken on Catalina we are giving up on MacOS for the time being and waiting for official support
+  # Version 20.03
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/3ab38ef086947822fbe2cffea071e1c508811990.zip";
-    sha256 = "004x04v07xdp444ilb4sjxprnsjy4g2ji7fq8sydjyf9gvn6b85f";
+    url = "https://github.com/NixOS/nixpkgs/archive/5272327b81ed355bbed5659b8d303cf2979b6953.zip";
+    sha256 = "0182ys095dfx02vl2a20j1hz92dx3mfgz2a6fhn31bqlp1wa8hlq";
   };
 
   jre = pkgs.jre;
   zip = pkgs.zip;
-  haxe = pkgs.haxe;
+  haxe = (import ./haxe4.nix) { pkgs = pkgs; };
+  # haxe = pkgs.haxe;
   neko = pkgs.neko;
   mono = pkgs.mono;
   nodejs = pkgs.nodejs;
