@@ -7,9 +7,15 @@ http://www.brucelindbloom.com/index.html?Eqn_xyY_to_XYZ.html */
 
 xyY_to_XYZ(x, y, Y) := [x * Y / y, Y, (1 - x - y) * Y / y];
 
-/* sRGB primaries with D65 white point
-http://en.wikipedia.org/wiki/SRGB#The_sRGB_gamut
-http://en.wikipedia.org/wiki/Illuminant_D65 */
+/* sRGB primaries and white point
+
+https://en.wikipedia.org/wiki/SRGB#The_sRGB_gamut
+https://en.wikipedia.org/wiki/Rec._709
+https://en.wikipedia.org/wiki/Illuminant_D65
+
+Note that many sources including CIE 15:2004 specify D65 numbers rounded to 5
+decimal places. Here we chose the numbers rounded to 4 decimal places as this
+seems to be encoded in the sRGB standard. */
 
 x_r: rat(0.64);
 y_r: rat(0.33);
@@ -34,36 +40,31 @@ M_S: invert(M_P) . [X_w, Y_w, Z_w];
 M_RGB_XYZ: M_P * transpose(addcol(M_S, M_S, M_S));
 M_XYZ_RGB: invert(M_RGB_XYZ);
 
-/* XYZ tristimulus values for D65, used as reference white point here:
-http://www.brucelindbloom.com/index.html?Eqn_xyY_to_XYZ.html */
-
-[ref_X, ref_Y, ref_Z] : xyY_to_XYZ(rat(0.3127), rat(0.3290), 1);
-
 /* Note that the standard defines these constants as decimals
 and is incorrect. We are using the correct non-standard values.
 See: http://www.brucelindbloom.com/index.html?LContinuity.html */
 
 epsilon: (6 / 29) ^ 3;
 kappa: (29 / 3) ^ 3;
-ref_U: (4 * ref_X) / (ref_X + (15 * ref_Y) + (3 * ref_Z));
-ref_V: (9 * ref_Y) / (ref_X + (15 * ref_Y) + (3 * ref_Z));
+ref_U: (4 * X_w) / (X_w + (15 * Y_w) + (3 * Z_w));
+ref_V: (9 * Y_w) / (X_w + (15 * Y_w) + (3 * Z_w));
 
 L_to_Y(L) :=
     if (L > 8)
-    then ref_Y * ((L + 16) / 116) ^ 3
-    else ref_Y * L / kappa;
+    then Y_w * ((L + 16) / 116) ^ 3
+    else Y_w * L / kappa;
 
 Y_to_L(Y) :=
     if (Y <= epsilon)
-    then (Y / ref_Y) * kappa
-    else 116 * (Y / ref_Y) ^ (1 / 3) - 16;
+    then (Y / Y_w) * kappa
+    else 116 * (Y / Y_w) ^ (1 / 3) - 16;
 
 LUV_to_XYZ(L, U, V) := block(
     [var_Y, var_U, var_V, Y, X, Z],
     var_Y : L_to_Y(L),
     var_U : U / (13 * L) + ref_U,
     var_V : V / (13 * L) + ref_V,
-    Y    : var_Y * ref_Y,
+    Y    : var_Y * Y_w,
     X    : 0 - (9 * Y * var_U) / ((var_U - 4) * var_V - var_U * var_V),
     Z    : (9 * Y - (15 * var_V * Y) - (var_V * X)) / (3 * var_V),
     [X, Y, Z]
@@ -81,9 +82,9 @@ sRGB_to_linear(c) :=
 
 bfloat(M_XYZ_RGB);
 bfloat(M_RGB_XYZ);
-bfloat(ref_X);
-bfloat(ref_Y);
-bfloat(ref_Z);
+bfloat(X_w);
+bfloat(Y_w);
+bfloat(Z_w);
 bfloat(ref_U);
 bfloat(ref_V);
 bfloat(kappa);
