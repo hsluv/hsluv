@@ -125,7 +125,7 @@ rec {
       source $stdenv/setup
       export SOURCE_DATE_EPOCH=315532800
       cp -R --no-preserve=mode,ownership $pythonSrc/* .
-      python setup.py sdist bdist_wheel
+      python3 setup.py sdist bdist_wheel
       mkdir $out
       cp dist/* $out
     '';
@@ -333,7 +333,6 @@ rec {
     ${python}/bin/twine upload --username $PYPI_USERNAME --password $PYPI_PASSWORD ${pythonDist}/*
   '';
 
-  # For some reason this function doesn't work with --username and --password params
   publishPypiTest = pkgs.writeShellScriptBin "script.sh" ''
     ${python}/bin/twine upload --username $PYPI_TEST_USERNAME --password $PYPI_TEST_PASSWORD --repository testpypi ${pythonDist}/*
   '';
@@ -385,7 +384,7 @@ rec {
 
   server = pkgs.writeShellScriptBin "script.sh" ''
     cd ${website}
-    ${python}/bin/python -m http.server
+    ${python}/bin/python3 -m http.server
   '';
 
   # ------------------------------------------------------------------------------------------
