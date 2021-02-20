@@ -4,14 +4,14 @@ rec {
 
   # Known issue on MacOS https://github.com/HaxeFoundation/haxe/issues/6866
   # Because Nix is broken on Catalina we are giving up on MacOS for the time being and waiting for official support
+  # https://github.com/NixOS/nixpkgs/tree/20.09
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/3ab38ef086947822fbe2cffea071e1c508811990.zip";
-    sha256 = "004x04v07xdp444ilb4sjxprnsjy4g2ji7fq8sydjyf9gvn6b85f";
+    url = "https://github.com/NixOS/nixpkgs/archive/cd63096d6d887d689543a0b97743d28995bc9bc3.zip";
+    sha256 = "1wg61h4gndm3vcprdcg7rc4s1v3jkm5xd7lw8r2f67w502y94gcy";
   };
 
   jre = pkgs.jre;
   zip = pkgs.zip;
-  haxe = pkgs.haxe;
   neko = pkgs.neko;
   mono = pkgs.mono;
   nodejs = pkgs.nodejs;
@@ -65,6 +65,13 @@ rec {
     url = "https://github.com/hsluv/hsluv-ruby/archive/263f7e4aa6b1390bb7a49e8555e301af78341f11.zip";
     sha256 = "13wsrq61zg0z3pxd6qc3gxn5d3p83fqrjy8bjqnyzxbvxll4yknz";
   };
+
+  ocaml-sha = (import ./vendor/ocaml-sha.nix) {
+    buildDunePackage = pkgs.ocamlPackages.buildDunePackage;
+    fetchFromGitHub = pkgs.fetchFromGitHub;
+  };
+
+  haxe = (import ./vendor/haxe.nix) (with pkgs; { inherit stdenv fetchFromGitHub coreutils ocamlPackages zlib pcre neko mbedtls ocaml-sha; });
 
   rubyDist = pkgs.stdenv.mkDerivation rec {
     name = "ruby-dist";
