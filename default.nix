@@ -30,10 +30,10 @@ rec {
 
   python = pkgs.python36.withPackages (ps: with ps; [ setuptools wheel twine ]);
 
-  # v5.0.1
+  # v5.0.2
   pythonSrc = pkgs.fetchzip {
-    url = "https://github.com/hsluv/hsluv-python/archive/9f74a58170ae08c087a11f01886828e17f5826c1.zip";
-    sha256 = "0rj6sbz5zyqdx32p437q831gzckdyq4d0izc6m40nmnvzmpbg3zj";
+    url = "https://github.com/hsluv/hsluv-python/archive/cb90bbd5cab268175a327197e23aa79899cd4a0a.zip";
+    sha256 = "0r0w8ycjwfg3pmzjghzrs0lkam93fzvgiqvrwh3nl9jnqlpw7v7j";
   };
 
   # v0.1-1
