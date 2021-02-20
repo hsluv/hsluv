@@ -36,6 +36,7 @@ RUN nix-env --version
 RUN nix-instantiate --eval -E 'with import <nixpkgs> {}; lib.version or lib.nixpkgsVersion'
 
 COPY --chown=nix:nix default.nix  /home/nix/hsluv/
+COPY --chown=nix:nix vendor/      /home/nix/hsluv/vendor/
 COPY --chown=nix:nix javascript/  /home/nix/hsluv/javascript/
 COPY --chown=nix:nix haxe/        /home/nix/hsluv/haxe/
 COPY --chown=nix:nix snapshots/   /home/nix/hsluv/snapshots/
