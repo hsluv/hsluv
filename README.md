@@ -83,6 +83,7 @@ For publishing packages and website you will need access to our shared credentia
 
 ```bash
 ./run.sh run publishPypi
+./run.sh run publishPypiTest # for publishing to https://test.pypi.org/
 ./run.sh run publishNpmJs
 ./run.sh run publishNpmSass
 ./run.sh run publishLua

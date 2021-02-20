@@ -333,6 +333,11 @@ rec {
     ${python}/bin/twine upload --username $PYPI_USERNAME --password $PYPI_PASSWORD ${pythonDist}/*
   '';
 
+  # For some reason this function doesn't work with --username and --password params
+  publishPypiTest = pkgs.writeShellScriptBin "script.sh" ''
+    ${python}/bin/twine upload --username $PYPI_TEST_USERNAME --password $PYPI_TEST_PASSWORD --repository testpypi ${pythonDist}/*
+  '';
+
   publishNpmPackage = package: pkgs.writeShellScriptBin "script.sh" ''
     echo "Generating .npmrc ..."
     # npm adduser creates .npmrc file in HOME

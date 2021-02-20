@@ -44,7 +44,7 @@ then
 
     echo "Encrypting secrets.txt    ..."
     cat ${secretsTxt} \
-        | openssl enc -aes-256-cbc -salt -pass pass:${symmetric} \
+        | openssl enc -pbkdf2 -salt -pass pass:${symmetric} \
         | openssl enc -base64 \
         > ${secretsEnc}
 
@@ -62,7 +62,7 @@ then
         echo "Decrypting secrets.txt ..."
         cat ${secretsEnc} \
             | openssl enc -base64 -d \
-            | openssl enc -d -aes-256-cbc -pass pass:${symmetric} \
+            | openssl enc -d -pbkdf2 -pass pass:${symmetric} \
             > ${secretsTxt}
 
     else
