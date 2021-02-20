@@ -187,6 +187,16 @@ rec {
     '';
   };
 
+  avatar2 = pkgs.stdenv.mkDerivation rec {
+    inherit haxe haxeSrc haxeTestSrc;
+    name = "hsluv-haxe-test";
+    buildInputs = [haxe];
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      haxe -cp $haxeSrc -cp $haxeTestSrc -main Images --interp > $out
+    '';
+  };
+
   pickerJs = pkgs.stdenv.mkDerivation rec {
     name = "picker-js";
     hsluvJsFull = haxeJsCompile "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker";
