@@ -142,28 +142,14 @@ rec {
     sha256 = "09gx8ra0m52bm0zdfbwb151b5ngvv7bq1367pizsgmh5r4sqigzk";
   };
 
-  nodeModules = pkgs.stdenv.mkDerivation rec {
-    name = "node-modules";
-    inherit nodejs mustacheJs nodePackageDist;
-    buildInputs = [nodejs];
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      HOME=.
-      npm install $mustacheJs
-      npm install $nodePackageDist
-      mkdir $out
-      cp -R node_modules/* $out
-    '';
-  };
-
   genDemoImage = i : pkgs.stdenv.mkDerivation rec {
     name = "hsluv-demo-${i}";
-    inherit nodejs nodeModules imagemagick;
+    inherit nodejs imagemagick nodePackageDist;
     generateImagesJs = ./website/generate-images.js;
     buildInputs = [nodejs imagemagick];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      export NODE_PATH=$nodeModules:$NODE_PATH
+      export NODE_PATH=$nodePackageDist:$NODE_PATH
       node $generateImagesJs ${i} > img.pam
       mkdir $out
       convert img.pam $out/${i}.png
@@ -185,7 +171,7 @@ rec {
 
   website = pkgs.stdenv.mkDerivation rec {
     name = "hsluv-website";
-    inherit nodejs nodeModules pickerJsDist;
+    inherit nodejs pickerJsDist mustacheJs nodePackageDist;
     src = ./website;
     buildInputs = [nodejs];
     demoFavicon = genDemoImage "favicon";
@@ -203,7 +189,7 @@ rec {
     demoHpluvChroma = genDemoImage "hpluv-chroma";
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
-      export NODE_PATH=$nodeModules:$NODE_PATH
+      export NODE_PATH=$mustacheJs:$nodePackageDist:$NODE_PATH
 
       mkdir $out
       mkdir $out/images
