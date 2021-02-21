@@ -27,6 +27,7 @@ rec {
   haxeTestSrc = ./haxe/test;
   snapshotRev4 = ./snapshots/snapshot-rev4.json;
   closureCompiler = pkgs.closurecompiler;
+  imagemagick = pkgs.imagemagick;
 
   python = pkgs.python36.withPackages (ps: with ps; [ setuptools wheel twine ]);
 
@@ -136,11 +137,6 @@ rec {
     sha256 = "14p96nidbbv4afphsl7sy2qhzrs4mc7hf960wbbd4dp0cg7lij1s";
   };
 
-  pngJs = pkgs.fetchzip {
-    url = "https://github.com/lukeapage/pngjs/archive/v3.0.0.zip";
-    sha256 = "0yny8zq0pjy2qa6gzdl4h7h2mijg0c3s9xcmm6b1mzq9n04xgzsx";
-  };
-
   mustacheJs = pkgs.fetchzip {
     url = "https://github.com/janl/mustache.js/archive/v2.3.0.zip";
     sha256 = "09gx8ra0m52bm0zdfbwb151b5ngvv7bq1367pizsgmh5r4sqigzk";
@@ -148,12 +144,11 @@ rec {
 
   nodeModules = pkgs.stdenv.mkDerivation rec {
     name = "node-modules";
-    inherit nodejs pngJs mustacheJs nodePackageDist;
+    inherit nodejs mustacheJs nodePackageDist;
     buildInputs = [nodejs];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       HOME=.
-      npm install $pngJs
       npm install $mustacheJs
       npm install $nodePackageDist
       mkdir $out
@@ -161,31 +156,21 @@ rec {
     '';
   };
 
-  websiteDemoImages = pkgs.stdenv.mkDerivation rec {
-    name = "hsluv-website-demo-images";
-    inherit nodejs nodeModules;
+  genDemoImage = i : pkgs.stdenv.mkDerivation rec {
+    name = "hsluv-demo-${i}";
+    inherit nodejs nodeModules imagemagick;
     generateImagesJs = ./website/generate-images.js;
-    buildInputs = [nodejs];
+    buildInputs = [nodejs imagemagick];
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       export NODE_PATH=$nodeModules:$NODE_PATH
+      node $generateImagesJs ${i} > img.pam
       mkdir $out
-      node $generateImagesJs --website $out
+      convert img.pam $out/${i}.png
     '';
   };
 
-  avatar = pkgs.stdenv.mkDerivation rec {
-    name = "hsluv-avatar";
-    inherit nodejs nodeModules;
-    generateImagesJs = ./website/generate-images.js;
-    buildInputs = [nodejs];
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      export NODE_PATH=$nodeModules:$NODE_PATH
-      mkdir $out
-      node $generateImagesJs --avatar $out/avatar.png
-    '';
-  };
+  avatar = genDemoImage "avatar";
 
   pickerJs = pkgs.stdenv.mkDerivation rec {
     name = "picker-js";
@@ -200,16 +185,42 @@ rec {
 
   website = pkgs.stdenv.mkDerivation rec {
     name = "hsluv-website";
-    inherit nodejs nodeModules websiteDemoImages pickerJsDist;
+    inherit nodejs nodeModules pickerJsDist;
     src = ./website;
     buildInputs = [nodejs];
+    demoFavicon = genDemoImage "favicon";
+    demoHsluv = genDemoImage "hsluv";
+    demoHpluv = genDemoImage "hpluv";
+    demoHsluvChroma = genDemoImage "hsluv-chroma";
+    demoCielchuvChroma = genDemoImage "cielchuv-chroma";
+    demoCielchuv = genDemoImage "cielchuv";
+    demoHsl = genDemoImage "hsl";
+    demoHslLightness = genDemoImage "hsl-lightness";
+    demoCielchuvLightness = genDemoImage "cielchuv-lightness";
+    demoHsluvLightness = genDemoImage "hsluv-lightness";
+    demoHpluvLightness = genDemoImage "hpluv-lightness";
+    demoHslChroma = genDemoImage "hsl-chroma";
+    demoHpluvChroma = genDemoImage "hpluv-chroma";
     builder = builtins.toFile "builder.sh" ''
       source $stdenv/setup
       export NODE_PATH=$nodeModules:$NODE_PATH
 
       mkdir $out
+      mkdir $out/images
+      install $demoFavicon/* $out
+      install $demoHsluv/* $out/images
+      install $demoHpluv/* $out/images
+      install $demoHsluvChroma/* $out/images
+      install $demoCielchuvChroma/* $out/images
+      install $demoCielchuv/* $out/images
+      install $demoHsl/* $out/images
+      install $demoHslLightness/* $out/images
+      install $demoCielchuvLightness/* $out/images
+      install $demoHsluvLightness/* $out/images
+      install $demoHpluvLightness/* $out/images
+      install $demoHslChroma/* $out/images
+      install $demoHpluvChroma/* $out/images
       cp -R --no-preserve=mode,ownership $src/static $out/static
-      cp -R --no-preserve=mode,ownership $websiteDemoImages/* $out
       cp $pickerJsDist $out/static/picker.min.js
 
       node $src/generate-html.js $out

@@ -1,5 +1,4 @@
 const fs = require('fs');
-const pngjs = require('pngjs');
 
 // Expecting full API
 const hsluv = require('hsluv');
@@ -29,12 +28,10 @@ function hslToRgb(h, s, l) {
     return [r, g, b];
 }
 
-function makeImage(file, func, width, height) {
-    console.log(' - ' + file);
-    let png = new pngjs.PNG({
-        width: width,
-        height: height
-    });
+function makeImage(func, width, height) {
+    const depth = 4;
+    const header = `P7\nWIDTH ${width}\nHEIGHT ${height}\nDEPTH ${depth}\nMAXVAL 255\nTUPLTYPE RGB_ALPHA\nENDHDR\n`;
+    const body = Buffer.alloc(width * height * depth);
     for (let y = 0; y < height; y++) {
         for (let x = 0; x < width; x++) {
             let pos = (y * width + x) * 4;
@@ -44,14 +41,15 @@ function makeImage(file, func, width, height) {
             let rgbVal = func(xn, yn);
             let rgb = rgbPrepare(rgbVal);
 
-            png.data[pos] = rgb[0];
-            png.data[pos + 1] = rgb[1];
-            png.data[pos + 2] = rgb[2];
-            png.data[pos + 3] = 255;
+            body.writeUInt8(rgb[0], pos);
+            body.writeUInt8(rgb[1], pos + 1);
+            body.writeUInt8(rgb[2], pos + 2);
+            body.writeUInt8(255, pos + 3);
         }
     }
-
-    return png.pack().pipe(fs.createWriteStream(file));
+    // fs.writeFileSync(file + '.pam', Buffer.concat([Buffer.from(header), body]));
+    const pam = Buffer.concat([Buffer.from(header), body]);
+    process.stdout.write(pam);
 }
 
 function chromaDemo(rgb) {
@@ -165,7 +163,8 @@ function makeDir(path) {
     }
 }
 
-function generateImages(targetDir) {
+if (require.main === module) {
+    const type = process.argv[2];
     const demos = {
         'hsluv': demoHsluv,
         'hpluv': demoHpluv,
@@ -180,21 +179,13 @@ function generateImages(targetDir) {
         'hsl-chroma': demoHslChroma,
         'hpluv-chroma': demoHpluvChroma
     };
-    console.log("Generating demo images:");
-    makeDir(targetDir + '/images');
-    makeImage(targetDir + '/favicon.png', luvSquare, 32, 32);
-    Object.keys(demos).forEach(function (demoName) {
-        let file = targetDir + '/images/' + demoName + '.png';
-        return makeImage(file, demos[demoName], 360, 200);
-    });
-}
 
-if (require.main === module) {
-    const type = process.argv[2];
-    const target = process.argv[3];
-    if (type === '--website') {
-        generateImages(target);
-    } else if (type === '--avatar') {
-        makeImage(target, luvSquare, 200, 200);
+    if (type === 'avatar') {
+        makeImage(luvSquare, 200, 200);
+    } else if (type === 'favicon') {
+        makeImage(luvSquare, 32, 32);
+    } else {
+        const func = demos[type];
+        makeImage(func, 360, 200);
     }
 }
