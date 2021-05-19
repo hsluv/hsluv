@@ -43,10 +43,10 @@ rec {
     sha256 = "1nqnyrym0vyf8fal6gj4nxk7pxpl2jyg5536dax0zg2nkdkzahms";
   };
 
-  # 1.0.0
+  # 2.0.0
   sassSrc = pkgs.fetchzip {
-    url = "https://github.com/hsluv/hsluv-sass/archive/da6c6435376c5d0f8d5829212023efe31965e8c6.zip";
-    sha256 = "1ambxi06gs51k2r5dw34mwlb82mx40z1qqx4zxhrqaggip45wq0x";
+    url = "https://github.com/hsluv/hsluv-sass/archive/4981ea0f5324763c99fd13a2c5a1c894b482b233.zip";
+    sha256 = "0vawny03x4jpzfspv8ac0ampmfiqjri73j6i68383gsfcmgwwzfn";
   };
 
   # 1.0.2
@@ -335,11 +335,12 @@ rec {
   '';
 
   publishNpmPackage = package: pkgs.writeShellScriptBin "script.sh" ''
+    set -e
     echo "Generating .npmrc ..."
     # npm adduser creates .npmrc file in HOME
     TEMP_HOME=`mktemp -d`
     HOME="$TEMP_HOME"
-    echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL\n" | ${pkgs.nodejs}/bin/npm adduser
+    echo -e "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > "$HOME/.npmrc"
 
     echo "Publishing ..."
     ${pkgs.nodejs}/bin/npm publish ${package}
