@@ -1,6 +1,7 @@
 rec {
   pkgs = import (pkgsSrc) {};
   pkgsOriginal = import <nixpkgs> {};
+  imagemagick = pkgs.imagemagick;
 
   pkgsSrc = pkgsOriginal.fetchzip {
     url = "https://github.com/NixOS/nixpkgs/archive/refs/tags/21.05.zip";
@@ -13,4 +14,15 @@ rec {
   };
 
   python = pkgs.python39.withPackages (ps: with ps; [ setuptools wheel twine ]);
+
+  # For some reason if we don't trigger this from Docker build, Docker insists on downloading more packages when running
+  buildTest = pkgs.stdenv.mkDerivation rec {
+    name = "build-test";
+    inherit imagemagick;
+    buildInputs = [imagemagick];
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      touch $out
+    '';
+  };
 }

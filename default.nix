@@ -60,17 +60,6 @@ rec {
     sha256 = "13wsrq61zg0z3pxd6qc3gxn5d3p83fqrjy8bjqnyzxbvxll4yknz";
   };
 
-  # For some reason if we don't trigger this from Docker build, Docker insists on downloading more packages when running
-  imagemagickTest = pkgs.stdenv.mkDerivation rec {
-    name = "imagemagick-test";
-    inherit imagemagick;
-    buildInputs = [imagemagick];
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      touch $out
-    '';
-  };
-
   rubyDist = pkgs.stdenv.mkDerivation rec {
     name = "ruby-dist";
     inherit ruby rubySrc;
