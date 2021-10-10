@@ -1,18 +1,12 @@
 rec {
-  pkgs = import (pkgsSrc) {};
-  pkgsOriginal = import <nixpkgs> {};
-
-  # Known issue on MacOS https://github.com/HaxeFoundation/haxe/issues/6866
-  # Because Nix is broken on Catalina we are giving up on MacOS for the time being and waiting for official support
-  # https://github.com/NixOS/nixpkgs/tree/20.09
-  pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/cd63096d6d887d689543a0b97743d28995bc9bc3.zip";
-    sha256 = "1wg61h4gndm3vcprdcg7rc4s1v3jkm5xd7lw8r2f67w502y94gcy";
-  };
+  deps = import ./deps.nix;
+  pkgs = deps.pkgs;
+  python = deps.python;
 
   jre = pkgs.jre;
   zip = pkgs.zip;
   neko = pkgs.neko;
+  haxe = pkgs.haxe;
   mono = pkgs.mono;
   nodejs = pkgs.nodejs;
   gnupg = pkgs.gnupg;
@@ -23,13 +17,12 @@ rec {
   nuget = pkgs.dotnetPackages.Nuget;
   maxima = pkgs.maxima;
   openssl = pkgs.openssl;
+
   haxeSrc = ./haxe/src;
   haxeTestSrc = ./haxe/test;
   snapshotRev4 = ./snapshots/snapshot-rev4.json;
   closureCompiler = pkgs.closurecompiler;
   imagemagick = pkgs.imagemagick;
-
-  python = pkgs.python36.withPackages (ps: with ps; [ setuptools wheel twine ]);
 
   # v5.0.2
   pythonSrc = pkgs.fetchzip {
@@ -67,12 +60,16 @@ rec {
     sha256 = "13wsrq61zg0z3pxd6qc3gxn5d3p83fqrjy8bjqnyzxbvxll4yknz";
   };
 
-  ocaml-sha = (import ./vendor/ocaml-sha.nix) {
-    buildDunePackage = pkgs.ocamlPackages.buildDunePackage;
-    fetchFromGitHub = pkgs.fetchFromGitHub;
+  # For some reason if we don't trigger this from Docker build, Docker insists on downloading more packages when running
+  imagemagickTest = pkgs.stdenv.mkDerivation rec {
+    name = "imagemagick-test";
+    inherit imagemagick;
+    buildInputs = [imagemagick];
+    builder = builtins.toFile "builder.sh" ''
+      source $stdenv/setup
+      touch $out
+    '';
   };
-
-  haxe = (import ./vendor/haxe.nix) (with pkgs; { inherit stdenv fetchFromGitHub coreutils ocamlPackages zlib pcre neko mbedtls ocaml-sha; });
 
   rubyDist = pkgs.stdenv.mkDerivation rec {
     name = "ruby-dist";
@@ -137,10 +134,7 @@ rec {
     sha256 = "14p96nidbbv4afphsl7sy2qhzrs4mc7hf960wbbd4dp0cg7lij1s";
   };
 
-  mustacheJs = pkgs.fetchzip {
-    url = "https://github.com/janl/mustache.js/archive/v2.3.0.zip";
-    sha256 = "09gx8ra0m52bm0zdfbwb151b5ngvv7bq1367pizsgmh5r4sqigzk";
-  };
+  mustacheJs = deps.mustacheJs;
 
   genDemoImage = i : pkgs.stdenv.mkDerivation rec {
     name = "hsluv-demo-${i}";

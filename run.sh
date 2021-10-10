@@ -11,15 +11,15 @@ NIX_TARGET=$2
 
 if [ "$HSLUV_RUNTIME" == "docker" ]; then
   # Docker wrapper, always begin by rebuilding image
-  docker build -t hsluv .
+  docker build --progress=plain -t hsluv-builder .
 
   if [ "$COMMAND" == "build" ]; then
     echo "Deleting $PWD/result_docker"
     sudo rm -rf result_docker
-    docker run -it --mount src="$PWD",target=/home/nix/hsluv,type=bind hsluv bash -c "nix-build -A $NIX_TARGET && cp -R -L result result_docker"
+    docker run -it --mount src="$PWD",target=/hsluv,type=bind hsluv-builder nix-shell -p bash --run "cd /hsluv && nix-build -A \"$NIX_TARGET\" && cp -R -L result result_docker"
     echo "Built: $PWD/result_docker"
   elif [ "$COMMAND" == "run" ]; then
-    exec docker run -it -p 8000:8000 --mount src="$PWD",target=/home/nix/hsluv,type=bind hsluv bash -c "./run.sh run $NIX_TARGET"
+    exec docker run -it -p 8000:8000 --mount src="$PWD",target=/hsluv,type=bind hsluv-builder nix-shell -p bash --run "cd /hsluv && ./run.sh run $NIX_TARGET"
   fi
 else
   # Native Nix runtime
