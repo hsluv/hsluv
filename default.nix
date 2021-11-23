@@ -36,10 +36,10 @@ rec {
     sha256 = "1nqnyrym0vyf8fal6gj4nxk7pxpl2jyg5536dax0zg2nkdkzahms";
   };
 
-  # 2.0.0
+  # 2.0.1
   sassSrc = pkgs.fetchzip {
-    url = "https://github.com/hsluv/hsluv-sass/archive/4981ea0f5324763c99fd13a2c5a1c894b482b233.zip";
-    sha256 = "0vawny03x4jpzfspv8ac0ampmfiqjri73j6i68383gsfcmgwwzfn";
+    url = "https://github.com/hsluv/hsluv-sass/archive/062c73ef7a8413d97aa527f629103bb22d6aadda.zip";
+    sha256 = "06fmd6zdnv77p9liz0y0fyak5xkc6wc88yick39mwvy062dhsdg0";
   };
 
   # 1.0.2
