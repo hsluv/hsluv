@@ -289,7 +289,7 @@ class Hsluv {
         var C:Float = tuple[1];
         var H:Float = tuple[2];
 
-        var Hrad:Float = H / 360.0 * 2 * Math.PI;
+        var Hrad:Float = H / 180.0 * Math.PI;
         var U:Float = Math.cos(Hrad) * C;
         var V:Float = Math.sin(Hrad) * C;
 
