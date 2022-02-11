@@ -4,8 +4,9 @@ rec {
   imagemagick = pkgs.imagemagick;
 
   pkgsSrc = pkgsOriginal.fetchzip {
-    url = "https://github.com/NixOS/nixpkgs/archive/refs/tags/21.05.zip";
-    sha256 = "1ckzhh24mgz6jd1xhfgx0i9mijk6xjqxwsshnvq789xsavrmsc36";
+    # branch: 21.11-fixneko
+    url = "https://github.com/boronine/nixpkgs/archive/d9c74264bd9948885292537ca22bdb9b07020584.zip";
+    sha256 = "0yy9638x86565vbc3mz747myzkgsbf9rqlz81anq044j8b5qprah";
   };
 
   mustacheJs = pkgs.fetchzip {
