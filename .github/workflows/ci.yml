@@ -1,0 +1,14 @@
+name: CI
+
+on: push
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: [self-hosted, Linux]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and test
+        run: |
+          PATH="$PATH:/nix/var/nix/profiles/default/bin"
+          nix-build -A test
