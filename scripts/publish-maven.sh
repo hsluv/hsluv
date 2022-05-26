@@ -7,17 +7,17 @@ function cleanup {
 }
 trap cleanup EXIT
 
-scripts=`dirname ${0}`
-root=`dirname ${scripts}`
+scripts=$(dirname "${0}")
+root=$(dirname "${scripts}")
 default="${root}/default.nix"
-maven=`nix-build -A maven --no-out-link ${default}`
-gnupg=`nix-build -A gnupg --no-out-link ${default}`
-javaSrc=`nix-build -A javaSrc --no-out-link ${default}`
+maven=$(nix-build -A maven --no-out-link "${default}")
+gnupg=$(nix-build -A gnupg --no-out-link "${default}")
+javaSrc=$(nix-build -A javaSrc --no-out-link "${default}")
 
 PATH="${maven}/bin:${gnupg}/bin:$PATH"
 
-tmpDir=`mktemp -d`
-cp -R ${javaSrc}/* "${tmpDir}"
+tmpDir=$(mktemp -d)
+cp -R "${javaSrc}"/* "${tmpDir}"
 
 source "${root}/secrets.txt"
 

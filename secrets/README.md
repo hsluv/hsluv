@@ -37,7 +37,7 @@ can be found in `/secrets.txt`. Our shared key is set to expire in 1 year.
 
 Generating GPG key:
 
-    gpg2 --gen-key
-    gpg2 --list-keys
-    gpg2 --output hsluvcontributors_pub.gpg --armor --export 381DF082
-    gpg2 --output hsluvcontributors_sec.gpg --armor --export-secret-key 381DF082
+    gpg --gen-key
+    gpg --list-keys
+    gpg --output hsluvcontributors_pub.gpg --armor --export 381DF082
+    gpg --output hsluvcontributors_sec.gpg --armor --export-secret-key 381DF082
