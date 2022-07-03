@@ -1,7 +1,6 @@
-const fs = require('fs');
-const hsluv = require('hsluv');
-const mustache = require('mustache');
-
+import * as fs from 'fs';
+import mustache from "mustache";
+import {Hsluv} from "hsluv";
 
 const pages = [
     {
@@ -33,17 +32,21 @@ const pages = [
 ];
 
 function demoColorBars() {
-    let numBars = 15;
-    let lightness = 60;
-    let saturation = 90;
-    let hslColors = [];
-    let hsluvColors = [];
+    const numBars = 15;
+    const lightness = 60;
+    const saturation = 90;
+    const hslColors = [];
+    const hsluvColors = [];
+    const conv = new Hsluv();
     for (let i = 0; i < numBars; i++) {
         let hue = 360 * i / numBars;
         let hslColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-        let hsluvColor = hsluv.hsluvToHex([hue, saturation, lightness]);
+        conv.hsluv_h = hue;
+        conv.hsluv_s = saturation;
+        conv.hsluv_l = lightness;
+        conv.hsluvToHex();
         hslColors.push(hslColor);
-        hsluvColors.push(hsluvColor);
+        hsluvColors.push(conv.hex);
     }
     return {
         hslColors: hslColors,
@@ -59,13 +62,13 @@ function makeDir(path) {
 }
 
 function generateHtml(targetDir) {
-    const baseTemplate = fs.readFileSync(__dirname + '/templates/base.mustache').toString();
+    const baseTemplate = fs.readFileSync('./website/templates/base.mustache').toString();
     const pageTemplateContext = {
         demoColorBars: demoColorBars()
     };
 
     for (let pageInfo of pages) {
-        let pageTemplate = fs.readFileSync(__dirname + '/content/' + pageInfo.page + '.mustache').toString();
+        let pageTemplate = fs.readFileSync('./website/content/' + pageInfo.page + '.mustache').toString();
         let pageContent = mustache.render(pageTemplate, pageTemplateContext);
         let baseTemplateContext = {
             content: pageContent,
@@ -85,6 +88,4 @@ function generateHtml(targetDir) {
     }
 }
 
-if (require.main === module) {
-    generateHtml(process.argv[2]);
-}
+generateHtml(process.argv[2]);

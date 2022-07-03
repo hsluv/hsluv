@@ -1,3 +1,7 @@
+import {Hsluv} from "hsluv";
+
+const conv = new Hsluv();
+
 const symSliderHue = 0;
 const symSliderSaturation = 1;
 const symSliderLightness = 2;
@@ -13,15 +17,178 @@ const height = size;
 const width = size;
 
 
-function tryParseStringAsHex(string) {
-    const match = string.match(/^\s*#?([0-9a-f]{6})\s*$/i);
-    if (match) {
-        const matchedHexDigits = match[1];
-        return '#' + matchedHexDigits;
-    } else {
-        return null;
-    }
+function intersectLineLine(a, b) {
+    let x = (a.intercept - b.intercept) / (b.slope - a.slope);
+    let y = a.slope * x + a.intercept;
+    return {x: x, y: y};
 }
+
+function distanceFromOrigin(point) {
+    return Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
+}
+
+function distanceLineFromOrigin(line) {
+    return Math.abs(line.intercept) / Math.sqrt(Math.pow(line.slope, 2) + 1);
+}
+
+function perpendicularThroughPoint(line, point) {
+    let slope = -1 / line.slope;
+    let intercept = point.y - slope * point.x;
+    return {slope: slope, intercept: intercept};
+}
+
+function angleFromOrigin(point) {
+    return Math.atan2(point.y, point.x);
+}
+
+function normalizeAngle(angle) {
+    let m = 2 * Math.PI;
+    return (angle % m + m) % m;
+}
+
+function lengthOfRayUntilIntersect(theta, line) {
+    return line.intercept / (Math.sin(theta) - line.slope * Math.cos(theta));
+}
+
+function getPickerGeometry(lightness) {
+    conv.calculateBoundingLines(lightness);
+    let lines = [
+        {slope: conv.r0s, intercept: conv.r0i},
+        {slope: conv.r1s, intercept: conv.r1i},
+        {slope: conv.g0s, intercept: conv.g0i},
+        {slope: conv.g1s, intercept: conv.g1i},
+        {slope: conv.b0s, intercept: conv.b0i},
+        {slope: conv.b1s, intercept: conv.b1i}
+    ];
+    let numLines = lines.length;
+    let outerCircleRadius = 0.0;
+    let closestIndex = null;
+    let closestLineDistance = null;
+    let _g = 0;
+    while (_g < numLines) {
+        let i = _g++;
+        let d = distanceLineFromOrigin(lines[i]);
+        if (closestLineDistance == null || d < closestLineDistance) {
+            closestLineDistance = d;
+            closestIndex = i;
+        }
+    }
+    let closestLine = lines[closestIndex];
+    let perpendicularLine = {slope: 0 - 1 / closestLine.slope, intercept: 0.0};
+    let intersectionPoint = intersectLineLine(closestLine, perpendicularLine);
+    let startingAngle = angleFromOrigin(intersectionPoint);
+    let intersections = [];
+    let intersectionPoint1;
+    let intersectionPointAngle;
+    let relativeAngle;
+    let _g2 = 0;
+    let _g3 = numLines - 1;
+    while (_g2 < _g3) {
+        let i1 = _g2++;
+        let _g = i1 + 1;
+        while (_g < numLines) {
+            let i2 = _g++;
+            intersectionPoint1 = intersectLineLine(lines[i1], lines[i2]);
+            intersectionPointAngle = angleFromOrigin(intersectionPoint1);
+            relativeAngle = intersectionPointAngle - startingAngle;
+            intersections.push({
+                line1: i1,
+                line2: i2,
+                intersectionPoint: intersectionPoint1,
+                intersectionPointAngle: intersectionPointAngle,
+                relativeAngle: normalizeAngle(intersectionPointAngle - startingAngle)
+            });
+        }
+    }
+    intersections.sort(function (a, b) {
+        if (a.relativeAngle > b.relativeAngle) {
+            return 1;
+        } else {
+            return -1;
+        }
+    });
+    let orderedLines = [];
+    let orderedVertices = [];
+    let orderedAngles = [];
+    let nextIndex;
+    let currentIntersection;
+    let intersectionPointDistance;
+    let currentIndex = closestIndex;
+    let _g4 = 0;
+    let _g5 = intersections.length;
+    while (_g4 < _g5) {
+        let j = _g4++;
+        currentIntersection = intersections[j];
+        nextIndex = null;
+        if (currentIntersection.line1 === currentIndex) {
+            nextIndex = currentIntersection.line2;
+        } else if (currentIntersection.line2 === currentIndex) {
+            nextIndex = currentIntersection.line1;
+        }
+        if (nextIndex != null) {
+            currentIndex = nextIndex;
+            orderedLines.push(lines[nextIndex]);
+            orderedVertices.push(currentIntersection.intersectionPoint);
+            orderedAngles.push(currentIntersection.intersectionPointAngle);
+            intersectionPointDistance = distanceFromOrigin(currentIntersection.intersectionPoint);
+            if (intersectionPointDistance > outerCircleRadius) {
+                outerCircleRadius = intersectionPointDistance;
+            }
+        }
+    }
+    return {
+        lines: orderedLines,
+        vertices: orderedVertices,
+        angles: orderedAngles,
+        outerCircleRadius: outerCircleRadius,
+        innerCircleRadius: closestLineDistance
+    };
+}
+
+function closestPoint(geometry, point) {
+    let angle = angleFromOrigin(point);
+    let numVertices = geometry.vertices.length;
+    let relativeAngle;
+    let smallestRelativeAngle = Math.PI * 2;
+    let index1 = 0;
+    let _g = 0;
+    while (_g < numVertices) {
+        let i = _g++;
+        relativeAngle = normalizeAngle(geometry.angles[i] - angle);
+        if (relativeAngle < smallestRelativeAngle) {
+            smallestRelativeAngle = relativeAngle;
+            index1 = i;
+        }
+    }
+    let index2 = (index1 - 1 + numVertices) % numVertices;
+    let closestLine = geometry.lines[index2];
+    if (distanceFromOrigin(point) < lengthOfRayUntilIntersect(angle, closestLine)) {
+        return point;
+    }
+    let perpendicularLine = perpendicularThroughPoint(closestLine, point);
+    let intersectionPoint = intersectLineLine(closestLine, perpendicularLine);
+    let bound1 = geometry.vertices[index1];
+    let bound2 = geometry.vertices[index2];
+    let upperBound;
+    let lowerBound;
+    if (bound1.x > bound2.x) {
+        upperBound = bound1;
+        lowerBound = bound2;
+    } else {
+        upperBound = bound2;
+        lowerBound = bound1;
+    }
+    let borderPoint;
+    if (intersectionPoint.x > upperBound.x) {
+        borderPoint = upperBound;
+    } else if (intersectionPoint.x < lowerBound.x) {
+        borderPoint = lowerBound;
+    } else {
+        borderPoint = intersectionPoint;
+    }
+    return borderPoint;
+}
+
 
 function stringIsNumberWithinRange(string, min, max) {
     const middle = parseFloat(string);
@@ -239,23 +406,24 @@ document.addEventListener('DOMContentLoaded', function () {
             x: point.x * size,
             y: point.y * size
         });
-        pointer = hsluv.ColorPicker.closestPoint(pickerGeometry, pointer);
+        pointer = closestPoint(pickerGeometry, pointer);
 
         const u = pointer.x;
         const v = pointer.y;
-
-        const lch = hsluv.Hsluv.luvToLch([L, u, v]);
-        const hsl = hsluv.Hsluv.lchToHsluv(lch);
-
-        H = hsl[0];
-        S = hsl[1];
+        conv.luv_l = L;
+        conv.luv_u = u;
+        conv.luv_v = v;
+        conv.luvToLch();
+        conv.lchToHsluv();
+        H = conv.hsluv_h;
+        S = conv.hsluv_s;
         redrawAfterUpdatingVariables(true, true, false, null);
     }
 
     function pickerDragZone(point) {
         // Don't allow dragging to start when clicked outside outer circle
         const maximumDistance = pickerGeometry.outerCircleRadius;
-        const actualDistance = hsluv.Geometry.distanceFromOrigin(fromPixelCoordinate({
+        const actualDistance = distanceFromOrigin(fromPixelCoordinate({
             x: point.x * size,
             y: point.y * size
         }));
@@ -297,9 +465,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     x: px + squareSize / 2,
                     y: py + squareSize / 2
                 });
-                let closest = hsluv.ColorPicker.closestPoint(pickerGeometry, p);
-                let luv = [L, closest.x, closest.y];
-                ctx.fillStyle = hsluv.Hsluv.rgbToHex(hsluv.Hsluv.xyzToRgb(hsluv.Hsluv.luvToXyz(luv)));
+                let closest = closestPoint(pickerGeometry, p);
+                conv.luv_l = L;
+                conv.luv_u = closest.x;
+                conv.luv_v = closest.y;
+                conv.luvToXyz();
+                conv.xyzToRgb();
+                conv.rgbToHex();
+                ctx.fillStyle = conv.hex;
                 ctx.fillRect(px, py, squareSize, squareSize);
             }
         }
@@ -319,8 +492,8 @@ document.addEventListener('DOMContentLoaded', function () {
         pastelBoundary.setAttribute('stroke', contrasting);
 
         if (L !== 0 && L !== 100) {
-
-            let maxChroma = hsluv.Hsluv.maxChromaForLH(L, H);
+            conv.calculateBoundingLines(L);
+            let maxChroma = conv.calcMaxChromaHsluv(H);
             let chroma = maxChroma * S / 100;
             let hrad = H / 360 * 2 * Math.PI;
             let point = toPixelCoordinate({
@@ -341,13 +514,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const hueColors = equidistantSamples(20).map(function (s) {
-            return hsluv.Hsluv.hsluvToHex([s * 360, S, L]);
+            conv.hsluv_h = s * 360;
+            conv.hsluv_s = S;
+            conv.hsluv_l = L;
+            conv.hsluvToHex();
+            return conv.hex;
         });
         const saturationColors = equidistantSamples(10).map(function (s) {
-            return hsluv.Hsluv.hsluvToHex([H, s * 100, L]);
+            conv.hsluv_h = H;
+            conv.hsluv_s = s * 100;
+            conv.hsluv_l = L;
+            conv.hsluvToHex();
+            return conv.hex;
         });
         const lightnessColors = equidistantSamples(10).map(function (s) {
-            return hsluv.Hsluv.hsluvToHex([H, S, s * 100]);
+            conv.hsluv_h = H;
+            conv.hsluv_s = S;
+            conv.hsluv_l = s * 100;
+            conv.hsluvToHex();
+            return conv.hex;
         });
 
         sliderH.setBackground(hueColors);
@@ -358,11 +543,15 @@ document.addEventListener('DOMContentLoaded', function () {
     function redrawAfterUpdatingVariables(changeH, changeS, changeL, triggeredBySym) {
         if (changeL) {
             contrasting = L > 70 ? '#1b1b1b' : '#ffffff';
-            pickerGeometry = hsluv.ColorPicker.getPickerGeometry(L);
+            pickerGeometry = getPickerGeometry(L);
             scale = outerCircleRadiusPixel / pickerGeometry.outerCircleRadius;
         }
         redrawForeground();
-        const hex = hsluv.Hsluv.hsluvToHex([H, S, L]);
+        conv.hsluv_h = H;
+        conv.hsluv_s = S;
+        conv.hsluv_l = L;
+        conv.hsluvToHex();
+        const hex = conv.hex;
         elSwatch.style.backgroundColor = hex;
         if (triggeredBySym !== symHexText)
             elInputHex.value = hex;
@@ -383,12 +572,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     elInputHex.addEventListener('input', function () {
-        const valueAsHex = tryParseStringAsHex(elInputHex.value);
-        if (valueAsHex !== null) {
-            const hsl = hsluv.Hsluv.hexToHsluv(valueAsHex);
-            H = hsl[0];
-            S = hsl[1];
-            L = hsl[2];
+        const match = elInputHex.value.match(/^\s*#?([\da-f]{6})\s*$/i);
+        if (match) {
+            const matchedHexDigits = match[1];
+            conv.hex = '#' + matchedHexDigits;
+            conv.hexToHsluv();
+            H = conv.hsluv_h;
+            S = conv.hsluv_s;
+            L = conv.hsluv_l;
             redrawAfterUpdatingVariables(true, true, true, symHexText);
         }
     });

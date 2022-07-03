@@ -8,14 +8,14 @@ shared public keys.
 
 To decrypt secrets (overwriting `/secrets.txt`):
 
-```
+```bash
 ./scripts/secrets.sh --decrypt ~/.ssh/myprivatekey ./secrets/symmetric/myusername.enc.txt
 ```
 
 After updating `/secrets.txt` or adding a new PEM file to `/secrets/public`, secrets need to be
 re-encrypted. To encrypt secrets:
 
-```
+```bash
 ./scripts/secrets.sh --encrypt
 ```
 
@@ -25,19 +25,21 @@ Don't forget to commit re-encrypted secrets after running the command above.
 
 To generate PEM file from public key:
 
-```
+```bash
 ssh-keygen -f ~/.ssh/id_rsa.pub -e -m PKCS8 > myusername.pem
 ```
 
 ## GPG key
 
 To create signed packages (e.g. for Maven Central) we need a GPG key. A GPG key shared by all
-the contributors is located in `/secrets`. The private key is protected by a passphrase which 
+the contributors is located in `/secrets`. The private key is protected by a passphrase which
 can be found in `/secrets.txt`. Our shared key is set to expire in 1 year.
 
 Generating GPG key:
 
-    gpg --gen-key
-    gpg --list-keys
-    gpg --output hsluvcontributors_pub.gpg --armor --export 381DF082
-    gpg --output hsluvcontributors_sec.gpg --armor --export-secret-key 381DF082
+```bash
+gpg --gen-key
+gpg --list-keys
+gpg --output hsluvcontributors_pub.gpg --armor --export 381DF082
+gpg --output hsluvcontributors_sec.gpg --armor --export-secret-key 381DF082
+```

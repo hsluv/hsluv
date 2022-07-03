@@ -1,0 +1,12 @@
+{
+  "type": "module",
+  "devDependencies": {
+    "mustache": "^4.2.0",
+    "esbuild": "^0.14.48",
+    "hsluv": "1.0.0-rc1"
+  },
+  "scripts": {
+    "build": "sh build.sh",
+    "serve": "node website/serve.js"
+  }
+}

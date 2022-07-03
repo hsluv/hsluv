@@ -1,100 +1,65 @@
 [![CI](https://github.com/hsluv/hsluv/actions/workflows/ci.yml/badge.svg)](https://github.com/hsluv/hsluv/actions/workflows/ci.yml)
-[![NPM package](https://img.shields.io/npm/v/hsluv.svg)](https://www.npmjs.com/package/hsluv)
 
 # HSLuv - Human-friendly HSL
 
-[Explanation, demo, ports etc.](https://www.hsluv.org)
+This website is hosted on [https://www.hsluv.org](https://www.hsluv.org)
 
-The reference implementation is [written in Haxe](https://github.com/hsluv/hsluv/tree/master/haxe). 
-
-## Build system
-
-HSLuv uses [Nix package manager](http://nixos.org/nix/). If you want to build without Nix,
-see `default.nix` for dependencies and command line instructions.
-
-Linux, Windows 10 (WSL), macOS:
- - Install [Nix](https://nixos.org/download.html)
- - Use: `./run.sh <COMMAND> <TARGET>`
-
-A Docker wrapper is available for Windows 10 (native), or anyone who finds it more convenient:
- - Install [Docker](https://www.docker.com/)
- - Use: `HSLUV_RUNTIME=docker ./run.sh <COMMAND> <TARGET>`
-
-The necessary mathematical equations are solved in [Maxima](http://maxima.sourceforge.net/). 
-See `/math` directory for the equations and run the following to verify the solutions:
-
-```
-./run.sh build maximaOutput
-```
-
-To run full test suite:
-
-```
-./run.sh build test
-```
-
-To build JavaScript distributions (Node.js and browser):
-
-```
-./run.sh build nodePackageDist
-./run.sh build browserDist
-```
+The reference implementation is [written in Haxe](https://github.com/hsluv/hsluv-haxe).
 
 To build website:
 
 ```
-./run.sh build website
+npm run build
 ```
 
-To build website and start localhost server:
+To start localhost server:
 
 ```
-./run.sh run server
+npm run serve
 ```
 
-## Testing
+## Shared credentials
 
-The snapshot file is stored for regression testing. If a backwards-incompatible change is made,
-a new snapshot file can be generated as follows:
+We are using public key cryptography to share credentials. Contributors' public keys are
+stored in PEM format in `secrets/public`. A plaintext `secrets.txt` file, which is ignored
+by git, is encrypted using each of these public keys and stored in the repo in its encrypted
+form. It can be decrypted by anyone posessing a private key that corresponds to one of the
+shared public keys.
 
-```
-./run.sh build snapshotJson
-```
-
-The format of the file is as follows:
-
-```
-{
-  "#000000": {
-    rgb: [ 0, 0, 0 ],
-    xyz: [ 0, 0, 0 ],
-    luv: [ 0, 0, 0 ],
-    lch: [ 0, 0, 0 ],
-    hsluv: [ 0, 0, 0 ],
-    hpluv: [ 0, 0, 0 ]
-  },
-  ...
-}
-```
-
-## Deploying
-
-For publishing packages and website you will need access to our shared credentials.
+To decrypt secrets (overwriting `secrets.txt`):
 
 ```bash
-./run.sh run publishPypi
-./run.sh run publishPypiTest # for publishing to https://test.pypi.org/
-./run.sh run publishNpmJs
-./run.sh run publishNpmSass
-./run.sh run publishLua
-./run.sh run publishWebsite
-./run.sh run publishRuby
-./run.sh run publishNuget
-./scripts/publish-maven.sh
+./secrets.sh --decrypt ~/.ssh/myprivatekey secrets/symmetric/myusername.enc.txt
 ```
 
-## Versioning
+After updating `secrets.txt` or adding a new PEM file to `secrets/public`, secrets need to be
+re-encrypted. To encrypt secrets:
 
-Following [semantic versioning](http://semver.org/), the major version must be incremented 
-whenever the color math changes. These changes can be tested for with snapshot files.
+```bash
+./secrets.sh --encrypt
+```
 
+Don't forget to commit re-encrypted secrets after running the command above.
+
+### PEM files
+
+To generate PEM file from public key:
+
+```bash
+ssh-keygen -f ~/.ssh/id_rsa.pub -e -m PKCS8 > myusername.pem
+```
+
+### GPG key
+
+To create signed packages (e.g. for Maven Central) we need a GPG key. A GPG key shared by all
+the contributors is located in `secrets`. The private key is protected by a passphrase which
+can be found in `secrets.txt`. Our shared key is set to expire in 1 year.
+
+Generating GPG key:
+
+```bash
+gpg --gen-key
+gpg --list-keys
+gpg --output hsluvcontributors_pub.gpg --armor --export 381DF082
+gpg --output hsluvcontributors_sec.gpg --armor --export-secret-key 381DF082
+```

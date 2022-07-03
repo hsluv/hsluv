@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
 
-scripts=$(dirname "${0}")
-root=$(dirname "${scripts}")
-
-# Use OpenSSL from nixpkgs if available
-if [ -x "$(command -v nix-shell)" ];
-then
-    default="${root}/default.nix"
-    openssl=$(nix-build -A openssl --no-out-link "${default}")
-    PATH="${openssl}/bin:$PATH"
-fi
+root=$(dirname "${0}")
 
 opensslBin="$(command -v openssl)"
 if [ -x "${opensslBin}" ];
@@ -32,7 +23,7 @@ then
 
     rm "${root}"/secrets/symmetric/*
 
-    for keyFile in ${root}/secrets/public/*
+    for keyFile in "${root}"/secrets/public/*
     do
         keyName="$(basename "${keyFile}" .pem)"
         echo "Encrypting symmetric key with ${keyName}.pem ..."
@@ -53,12 +44,12 @@ elif [ "${command}" = "--decrypt" ];
 then
     privateKey="$2"
     symmetricEnc="$3"
-    if [ -f "${privateKey}" -a -f "${symmetricEnc}" ];
+    if [ -f "${privateKey}" ] && [ -f "${symmetricEnc}" ];
     then
         echo "Decrypting symmetric key from ${symmetricEnc} ..."
         symmetric=$(cat "${symmetricEnc}" \
             | openssl enc -base64 -d \
-            | openssl rsautl -inkey "${privateKey}" -decrypt)
+            | openssl pkeyutl -inkey "${privateKey}" -decrypt)
         echo "Decrypting secrets.txt ..."
         cat "${secretsEnc}" \
             | openssl enc -base64 -d \

@@ -1,6 +1,8 @@
 node_modules
 npm-debug.log
 /.idea
+/build
+/dist
 /result
 /result_docker
 /secrets.txt

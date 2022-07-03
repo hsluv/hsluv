@@ -1,7 +1,6 @@
-const fs = require('fs');
+import {Hsluv} from 'hsluv';
 
-// Expecting full API
-const hsluv = require('hsluv');
+const conv = new Hsluv();
 
 function hslToRgb(h, s, l) {
     let r, g, b;
@@ -53,9 +52,20 @@ function makeImage(func, width, height) {
 }
 
 function chromaDemo(rgb) {
-    const lch = hsluv.rgbToLch(rgb);
-    const C = lch[1] * 0.8;
-    return hsluv.lchToRgb([50, C, 10]);
+    conv.rgb_r = rgb[0];
+    conv.rgb_g = rgb[1];
+    conv.rgb_b = rgb[2];
+    conv.rgbToXyz();
+    conv.xyzToLuv();
+    conv.luvToLch();
+    const C = conv.lch_c * 0.8;
+    conv.lch_l = 50;
+    conv.lch_c = C;
+    conv.lch_h = 10;
+    conv.lchToLuv();
+    conv.luvToXyz();
+    conv.xyzToRgb();
+    return [conv.rgb_r, conv.rgb_g, conv.rgb_b];
 }
 
 // Rounds number to a given number of decimal places
@@ -64,14 +74,16 @@ function round(num, places) {
     return Math.round(num * n) / n;
 }
 
+function rgbChannelPrepare(ch) {
+    ch = round(ch, 3);
+    if (ch < 0 || ch > 1) {
+        throw new Error("Illegal rgb value");
+    }
+    return Math.round(ch * 255);
+}
+
 function rgbPrepare(tuple) {
-    return tuple.map(function (ch) {
-        ch = round(ch, 3);
-        if (ch < 0 || ch > 1) {
-            throw new Error("Illegal rgb value");
-        }
-        return Math.round(ch * 255);
-    });
+    return tuple.map(rgbChannelPrepare);
 }
 
 function luvSquare(x, y) {
@@ -83,41 +95,67 @@ function luvSquare(x, y) {
     const u = umin + x * (umax - umin);
     const v = vmin + y * (vmax - vmin);
 
-    return hsluv.xyzToRgb(hsluv.luvToXyz([50, u, v]));
+    conv.luv_l = 50;
+    conv.luv_u = u;
+    conv.luv_v = v;
+    conv.luvToXyz();
+    conv.xyzToRgb();
+    return [conv.rgb_r, conv.rgb_g, conv.rgb_b];
 }
 
 function demoHsluv(x, y) {
-    return hsluv.hsluvToRgb([x * 360, y * 100, 50]);
+    conv.hsluv_h = x * 360;
+    conv.hsluv_s = y * 100;
+    conv.hsluv_l = 50;
+    conv.hsluvToRgb();
+    return [conv.rgb_r, conv.rgb_g, conv.rgb_b];
 }
 
 function demoHpluv(x, y) {
-    return hsluv.hpluvToRgb([x * 360, y * 100, 50]);
+    conv.hpluv_h = x * 360;
+    conv.hpluv_p = y * 100;
+    conv.hpluv_l = 50;
+    conv.hpluvToRgb();
+    return [conv.rgb_r, conv.rgb_g, conv.rgb_b];
 }
 
 function demoHsluvChroma(x, y) {
-    const rgb = hsluv.hsluvToRgb([x * 360, y * 100, 50]);
-    return chromaDemo(rgb);
+    conv.hsluv_h = x * 360;
+    conv.hsluv_s = y * 100;
+    conv.hsluv_l = 50;
+    conv.hsluvToRgb();
+    return chromaDemo([conv.rgb_r, conv.rgb_g, conv.rgb_b]);
 }
 
 function demoCielchuvChroma(x, y) {
-    const lch = [50, y * 200, x * 360];
-    const S = hsluv.lchToHsluv(lch)[1];
+    conv.lch_l = 50;
+    conv.lch_c = y * 200;
+    conv.lch_h = x * 360;
+    conv.lchToHsluv();
     let rgb;
-    if (S > 100) {
+    if (conv.hsluv_s > 100) {
         rgb = [0, 0, 0];
     } else {
-        rgb = hsluv.lchToRgb(lch);
+        conv.lchToLuv();
+        conv.luvToXyz();
+        conv.xyzToRgb();
+        rgb = [conv.rgb_r, conv.rgb_g, conv.rgb_b];
     }
     return chromaDemo(rgb);
 }
 
 function demoCielchuv(x, y) {
-    const lch = [50, y * 200, x * 360];
-    const S = hsluv.lchToHsluv(lch)[1];
-    if (S > 100) {
+    conv.lch_l = 50;
+    conv.lch_c = y * 200;
+    conv.lch_h = x * 360;
+    conv.lchToHsluv();
+    if (conv.hsluv_s > 100) {
         return [0, 0, 0];
     } else {
-        return hsluv.lchToRgb(lch);
+        conv.lchToLuv();
+        conv.luvToXyz();
+        conv.xyzToRgb();
+        return [conv.rgb_r, conv.rgb_g, conv.rgb_b];
     }
 }
 
@@ -127,15 +165,22 @@ function demoHsl(x, y) {
 
 function demoHslLightness(x, y) {
     const rgb = hslToRgb(x, y, 0.5);
-    const lch = hsluv.rgbToLch(rgb);
-    const l = lch[0] / 100;
+    conv.rgb_r = rgb[0];
+    conv.rgb_g = rgb[1];
+    conv.rgb_b = rgb[2];
+    conv.rgbToXyz();
+    conv.xyzToLuv();
+    conv.luvToLch();
+    const l = conv.lch_l / 100;
     return [l, l, l];
 }
 
 function demoCielchuvLightness(x, y) {
-    const lch = [50, y * 200, x * 360];
-    const S = hsluv.lchToHsluv(lch)[1];
-    if (S > 100) {
+    conv.lch_l = 50;
+    conv.lch_c = y * 200;
+    conv.lch_h = x * 360;
+    conv.lchToHsluv();
+    if (conv.hsluv_s > 100) {
         return [0, 0, 0];
     } else {
         return [0.5, 0.5, 0.5];
@@ -152,40 +197,35 @@ function demoHslChroma(x, y) {
 }
 
 function demoHpluvChroma(x, y) {
-    const rgb = hsluv.hpluvToRgb([x * 360, y * 100, 50]);
-    return chromaDemo(rgb);
+    conv.hpluv_h = x * 360;
+    conv.hpluv_p = y * 100;
+    conv.hpluv_l = 50;
+    conv.hpluvToRgb();
+    return chromaDemo([conv.rgb_r, conv.rgb_g, conv.rgb_b]);
 }
 
-function makeDir(path) {
-    if (!fs.existsSync(path)) {
-        console.log('creating directory', path);
-        fs.mkdirSync(path);
-    }
-}
 
-if (require.main === module) {
-    const type = process.argv[2];
-    const demos = {
-        'hsluv': demoHsluv,
-        'hpluv': demoHpluv,
-        'hsluv-chroma': demoHsluvChroma,
-        'cielchuv-chroma': demoCielchuvChroma,
-        'cielchuv': demoCielchuv,
-        'hsl': demoHsl,
-        'hsl-lightness': demoHslLightness,
-        'cielchuv-lightness': demoCielchuvLightness,
-        'hsluv-lightness': demoHsluvLightness,
-        'hpluv-lightness': demoHsluvLightness,
-        'hsl-chroma': demoHslChroma,
-        'hpluv-chroma': demoHpluvChroma
-    };
+const type = process.argv[2];
+const demos = {
+    'hsluv': demoHsluv,
+    'hpluv': demoHpluv,
+    'hsluv-chroma': demoHsluvChroma,
+    'cielchuv-chroma': demoCielchuvChroma,
+    'cielchuv': demoCielchuv,
+    'hsl': demoHsl,
+    'hsl-lightness': demoHslLightness,
+    'cielchuv-lightness': demoCielchuvLightness,
+    'hsluv-lightness': demoHsluvLightness,
+    'hpluv-lightness': demoHsluvLightness,
+    'hsl-chroma': demoHslChroma,
+    'hpluv-chroma': demoHpluvChroma
+};
 
-    if (type === 'avatar') {
-        makeImage(luvSquare, 200, 200);
-    } else if (type === 'favicon') {
-        makeImage(luvSquare, 32, 32);
-    } else {
-        const func = demos[type];
-        makeImage(func, 360, 200);
-    }
+if (type === 'avatar') {
+    makeImage(luvSquare, 200, 200);
+} else if (type === 'favicon') {
+    makeImage(luvSquare, 32, 32);
+} else {
+    const func = demos[type];
+    makeImage(func, 360, 200);
 }

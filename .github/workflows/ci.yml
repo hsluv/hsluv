@@ -1,14 +1,23 @@
 name: CI
-
-on: push
-
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
 jobs:
   build:
-    name: Build and test
-    runs-on: [self-hosted, Linux]
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Build and test
-        run: |
-          PATH="$PATH:/nix/var/nix/profiles/default/bin"
-          nix-build -A test
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
+      - name: Deploy to GitHub pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        # Only run when pushing to main branch
+        if: github.event_name != 'pull_request'
+        with:
+          folder: dist

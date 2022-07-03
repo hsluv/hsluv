@@ -1,4 +1,0 @@
-language: nix
-script:
-  - nix-build -A test
-  - nix-build -A website

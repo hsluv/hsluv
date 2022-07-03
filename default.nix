@@ -1,8 +1,15 @@
+# This file contains legacy automation scripts for reference as we move to GitHub Actions automation
 rec {
-  deps = import ./deps.nix;
-  pkgs = deps.pkgs;
-  python = deps.python;
+  pkgs = import (pkgsSrc) {};
+  pkgsOriginal = import <nixpkgs> {};
 
+  pkgsSrc = pkgsOriginal.fetchzip {
+    # branch: 21.11-fixneko
+    url = "https://github.com/boronine/nixpkgs/archive/d9c74264bd9948885292537ca22bdb9b07020584.zip";
+    sha256 = "0yy9638x86565vbc3mz747myzkgsbf9rqlz81anq044j8b5qprah";
+  };
+
+  python = pkgs.python39.withPackages (ps: with ps; [ setuptools wheel twine ]);
   jre = pkgs.jre;
   zip = pkgs.zip;
   neko = pkgs.neko;
@@ -17,12 +24,6 @@ rec {
   nuget = pkgs.dotnetPackages.Nuget;
   maxima = pkgs.maxima;
   openssl = pkgs.openssl;
-
-  haxeSrc = ./haxe/src;
-  haxeTestSrc = ./haxe/test;
-  snapshotRev4 = ./snapshots/snapshot-rev4.json;
-  closureCompiler = pkgs.closurecompiler;
-  imagemagick = pkgs.imagemagick;
 
   # v5.0.2
   pythonSrc = pkgs.fetchzip {
@@ -123,80 +124,6 @@ rec {
     sha256 = "14p96nidbbv4afphsl7sy2qhzrs4mc7hf960wbbd4dp0cg7lij1s";
   };
 
-  mustacheJs = deps.mustacheJs;
-
-  genDemoImage = i : pkgs.stdenv.mkDerivation rec {
-    name = "hsluv-demo-${i}";
-    inherit nodejs imagemagick nodePackageDist;
-    generateImagesJs = ./website/generate-images.js;
-    buildInputs = [nodejs imagemagick];
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      export NODE_PATH=$nodePackageDist:$NODE_PATH
-      node $generateImagesJs ${i} > img.pam
-      mkdir $out
-      convert img.pam $out/${i}.png
-    '';
-  };
-
-  avatar = genDemoImage "avatar";
-
-  pickerJs = pkgs.stdenv.mkDerivation rec {
-    name = "picker-js";
-    hsluvJsFull = haxeJsCompile "hsluv.Hsluv hsluv.Geometry hsluv.ColorPicker";
-    pickerJs = ./website/picker.js;
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      cat $hsluvJsFull >> $out
-      cat $pickerJs >> $out
-    '';
-  };
-
-  website = pkgs.stdenv.mkDerivation rec {
-    name = "hsluv-website";
-    inherit nodejs pickerJsDist mustacheJs nodePackageDist;
-    src = ./website;
-    buildInputs = [nodejs];
-    demoFavicon = genDemoImage "favicon";
-    demoHsluv = genDemoImage "hsluv";
-    demoHpluv = genDemoImage "hpluv";
-    demoHsluvChroma = genDemoImage "hsluv-chroma";
-    demoCielchuvChroma = genDemoImage "cielchuv-chroma";
-    demoCielchuv = genDemoImage "cielchuv";
-    demoHsl = genDemoImage "hsl";
-    demoHslLightness = genDemoImage "hsl-lightness";
-    demoCielchuvLightness = genDemoImage "cielchuv-lightness";
-    demoHsluvLightness = genDemoImage "hsluv-lightness";
-    demoHpluvLightness = genDemoImage "hpluv-lightness";
-    demoHslChroma = genDemoImage "hsl-chroma";
-    demoHpluvChroma = genDemoImage "hpluv-chroma";
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      export NODE_PATH=$mustacheJs:$nodePackageDist:$NODE_PATH
-
-      mkdir $out
-      mkdir $out/images
-      install $demoFavicon/* $out
-      install $demoHsluv/* $out/images
-      install $demoHpluv/* $out/images
-      install $demoHsluvChroma/* $out/images
-      install $demoCielchuvChroma/* $out/images
-      install $demoCielchuv/* $out/images
-      install $demoHsl/* $out/images
-      install $demoHslLightness/* $out/images
-      install $demoCielchuvLightness/* $out/images
-      install $demoHsluvLightness/* $out/images
-      install $demoHpluvLightness/* $out/images
-      install $demoHslChroma/* $out/images
-      install $demoHpluvChroma/* $out/images
-      cp -R --no-preserve=mode,ownership $src/static $out/static
-      cp $pickerJsDist $out/static/picker.min.js
-
-      node $src/generate-html.js $out
-      echo 'www.hsluv.org' > $out/CNAME
-    '';
-  };
-
   # haxelib causes segmentation fault
   docs = pkgs.stdenv.mkDerivation rec {
     name = "docs";
@@ -247,65 +174,6 @@ rec {
     '';
   };
 
-  snapshotJson = pkgs.stdenv.mkDerivation rec {
-    inherit haxe haxeSrc haxeTestSrc;
-    name = "hsluv-haxe-test";
-    buildInputs = [haxe];
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      haxe -cp $haxeSrc -cp $haxeTestSrc -main Snapshot --interp > $out
-    '';
-  };
-
-  minifyJs = jsFile : pkgs.stdenv.mkDerivation rec {
-    inherit closureCompiler jsFile;
-    name = "hsluv-js";
-    buildInputs = [closureCompiler];
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      closure-compiler --output_wrapper "(function() {%output%})();" \
-                       --js_output_file=$out \
-                       --compilation_level ADVANCED $jsFile
-    '';
-  };
-
-  # ------------------------------------------------------------------------------------------
-  # JavaScript distributions
-
-  nodePackageDist = pkgs.stdenv.mkDerivation rec {
-    name = "js-node-package";
-    jsFile = haxeJsCompile "hsluv.Hsluv";
-    exportFile = ./javascript/api-public.js;
-    packageJson = ./javascript/package.json;
-    readme = ./javascript/README.md;
-    typings = ./javascript/hsluv.d.ts;
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      mkdir $out
-      cat $jsFile > $out/hsluv.js
-      cat $exportFile >> $out/hsluv.js
-      echo -e "\nmodule.exports = root;" >> $out/hsluv.js
-      install $packageJson $out/package.json
-      install $typings $out/hsluv.d.ts
-      install $readme $out/README.md
-    '';
-  };
-
-  browserModule = pkgs.stdenv.mkDerivation rec {
-    name = "js-browser-module";
-    jsFile = haxeJsCompile "hsluv.Hsluv";
-    export = ./javascript/api-public.js;
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      cat $jsFile > $out
-      cat $export >> $out
-      echo -e "\nwindow['hsluv'] = root;" >> $out
-    '';
-  };
-
-  browserDist = minifyJs browserModule;
-  pickerJsDist = minifyJs pickerJs;
-
   # ------------------------------------------------------------------------------------------
   # Scripts
 
@@ -316,25 +184,6 @@ rec {
   publishPypiTest = pkgs.writeShellScriptBin "script.sh" ''
     ${python}/bin/twine upload --username $PYPI_TEST_USERNAME --password $PYPI_TEST_PASSWORD --repository testpypi ${pythonDist}/*
   '';
-
-  publishNpmPackage = package: pkgs.writeShellScriptBin "script.sh" ''
-    set -e
-    echo "Generating .npmrc ..."
-    # npm adduser creates .npmrc file in HOME
-    TEMP_HOME=`mktemp -d`
-    HOME="$TEMP_HOME"
-    echo -e "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > "$HOME/.npmrc"
-
-    echo "Publishing ..."
-    ${pkgs.nodejs}/bin/npm publish ${package}
-
-    echo "Cleaning up"
-    rm -rf "$TEMP_HOME"
-  '';
-
-  publishNpmJs = publishNpmPackage nodePackageDist;
-
-  publishNpmSass = publishNpmPackage sassSrc;
 
   publishLua = pkgs.writeShellScriptBin "script.sh" ''
     export LUA_PATH="${luaSrc}/?.lua"
@@ -362,66 +211,4 @@ rec {
   publishWebsite = pkgs.writeShellScriptBin "script.sh" ''
     ${awscli}/bin/aws s3 cp --recursive ${website} s3://www.hsluv.org
   '';
-
-  server = pkgs.writeShellScriptBin "script.sh" ''
-    cd ${website}
-    ${python}/bin/python3 -m http.server
-  '';
-
-  # ------------------------------------------------------------------------------------------
-  # Tests
-
-  haxeTest = pkgs.stdenv.mkDerivation rec {
-    inherit haxe haxeSrc haxeTestSrc snapshotRev4;
-    name = "hsluv-haxe-test";
-    buildInputs = [haxe];
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      haxe -cp $haxeSrc -cp $haxeTestSrc -main RunTests -resource $snapshotRev4@snapshot-rev4 --interp
-      touch $out
-    '';
-  };
-
-  testBrowserJs = pkgs.stdenv.mkDerivation rec {
-    inherit nodejs browserDist;
-    name = "test-browser-js";
-    testJs = ./javascript/test.js;
-    buildInputs = [nodejs];
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      echo "const window = {};" > ./test.js
-      cat $browserDist >> ./test.js
-      echo "const hsluv = window.hsluv;" >> ./test.js
-      cat $testJs >> ./test.js
-      node ./test.js
-      touch $out
-    '';
-  };
-
-  testNodePackage = pkgs.stdenv.mkDerivation rec {
-    inherit nodejs nodePackageDist;
-    name = "test-node-js";
-    testJs = ./javascript/test.js;
-    buildInputs = [nodejs];
-    builder = builtins.toFile "builder.sh" ''
-      source $stdenv/setup
-      NODE_PATH=$nodePackageDist:$NODE_PATH
-      echo "const hsluv = require('hsluv');" > ./test.js
-      cat $testJs >> ./test.js
-      node ./test.js
-      touch $out
-    '';
-  };
-
-  test = pkgs.stdenv.mkDerivation rec {
-    inherit browserDist haxeTest testBrowserJs testNodePackage;
-    name = "super-test";
-    builder = builtins.toFile "builder.sh" "
-      source $stdenv/setup
-      echo $testBrowserJs
-      echo $haxeTest
-      echo $testNodePackage
-      touch $out
-    ";
-  };
 }
