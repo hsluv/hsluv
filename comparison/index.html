@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Comparing HSLuv to HSL - Human-friendly HSL</title>
+    <meta name="description" content="HSLuv - An alternative to HSL for programmatic color generation">
+    <meta name="author" content="Alexei Boronine">
+    <meta name="viewport" content="width=device-width">
+    <link rel="preload" href="/static/css/min.min.css" as="style">
+    <link rel="preload" href="/static/css/main.css" as="style">
+    <link rel="stylesheet" href="/static/css/min.min.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="shortcut icon" href="/favicon.png"/>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-31795350-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-31795350-1');
+    </script>
+</head>
+
+<body class="">
+<nav id="header">
+    <nav class="container" role="navigation">
+        <div class="github-button">
+            <iframe src="https://ghbtns.com/github-btn.html?user=hsluv&repo=hsluv&type=star&count=true" frameborder="0" scrolling="0" width="100px" height="20px" title="Star on GitHub"></iframe>
+        </div>
+        <a class="logo" href="/">HSLuv</a>
+        <a href="/comparison/">Comparison</a>
+        <a href="/implementations/">Implementations</a>
+        <a href="/math/">Math</a>
+        <a href="/examples/">Examples</a>
+        <a href="/credits/">Credits</a>
+    </nav>
+</nav>
+
+<main class="container">
+    <div class="row">
+    <div class="col c6">
+        <h1>HSLuv vs. HSL</h1>
+    </div>
+    <div class="col c6">
+        <table class="table">
+            <thead>
+            <tr>
+                <th></th>
+                <th class="text-center">HSL</th>
+                <th class="text-center">CIELUV&nbsp;LCh</th>
+                <th class="text-center">HSLuv</th>
+                <th class="text-center">HPLuv</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th>Lightness</th>
+                <td class="text-center cell-red">Relative</td>
+                <td class="text-center cell-green">Absolute</td>
+                <td class="text-center cell-green">Absolute</td>
+                <td class="text-center cell-green">Absolute</td>
+            </tr>
+            <tr>
+                <th>Saturation<sup>*</sup></th>
+                <td class="text-center cell-red">Relative</td>
+                <td class="text-center cell-green">Absolute</td>
+                <td class="text-center cell-red">Relative</td>
+                <td class="text-center cell-green">Absolute</td>
+            </tr>
+            <tr>
+                <th>Saturation range</th>
+                <td class="text-center cell-green">Percent</td>
+                <td class="text-center cell-red">Undefined</td>
+                <td class="text-center cell-green">Percent</td>
+                <td class="text-center cell-green">Percent</td>
+            </tr>
+            <tr>
+                <th>Saturated colors</th>
+                <td class="text-center cell-green">Yes</td>
+                <td class="text-center cell-green">Yes</td>
+                <td class="text-center cell-green">Yes</td>
+                <td class="text-center cell-red">No</td>
+            </tr>
+            <tr>
+                <th>Hue uniformity</th>
+                <td class="text-center cell-red">Poor</td>
+                <td class="text-center cell-green">Good</td>
+                <td class="text-center cell-green">Good</td>
+                <td class="text-center cell-green">Good</td>
+            </tr>
+            <tr>
+                <td colspan="5">
+                    <sup>*</sup> Saturation and chroma are distinct concepts
+                </td>
+            </tbody>
+        </table>
+    </div>
+</div>
+<h2>Overview</h2>
+<div class="row">
+    <div class="col c3">
+        <figure>
+            <img src="/images/hsl.png"/>
+            <figcaption>HSL</figcaption>
+        </figure>
+    </div>
+    <div class="col c3">
+        <figure>
+            <img src="/images/cielchuv.png"/>
+            <figcaption>CIELUV&nbsp;LCh</figcaption>
+        </figure>
+        <p>
+            The dips in the graph represent impossible colors (such as dark saturated yellow).
+            CIELUV&nbsp;LCh doesn't warn you about them, making it
+            unsuitable for generating colors.
+        </p>
+    </div>
+    <div class="col c3">
+        <figure>
+            <img src="/images/hsluv.png"/>
+            <figcaption>HSLuv</figcaption>
+        </figure>
+        <p>
+            HSLuv preserves the lightness and hue components of CIELUV&nbsp;LCh
+            and stretches its chroma so that every color has
+            the same range, defined as a percentage.
+        </p>
+    </div>
+    <div class="col c3">
+        <figure>
+            <img src="/images/hpluv.png"/>
+            <figcaption>HPLuv</figcaption>
+        </figure>
+        <p>
+            HPLuv takes as many colors as it can from CIELUV&nbsp;LCh without distorting
+            the chroma. As you can see, the resulting color space is smooth, but only pastel colors
+            can be included.
+        </p>
+    </div>
+</div>
+<h2>Chroma</h2>
+<div class="row">
+    <div class="col c3">
+        <figure>
+            <img src="/images/hsl-chroma.png"/>
+            <figcaption>HSL</figcaption>
+        </figure>
+    </div>
+    <div class="col c3">
+        <figure>
+            <img src="/images/cielchuv-chroma.png"/>
+            <figcaption>CIELUV&nbsp;LCh</figcaption>
+        </figure>
+        <p>
+            The chroma component of CIELUV&nbsp;LCh is absolute. Unlike
+            HSL's saturation you can effectively use it to compare two different
+            colors.
+        </p>
+    </div>
+    <div class="col c3">
+        <figure>
+            <img src="/images/hsluv-chroma.png"/>
+            <figcaption>HSLuv</figcaption>
+        </figure>
+        <p>
+            Both HSL and HSLuv have a distorted chroma
+            map, this is a trade-off of their convenient shape. Admittedly, HSLuv's
+            chroma has more sudden shifts.
+        </p>
+    </div>
+    <div class="col c3">
+        <figure>
+            <img src="/images/hpluv-chroma.png"/>
+            <figcaption>HPLuv</figcaption>
+        </figure>
+    </div>
+</div>
+<h2>Lightness</h2>
+<div class="row">
+    <div class="col c3">
+        <figure>
+            <img src="/images/hsl-lightness.png"/>
+            <figcaption>HSL</figcaption>
+        </figure>
+        <p>
+            This is why HSL is useless for working out contrast. The actual lightness
+            varies drastically between hues.
+        </p>
+    </div>
+    <div class="col c3">
+        <figure>
+            <img src="/images/cielchuv-lightness.png"/>
+            <figcaption>CIELUV&nbsp;LCh</figcaption>
+        </figure>
+    </div>
+    <div class="col c3">
+        <figure>
+            <img src="/images/hsluv-lightness.png"/>
+            <figcaption>HSLuv</figcaption>
+        </figure>
+        <p>
+            For this demo I am using CIE's definition of lightness. Both CIELUV&nbsp;LCh
+            and HSLuv use this component, so their picture is an even gray.
+        </p>
+    </div>
+    <div class="col c3">
+        <figure>
+            <img src="/images/hpluv-lightness.png"/>
+            <figcaption>HPLuv</figcaption>
+        </figure>
+    </div>
+</div>
+<div class="row">
+        <div class="col c2">
+            <div class="demo" id="rainbow-hsluv">
+                <h3>HSLuv</h3>
+                    <div style="background-color:#f75782">Lightness: 60%</div>
+                    <div style="background-color:#eb6a2c">Lightness: 60%</div>
+                    <div style="background-color:#c0852b">Lightness: 60%</div>
+                    <div style="background-color:#a5902b">Lightness: 60%</div>
+                    <div style="background-color:#88992b">Lightness: 60%</div>
+                    <div style="background-color:#56a22b">Lightness: 60%</div>
+                    <div style="background-color:#2da46b">Lightness: 60%</div>
+                    <div style="background-color:#2ea28b">Lightness: 60%</div>
+                    <div style="background-color:#2fa09f">Lightness: 60%</div>
+                    <div style="background-color:#319db4">Lightness: 60%</div>
+                    <div style="background-color:#3498d6">Lightness: 60%</div>
+                    <div style="background-color:#7e86f4">Lightness: 60%</div>
+                    <div style="background-color:#c16af4">Lightness: 60%</div>
+                    <div style="background-color:#f43ae8">Lightness: 60%</div>
+                    <div style="background-color:#f64cb6">Lightness: 60%</div>
+            </div>
+        </div>
+        <div class="col c2">
+            <div class="demo" id="rainbow-hsl">
+                <h3>HSL</h3>
+                    <div style="background-color:hsl(0, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(24, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(48, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(72, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(96, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(120, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(144, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(168, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(192, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(216, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(240, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(264, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(288, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(312, 90%, 60%)">Lightness: 60%</div>
+                    <div style="background-color:hsl(336, 90%, 60%)">Lightness: 60%</div>
+            </div>
+        </div>
+    <div class="col c8">
+        <p style="margin:100px">
+            This demo should illustrate the uniformity of HSLuv's hue and the consistency
+            of contrast when generating colors with HSLuv.
+        </p>
+    </div>
+</div>
+
+    <div class="row">
+        <footer class="col c12">
+            © Copyright 2022 by <a href="https://www.boronine.com">Alexei Boronine</a>.
+        </footer>
+    </div>
+</main>
+
+</body>
+</html>

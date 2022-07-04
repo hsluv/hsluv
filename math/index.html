@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Math - Human-friendly HSL</title>
+    <meta name="description" content="HSLuv - An alternative to HSL for programmatic color generation">
+    <meta name="author" content="Alexei Boronine">
+    <meta name="viewport" content="width=device-width">
+    <link rel="preload" href="/static/css/min.min.css" as="style">
+    <link rel="preload" href="/static/css/main.css" as="style">
+    <link rel="stylesheet" href="/static/css/min.min.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="shortcut icon" href="/favicon.png"/>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-31795350-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-31795350-1');
+    </script>
+</head>
+
+<body class="">
+<nav id="header">
+    <nav class="container" role="navigation">
+        <div class="github-button">
+            <iframe src="https://ghbtns.com/github-btn.html?user=hsluv&repo=hsluv&type=star&count=true" frameborder="0" scrolling="0" width="100px" height="20px" title="Star on GitHub"></iframe>
+        </div>
+        <a class="logo" href="/">HSLuv</a>
+        <a href="/comparison/">Comparison</a>
+        <a href="/implementations/">Implementations</a>
+        <a href="/math/">Math</a>
+        <a href="/examples/">Examples</a>
+        <a href="/credits/">Credits</a>
+    </nav>
+</nav>
+
+<main class="container">
+    <h2>How does HSLuv work?</h2>
+<p>
+    HSLuv is defined as a conversion to and from CIELUV&nbsp;LCh. For both
+    HSLuv and HPLuv, the first step is to find the chroma bounds for a given
+    lightness. These are lines, crossing which will push the color out of the RGB gamut. We define
+    a function, <em>getBounds(L)</em> which returns 6 straight lines in slope-intercept format. Each
+    of them represents one of three RGB channels being pushed either below 0 or above 1.
+</p>
+<p><strong>HSLuv:</strong></p>
+<ol>
+    <li>
+        Given a hue (angle), build a ray starting from <em>(0, 0)</em> and find the point where it
+        first intersects with one of the bounding lines.
+    </li>
+    <li>
+        The distance from <em>(0, 0)</em> to this point is the maximum chroma for given <em>L</em>
+        and <em>H</em>. Scale saturation to be a percentage of this distance.
+    </li>
+</ol>
+<p><strong>HPLuv:</strong></p>
+<ol>
+    <li>
+        Use perpendiculars to find the shortest distance from <em>(0, 0)</em> to one of the
+        bounding lines.
+    </li>
+    <li>
+        This distance is the lowest common chroma. For the given <em>L</em> and any <em>H</em>
+        let saturation span this distance.
+    </li>
+</ol>
+<p>
+    The equations were built and solved using <a href="http://maxima.sourceforge.net/">Maxima</a>,
+    and <a href="https://github.com/hsluv/hsluv/tree/master/math">the Maxima files</a> are
+    bundled with the code explaining how to get the bounding lines. The rest is simple geometry you
+    can see in the reference implementation.
+</p>
+
+    <div class="row">
+        <footer class="col c12">
+            © Copyright 2022 by <a href="https://www.boronine.com">Alexei Boronine</a>.
+        </footer>
+    </div>
+</main>
+
+</body>
+</html>

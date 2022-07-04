@@ -1,0 +1,200 @@
+body {
+    font-size: 15px;
+    line-height: 20px;
+    min-width: 440px;
+    padding: 0;
+}
+
+a {
+    color: #0055B0;
+}
+
+footer {
+    margin-top: 100px;
+    margin-bottom: 10px;
+}
+
+body.dark {
+    background-color: #1b1b1b;
+    color: #999;
+}
+
+body.dark a {
+    color: #5af;
+}
+
+sub {
+    font-size: 0.7em;
+    line-height: 0;
+    text-decoration: none !important;
+}
+
+/* hide spinners on <input type="number"> */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+td.cell-green {
+    background-color: #9f9;
+}
+
+td.cell-red {
+    background-color: #f99;
+}
+
+figure {
+    margin: 0.2em;
+}
+
+figure img {
+    max-width: 100%;
+}
+
+figcaption {
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+div.demo {
+    margin: 0.2em;
+}
+
+div.demo button {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+div.demo div {
+    color: white;
+    height: 2em;
+    line-height: 2em;
+    padding-left: 0.3em;
+    padding-right: 0.3em;
+}
+
+#display {
+    position: relative;
+    width: 400px;
+    height: 400px;
+}
+
+#picker {
+    width: 400px;
+    margin: auto;
+}
+
+#picker td.cell-input {
+    width: 80px;
+    padding-right: 20px;
+}
+
+#picker td.cell-input input {
+    margin: 0;
+    height: 22px;
+    background: transparent;
+    color: #888;
+    outline: none;
+    border: 1px solid #333;
+    border-radius: 0;
+    text-align: right;
+    width: 100%;
+    padding: 0 5px;
+}
+
+#picker td.cell-input.cell-input-hex input {
+    font-family: monospace;
+    border-color: #555;
+}
+
+#picker table {
+    margin-top: 20px;
+    width: 100%;
+}
+
+#picker table td {
+    padding: 5px 5px;
+    vertical-align: top;
+    border: none;
+}
+
+#picker table td.picker-label {
+    color: #eeeeee;
+    width: 30px;
+    line-height: 22px;
+}
+
+#picker table .swatch {
+    height: 100px;
+}
+
+#picker .explanation-text {
+    margin-bottom: 60px;
+    margin-top: 100px;
+}
+
+.range-slider {
+    height: 22px;
+    display: block;
+    position: relative;
+}
+
+.range-slider-handle {
+    display: inline-block;
+    position: absolute;
+    width: 6px;
+    top: -2px;
+    left: -5px;
+    height: 100%;
+    cursor: default;
+    border: 2px solid #fff;
+    touch-action: pan-y;
+    -ms-touch-action: pan-y;
+}
+
+#header {
+    background-color: rgba(0, 0, 0, 0.8);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    line-height: 26px;
+    border-bottom: 1px #080808;
+}
+
+#header .github-button {
+    float: right;
+    height: 20px;
+    margin-top: 3px;
+}
+
+#header a {
+    color: #999999;
+    text-decoration: none;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    vertical-align: top;
+}
+
+#header a:hover {
+    color: white;
+}
+
+#header a.logo {
+    font-size: 2rem;
+    color: white;
+}
+
+/* collapse navbar */
+@media (max-width: 800px) {
+    #header a {
+        display: block;
+    }
+    #header a.logo {
+        margin-bottom: 1rem;
+    }
+}
+

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>HSLuv - Human-friendly HSL</title>
+    <meta name="description" content="HSLuv - An alternative to HSL for programmatic color generation">
+    <meta name="author" content="Alexei Boronine">
+    <meta name="viewport" content="width=device-width">
+    <link rel="preload" href="/static/css/min.min.css" as="style">
+    <link rel="preload" href="/static/css/main.css" as="style">
+    <link rel="stylesheet" href="/static/css/min.min.css">
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="shortcut icon" href="/favicon.png"/>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-31795350-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-31795350-1');
+    </script>
+</head>
+
+<body class="dark">
+<nav id="header">
+    <nav class="container" role="navigation">
+        <div class="github-button">
+            <iframe src="https://ghbtns.com/github-btn.html?user=hsluv&repo=hsluv&type=star&count=true" frameborder="0" scrolling="0" width="100px" height="20px" title="Star on GitHub"></iframe>
+        </div>
+        <a class="logo" href="/">HSLuv</a>
+        <a href="/comparison/">Comparison</a>
+        <a href="/implementations/">Implementations</a>
+        <a href="/math/">Math</a>
+        <a href="/examples/">Examples</a>
+        <a href="/credits/">Credits</a>
+    </nav>
+</nav>
+
+<main class="container">
+    <div class="row">
+    <div class="col c6" style="min-width:400px">
+        <div id="picker">
+            <div id="display">
+                <canvas style="position:absolute;left:0" height="400" width="400"></canvas>
+                <svg style="position:absolute;left:0" height="400" width="400"></svg>
+            </div>
+            <table>
+                <tr id="control-h">
+                    <td class="cell-input">
+                        <input type="number" min="0" max="360" step="any" class="counter counter-hue" tabindex="0"/>
+                    </td>
+                    <td><div class="range-slider"></div></td>
+                    <td class="picker-label">H</td>
+                </tr>
+                <tr id="control-s">
+                    <td class="cell-input">
+                        <input type="number" step="any" min="0" max="100" class="counter counter-saturation"/>
+                    </td>
+                    <td><div class="range-slider"></div></td>
+                    <td class="picker-label">S</td>
+                </tr>
+                <tr id="control-l">
+                    <td class="cell-input">
+                        <input type="number" step="any" min="0" max="100" class="counter counter-lightness"/>
+                    </td>
+                    <td><div class="range-slider"></div></td>
+                    <td class="picker-label">L</td>
+                </tr>
+                <tr>
+                    <td class="cell-input cell-input-hex">
+                        <input class="input-hex" pattern="#?[0-9a-fA-F]{6}"/>
+                    </td>
+                    <td><div class="swatch"></div></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="col c6 explanation-text">
+        <p>
+            HSLuv is a <a href="https://www.boronine.com/2012/03/26/Color-Spaces-for-Human-Beings/">
+            human-friendly</a> alternative to <abbr>HSL</abbr>.
+        </p>
+        <p>
+            Here you can see <a href="http://en.wikipedia.org/wiki/CIELUV">CIELUV</a>,
+            a color space designed for perceptual uniformity based on human experiments. When
+            accessed by polar coordinates, it becomes functionally similar to HSL
+            with a single problem: its chroma component doesn't fit into a specific range.
+        <p>
+        <p>
+            HSLuv extends CIELUV with a
+            new saturation component that allows you to span all the available chroma as a neat
+            percentage.
+        </p>
+    </div>
+</div>
+
+<script src="/static/picker.min.js" defer></script>
+
+    <div class="row">
+        <footer class="col c12">
+            © Copyright 2022 by <a href="https://www.boronine.com">Alexei Boronine</a>.
+        </footer>
+    </div>
+</main>
+
+</body>
+</html>
