@@ -189,7 +189,7 @@ div.demo div {
 }
 
 /* collapse navbar */
-@media (max-width: 800px) {
+@media (max-width: 1000px) {
     #header a {
         display: block;
     }
