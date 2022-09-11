@@ -221,8 +221,10 @@ const demos = {
     'hpluv-chroma': demoHpluvChroma
 };
 
-if (type === 'avatar') {
+if (type === 'avatar200') {
     makeImage(luvSquare, 200, 200);
+} else if (type === 'avatar500') {
+    makeImage(luvSquare, 500, 500);
 } else if (type === 'favicon') {
     makeImage(luvSquare, 32, 32);
 } else {

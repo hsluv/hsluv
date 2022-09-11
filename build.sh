@@ -15,7 +15,12 @@ echo "Compiling picker.js"
 npx esbuild website/picker.js --bundle --minify --outfile=dist/static/picker.min.js
 
 echo "Generating images"
-node website/generate-images.js avatar >build/avatar.pam
+node website/generate-images.js avatar200 >build/avatar200.pam
+node website/generate-images.js avatar500 >build/avatar500.pam
+convert build/avatar200.pam dist/static/images/avatar200.jpeg
+convert build/avatar200.pam dist/static/images/avatar200.png
+convert build/avatar500.pam dist/static/images/avatar500.jpeg
+convert build/avatar500.pam dist/static/images/avatar500.png
 node website/generate-images.js favicon >build/favicon.pam
 convert build/favicon.pam dist/favicon.png
 node website/generate-images.js hsluv >build/hsluv.pam
