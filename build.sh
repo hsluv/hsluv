@@ -17,33 +17,33 @@ npx esbuild website/picker.js --bundle --minify --outfile=dist/static/picker.min
 echo "Generating images"
 node website/generate-images.js avatar200 >build/avatar200.pam
 node website/generate-images.js avatar500 >build/avatar500.pam
-convert build/avatar200.pam dist/static/images/avatar200.jpeg
-convert build/avatar200.pam dist/static/images/avatar200.png
-convert build/avatar500.pam dist/static/images/avatar500.jpeg
-convert build/avatar500.pam dist/static/images/avatar500.png
+magick build/avatar200.pam dist/static/images/avatar200.jpeg
+magick build/avatar200.pam dist/static/images/avatar200.png
+magick build/avatar500.pam dist/static/images/avatar500.jpeg
+magick build/avatar500.pam dist/static/images/avatar500.png
 node website/generate-images.js favicon >build/favicon.pam
-convert build/favicon.pam dist/favicon.png
+magick build/favicon.pam dist/favicon.png
 node website/generate-images.js hsluv >build/hsluv.pam
-convert build/hsluv.pam dist/images/hsluv.png
+magick build/hsluv.pam dist/images/hsluv.png
 node website/generate-images.js hpluv >build/hpluv.pam
-convert build/hpluv.pam dist/images/hpluv.png
+magick build/hpluv.pam dist/images/hpluv.png
 node website/generate-images.js hsluv-chroma >build/hsluv-chroma.pam
-convert build/hsluv-chroma.pam dist/images/hsluv-chroma.png
+magick build/hsluv-chroma.pam dist/images/hsluv-chroma.png
 node website/generate-images.js cielchuv-chroma >build/cielchuv-chroma.pam
-convert build/cielchuv-chroma.pam dist/images/cielchuv-chroma.png
+magick build/cielchuv-chroma.pam dist/images/cielchuv-chroma.png
 node website/generate-images.js cielchuv >build/cielchuv.pam
-convert build/cielchuv.pam dist/images/cielchuv.png
+magick build/cielchuv.pam dist/images/cielchuv.png
 node website/generate-images.js hsl >build/hsl.pam
-convert build/hsl.pam dist/images/hsl.png
+magick build/hsl.pam dist/images/hsl.png
 node website/generate-images.js hsl-lightness >build/hsl-lightness.pam
-convert build/hsl-lightness.pam dist/images/hsl-lightness.png
+magick build/hsl-lightness.pam dist/images/hsl-lightness.png
 node website/generate-images.js cielchuv-lightness >build/cielchuv-lightness.pam
-convert build/cielchuv-lightness.pam dist/images/cielchuv-lightness.png
+magick build/cielchuv-lightness.pam dist/images/cielchuv-lightness.png
 node website/generate-images.js hsluv-lightness >build/hsluv-lightness.pam
-convert build/hsluv-lightness.pam dist/images/hsluv-lightness.png
+magick build/hsluv-lightness.pam dist/images/hsluv-lightness.png
 node website/generate-images.js hpluv-lightness >build/hpluv-lightness.pam
-convert build/hpluv-lightness.pam dist/images/hpluv-lightness.png
+magick build/hpluv-lightness.pam dist/images/hpluv-lightness.png
 node website/generate-images.js hsl-chroma >build/hsl-chroma.pam
-convert build/hsl-chroma.pam dist/images/hsl-chroma.png
+magick build/hsl-chroma.pam dist/images/hsl-chroma.png
 node website/generate-images.js hpluv-chroma >build/hpluv-chroma.pam
-convert build/hpluv-chroma.pam dist/images/hpluv-chroma.png
+magick build/hpluv-chroma.pam dist/images/hpluv-chroma.png
