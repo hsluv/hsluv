@@ -2,7 +2,7 @@
   "type": "module",
   "devDependencies": {
     "mustache": "^4.2.0",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.28.1",
     "hsluv": "1.0.1"
   },
   "scripts": {
