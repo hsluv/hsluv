@@ -6,7 +6,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-c/actions/workflows/test.yml/badge.svg",
         "packageUrl": null,
         "packageBadge": null,
-        "packageAlt": null
+        "packageAlt": null,
+        "thirdParty": false
     },
     {
         "name": "C#",
@@ -15,7 +16,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-csharp/actions/workflows/test.yml/badge.svg",
         "packageUrl": "https://www.nuget.org/packages/Hsluv",
         "packageBadge": "https://img.shields.io/nuget/v/Hsluv.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": false
     },
     {
         "name": "Crystal",
@@ -24,7 +26,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-crystal/actions/workflows/crystal.yml/badge.svg",
         "packageUrl": null,
         "packageBadge": null,
-        "packageAlt": null
+        "packageAlt": null,
+        "thirdParty": false
     },
     {
         "name": "Dart",
@@ -33,7 +36,8 @@
         "ciBadge": null,
         "packageUrl": "https://pub.dev/packages/hsluv",
         "packageBadge": "https://img.shields.io/pub/v/hsluv",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": true
     },
     {
         "name": "Elixir",
@@ -42,7 +46,8 @@
         "ciBadge": null,
         "packageUrl": "https://hex.pm/packages/hsluv",
         "packageBadge": "https://img.shields.io/hexpm/v/hsluv",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": true
     },
     {
         "name": "Elm",
@@ -51,7 +56,8 @@
         "ciBadge": null,
         "packageUrl": "https://package.elm-lang.org/packages/kuon/elm-hsluv/latest/",
         "packageBadge": "https://img.shields.io/badge/elm-package-blue.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": true
     },
     {
         "name": "Emacs",
@@ -60,7 +66,8 @@
         "ciBadge": null,
         "packageUrl": "https://melpa.org/#/hsluv",
         "packageBadge": "https://melpa.org/packages/hsluv-badge.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": false
     },
     {
         "name": "GDScript",
@@ -69,7 +76,8 @@
         "ciBadge": null,
         "packageUrl": null,
         "packageBadge": null,
-        "packageAlt": null
+        "packageAlt": null,
+        "thirdParty": true
     },
     {
         "name": "GLSL",
@@ -78,7 +86,8 @@
         "ciBadge": null,
         "packageUrl": null,
         "packageBadge": null,
-        "packageAlt": null
+        "packageAlt": null,
+        "thirdParty": true
     },
     {
         "name": "HLSL",
@@ -87,7 +96,8 @@
         "ciBadge": null,
         "packageUrl": null,
         "packageBadge": null,
-        "packageAlt": null
+        "packageAlt": null,
+        "thirdParty": true
     },
     {
         "name": "Haskell",
@@ -96,7 +106,8 @@
         "ciBadge": null,
         "packageUrl": "https://hackage.haskell.org/package/hsluv-haskell",
         "packageBadge": "https://img.shields.io/hackage/v/hsluv-haskell.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": true
     },
     {
         "name": "Haxe",
@@ -105,7 +116,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-haxe/actions/workflows/test.yml/badge.svg",
         "packageUrl": "https://lib.haxe.org/p/hsluv",
         "packageBadge": "https://img.shields.io/badge/haxelib-0.1.0-blue.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": false
     },
     {
         "name": "Go",
@@ -114,7 +126,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-go/actions/workflows/test.yml/badge.svg",
         "packageUrl": null,
         "packageBadge": null,
-        "packageAlt": null
+        "packageAlt": null,
+        "thirdParty": false
     },
     {
         "name": "Java",
@@ -123,7 +136,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-java/actions/workflows/test.yml/badge.svg?branch=main",
         "packageUrl": "https://central.sonatype.com/artifact/org.hsluv/hsluv",
         "packageBadge": "https://img.shields.io/maven-central/v/org.hsluv/hsluv",
-        "packageAlt": "Maven Central"
+        "packageAlt": "Maven Central",
+        "thirdParty": false
     },
     {
         "name": "JavaScript",
@@ -132,7 +146,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-javascript/actions/workflows/nodeci.yml/badge.svg",
         "packageUrl": "https://www.npmjs.com/package/hsluv",
         "packageBadge": "https://img.shields.io/npm/v/hsluv.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": false
     },
     {
         "name": "Lua",
@@ -141,7 +156,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-lua/actions/workflows/test.yml/badge.svg",
         "packageUrl": "https://luarocks.org/modules/hsluv/hsluv",
         "packageBadge": "https://img.shields.io/badge/luarocks-0.1--0-blue.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": false
     },
     {
         "name": "Objective-C",
@@ -151,7 +167,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-objc/actions/workflows/ci.yml/badge.svg",
         "packageUrl": "https://cocoapods.org/pods/hsluv-objc",
         "packageBadge": "https://img.shields.io/cocoapods/v/hsluv-objc.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": false
     },
     {
         "name": "OCaml",
@@ -161,7 +178,8 @@
         "ciBadge": null,
         "packageUrl": "https://ocaml.org/p/hsluv/latest",
         "packageBadge": "https://img.shields.io/badge/ocaml.org-latest-blue",
-        "packageAlt": "package"
+        "packageAlt": "package",
+        "thirdParty": true
     },
     {
         "name": "Perl",
@@ -170,7 +188,8 @@
         "ciBadge": null,
         "packageUrl": "https://metacpan.org/release/Convert-Color-HUSL",
         "packageBadge": "https://img.shields.io/cpan/v/Convert-Color-HUSL.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": true
     },
     {
         "name": "PHP",
@@ -179,7 +198,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-php/actions/workflows/test.yml/badge.svg",
         "packageUrl": null,
         "packageBadge": null,
-        "packageAlt": null
+        "packageAlt": null,
+        "thirdParty": false
     },
     {
         "name": "Python",
@@ -188,7 +208,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-python/actions/workflows/test.yml/badge.svg",
         "packageUrl": "https://pypi.python.org/pypi/hsluv/",
         "packageBadge": "https://img.shields.io/pypi/v/hsluv.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": false
     },
     {
         "name": "Ruby",
@@ -197,7 +218,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-ruby/actions/workflows/ruby.yml/badge.svg",
         "packageUrl": "https://rubygems.org/gems/hsluv",
         "packageBadge": "https://img.shields.io/gem/v/hsluv.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": false
     },
     {
         "name": "Rust",
@@ -206,7 +228,8 @@
         "ciBadge": null,
         "packageUrl": "https://crates.io/crates/rust-hsluv",
         "packageBadge": "https://img.shields.io/crates/v/rust-hsluv.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": true
     },
     {
         "name": "Sass",
@@ -215,7 +238,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-sass/actions/workflows/ci.yml/badge.svg",
         "packageUrl": "https://www.npmjs.com/package/hsluv-sass",
         "packageBadge": "https://img.shields.io/npm/v/hsluv-sass.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": false
     },
     {
         "name": "Swift",
@@ -224,7 +248,8 @@
         "ciBadge": "https://github.com/hsluv/hsluv-swift/actions/workflows/ci.yml/badge.svg",
         "packageUrl": "https://cocoapods.org/pods/HSLuvSwift",
         "packageBadge": "https://img.shields.io/cocoapods/v/HSLuvSwift.svg",
-        "packageAlt": "CI"
+        "packageAlt": "CI",
+        "thirdParty": false
     },
     {
         "name": "Swift (AppKit/UIKit)",
@@ -233,6 +258,7 @@
         "ciBadge": "https://github.com/hsluv/hsluv-apple/actions/workflows/ci.yml/badge.svg",
         "packageUrl": null,
         "packageBadge": null,
-        "packageAlt": null
+        "packageAlt": null,
+        "thirdParty": false
     }
 ]

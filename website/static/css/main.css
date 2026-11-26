@@ -207,3 +207,9 @@ div.demo div {
     }
 }
 
+
+.third-party {
+    display: block;
+    font-size: 0.75em;
+    color: #777;
+}
