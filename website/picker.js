@@ -584,5 +584,36 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    const elCopyHex = picker.getElementsByClassName('copy-hex')[0];
+    const elCopyStatus = picker.getElementsByClassName('copy-status')[0];
+    let copyStatusTimeout = null;
+
+    function showCopyStatus(message) {
+        elCopyStatus.textContent = message;
+        clearTimeout(copyStatusTimeout);
+        copyStatusTimeout = setTimeout(function () {
+            elCopyStatus.textContent = '';
+        }, 2000);
+    }
+
+    elCopyHex.addEventListener('click', function () {
+        conv.hsluv_h = H;
+        conv.hsluv_s = S;
+        conv.hsluv_l = L;
+        conv.hsluvToHex();
+        const hex = conv.hex;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(hex).then(function () {
+                showCopyStatus('Copied');
+            }, function () {
+                elInputHex.select();
+                showCopyStatus('Press Ctrl+C to copy');
+            });
+        } else {
+            elInputHex.select();
+            showCopyStatus('Press Ctrl+C to copy');
+        }
+    });
+
     redrawAfterUpdatingVariables(true, true, true, null);
 });
