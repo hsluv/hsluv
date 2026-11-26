@@ -63,8 +63,12 @@ function makeDir(path) {
 
 function generateHtml(targetDir) {
     const baseTemplate = fs.readFileSync('./website/templates/base.mustache').toString();
+    const implementations = JSON.parse(
+        fs.readFileSync('./website/data/implementations.json').toString()
+    );
     const pageTemplateContext = {
-        demoColorBars: demoColorBars()
+        demoColorBars: demoColorBars(),
+        implementations: implementations
     };
 
     for (let pageInfo of pages) {
