@@ -8,3 +8,5 @@ npm-debug.log
 /secrets.txt
 *.iml
 .vscode
+test-results
+playwright-report

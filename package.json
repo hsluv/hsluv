@@ -1,12 +1,15 @@
 {
   "type": "module",
   "devDependencies": {
-    "mustache": "^4.2.0",
+    "@playwright/test": "^1.65.1",
     "esbuild": "^0.28.1",
-    "hsluv": "1.0.1"
+    "hsluv": "1.0.1",
+    "mustache": "^4.2.0"
   },
   "scripts": {
     "build": "sh build.sh",
-    "serve": "node website/serve.js"
+    "serve": "node website/serve.js",
+    "test:links": "node website/test/check-links.mjs dist",
+    "test:picker": "playwright test"
   }
 }
