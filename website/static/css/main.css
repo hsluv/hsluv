@@ -112,6 +112,10 @@ div.demo div {
     border-color: #555;
 }
 
+#picker td.cell-input input:focus {
+    border-color: #5af;
+}
+
 #picker table {
     margin-top: 20px;
     width: 100%;
@@ -125,8 +129,13 @@ div.demo div {
 
 #picker table td.picker-label {
     color: #eeeeee;
-    width: 30px;
+    width: 90px;
     line-height: 22px;
+    white-space: nowrap;
+}
+
+#picker table td.picker-label .unit {
+    color: #888;
 }
 
 #picker table .swatch {
